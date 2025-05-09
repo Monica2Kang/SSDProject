@@ -1,8 +1,8 @@
 #include "SSDDevice.h"
 
-int SSD::readSSD(int LBA) {
+int SSDDevice::readSSD(int LBA) {
     return 0;
 }
 
-void SSD::writeSSD(int LBA, int data) {
+void SSDDevice::writeSSD(int LBA, int data) {
 }

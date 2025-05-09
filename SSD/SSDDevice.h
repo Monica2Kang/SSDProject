@@ -1,6 +1,6 @@
 #pragma once
 
-class SSD {
+class SSDDevice {
 public:
     int readSSD(int LBA);
     void writeSSD(int LBA, int data);

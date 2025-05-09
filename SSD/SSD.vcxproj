@@ -133,9 +133,12 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SSDCmdParser.cpp" />
     <ClCompile Include="SSDCmdParser_test.cpp" />
+    <ClCompile Include="SSDDevice.cpp" />
+    <ClCompile Include="SSDDevice_test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SSDCmdParser.h" />
+    <ClInclude Include="SSDDevice.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

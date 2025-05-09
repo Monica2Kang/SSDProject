@@ -11,6 +11,5 @@ public:
 };
 
 TEST_F(SSDDeviceFixture, ssdCreationTC) {
-    SSDDevice ssd;
     EXPECT_NE(&ssd, nullptr);
 }

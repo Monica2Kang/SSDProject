@@ -24,15 +24,15 @@
     <ClCompile Include="main.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="ssd_cmdParser.cpp">
+    <ClCompile Include="SSDCmdParser.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="ssd_cmdParser_test.cpp">
+    <ClCompile Include="SSDCmdParser_test.cpp">
       <Filter>테스트 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ssd_cmdParser.h">
+    <ClInclude Include="SSDCmdParser.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

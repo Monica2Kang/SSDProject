@@ -131,6 +131,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="ssd_cmdParser.cpp" />
+    <ClCompile Include="ssd_cmdParser_test.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ssd_cmdParser.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -6,7 +6,7 @@ using namespace std;
 
 class Shell {
 public:
-	void executeShell() {
+	void executeShell(void) {
 		string input;
 		while (input != "exit") {
 			cout << "Shell> ";

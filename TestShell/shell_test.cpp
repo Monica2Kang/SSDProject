@@ -9,7 +9,7 @@ public:
 
 };
 
-TEST(ShellFixture, commandValidTest) {
+TEST(ShellFixture, creationTest) {
 	Shell instance;
 	EXPECT_NE(&instance, nullptr);
 }

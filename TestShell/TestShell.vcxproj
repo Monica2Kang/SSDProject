@@ -131,6 +131,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="SSDAdapter.cpp" />
+    <ClCompile Include="SSDAdapter_test.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ISSDAdapter.h" />
+    <ClInclude Include="SSDAdapter.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

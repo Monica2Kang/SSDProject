@@ -7,9 +7,10 @@ using namespace std;
 
 class SSDDeviceFixture : public Test {
 public:
-    SSDDevice ssd;
+
 };
 
 TEST_F(SSDDeviceFixture, ssdCreationTC) {
+    SSDDevice ssd;
     EXPECT_NE(&ssd, nullptr);
 }

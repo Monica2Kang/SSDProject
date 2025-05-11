@@ -23,6 +23,10 @@ string SSDCmdParser::checkParsing(int argc, const char* argv[]) const {
     if (LBA > 99) return "ERROR";
 
     if (command == "W") {
+        string value = tokens[3];
+        if (value.find("0x") == string::npos) return "ERROR";
+        if (value.length() != 10) return "ERROR";
+        //unsigned int hexValue = std::stoul(value, nullptr, 16);
         return "";
     }
 

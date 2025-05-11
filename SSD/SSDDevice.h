@@ -1,4 +1,5 @@
-#pragma once
+﻿#pragma once
+#include <stdexcept>
 
 class SSDDevice {
 public:
@@ -9,3 +10,8 @@ private:
     static const int MAX_LBA = 100;
     int cellData[MAX_LBA];
 };
+
+//class SSDDeviceException : public exception {
+//public:
+//    explicit SSDDeviceException(char const* _exception) : exception{ _exception } {}
+//};

@@ -13,7 +13,6 @@ public:
 	MOCK_METHOD(void, fullRead, (), (override));
 };
 
-
 class SSDAdapterFixture : public Test {
 public:
 	
@@ -25,7 +24,7 @@ TEST_F(SSDAdapterFixture, InterfaceTest) {
 	EXPECT_NE(ssdAdpater, nullptr);
 }
 
-TEST_F(SSDAdapterFixture, API_Test_WriteLba) {
+TEST_F(SSDAdapterFixture, ApiTestWriteLba) {
 	MockSSDAdapter ssdAdpater;
 
 	const int writeLba = 0;
@@ -37,7 +36,7 @@ TEST_F(SSDAdapterFixture, API_Test_WriteLba) {
 	ssdAdpater.wirteLba(writeLba, data);
 }
 
-TEST_F(SSDAdapterFixture, API_Test_ReadLba) {
+TEST_F(SSDAdapterFixture, ApiTestReadLba) {
 	MockSSDAdapter ssdAdpater;
 
 	const int readLba = 0;
@@ -52,7 +51,7 @@ TEST_F(SSDAdapterFixture, API_Test_ReadLba) {
 	EXPECT_EQ(returnData, data);
 }
 
-TEST_F(SSDAdapterFixture, API_Test_fullWrite) {
+TEST_F(SSDAdapterFixture, ApiTestFullWrite) {
 	MockSSDAdapter ssdAdpater;
 
 	const int data = 0xCAFECAFE;
@@ -63,7 +62,7 @@ TEST_F(SSDAdapterFixture, API_Test_fullWrite) {
 	ssdAdpater.fullWrite(data);
 }
 
-TEST_F(SSDAdapterFixture, API_Test_fullRead) {
+TEST_F(SSDAdapterFixture, ApiTestFullRead) {
 	MockSSDAdapter ssdAdpater;
 
 

@@ -1,6 +1,7 @@
-#include "SSDDevice.h"
+﻿#include "SSDDevice.h"
 
-int SSDDevice::readData(int LBA) {
+int SSDDevice::readData(int lba) {
+    if (lba >= MAX_LBA) throw std::invalid_argument("Out of LBA Ragne");
     return 0;
 }
 

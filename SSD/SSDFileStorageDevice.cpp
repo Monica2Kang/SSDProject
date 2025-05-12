@@ -16,11 +16,11 @@ bool SSDFileStorageDevice::openFile(void) {
     return _openFile();
 }
 
-bool SSDFileStorageDevice::writeData(int lba, int data) {
+bool SSDFileStorageDevice::writeData(const int lba, const int data) {
     return true;
 }
 
-bool SSDFileStorageDevice::readData(int lba, int& data) {
+bool SSDFileStorageDevice::readData(const int lba, int& data) {
     return true;
 }
 

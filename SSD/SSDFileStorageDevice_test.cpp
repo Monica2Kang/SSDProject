@@ -1,5 +1,7 @@
-﻿#include <fstream>
+﻿#include <iostream>
+#include <fstream>
 #include "gmock/gmock.h"
+
 #include "SSDFileStorageDevice.h"
 
 using namespace testing;
@@ -7,10 +9,32 @@ using namespace std;
 
 class SSDFileStorageDeviceFixture : public Test {
 public:
-protected:
     const char* FILE_NAME = "ssd_nand.txt";
+    const char* FILE_NAME_TEMP = "ssd_nand_temp.txt";
     const int FILE_STORAGE_CAPACITY = 100;
     SSDFileStorageDevice fSsd = { FILE_NAME, FILE_STORAGE_CAPACITY };
+public:
+    void removeSSDFile(const char* filename) {
+        std::ifstream ssdFile;
+        std::remove(filename);
+        ssdFile.open(filename, std::ios::in | std::ios::out | std::ios::binary);
+        bool fileOpened = ssdFile.is_open();
+        EXPECT_FALSE(fileOpened);
+    }
+    void createSSDFile(const char* filename) {
+        SSDFileStorageDevice ssdFile = { filename, FILE_STORAGE_CAPACITY };
+        if (ssdFile.openFile())
+            std::cout << FILE_NAME << " file created." << std::endl;
+        else
+            std::cout << FILE_NAME << " file is not created." << std::endl;
+        ssdFile.closeFile();
+    }
+    void openSSDFile(const char* filename) {
+        std::ifstream ssdFile;
+        ssdFile.open(filename, std::ios::in | std::ios::out | std::ios::binary);
+        bool fileOpened = ssdFile.is_open();
+        EXPECT_TRUE(fileOpened);
+    }
 };
 
 TEST_F(SSDFileStorageDeviceFixture, ssdFileStorageDummyInstanceCreationTC) {
@@ -23,23 +47,8 @@ TEST_F(SSDFileStorageDeviceFixture, ssdFileStorageCreationTC) {
 }
 
 TEST_F(SSDFileStorageDeviceFixture, ssdFileStorageCreationTCwithActualFile) {
-    std::ifstream check_file;
-    
-    std::remove(FILE_NAME);
-    check_file.open(FILE_NAME, std::ios::binary);
-    bool isFileOpend = check_file.is_open();
-    EXPECT_EQ(isFileOpend, false);
-
-    SSDFileStorageDevice fSsdTemp = { FILE_NAME, FILE_STORAGE_CAPACITY };
-    if (fSsdTemp.openFile()) 
-        std::cout << FILE_NAME << " file created." << std::endl;
-    else 
-        std::cout << FILE_NAME << " file is not created." << std::endl;
-    fSsdTemp.closeFile();
-
-    check_file.open(FILE_NAME, std::ios::in | std::ios::out | std::ios::binary);
-    isFileOpend = check_file.is_open();
-    EXPECT_EQ(isFileOpend, true);
-    std::remove(FILE_NAME);
-    std::cout << FILE_NAME << " file is deleted." << std::endl;
+    removeSSDFile(FILE_NAME_TEMP);
+    createSSDFile(FILE_NAME_TEMP);
+    openSSDFile(FILE_NAME_TEMP);
+    removeSSDFile(FILE_NAME_TEMP);
 }

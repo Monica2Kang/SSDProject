@@ -11,6 +11,7 @@ using namespace std;
 
 Shell::Shell(ISSDAdapter* ISSDAdapter) : m_ISSDAdapter(ISSDAdapter)
 {
+	m_TestScript = new TestScript(m_ISSDAdapter);
 }
 
 void Shell::executeShell(void) {
@@ -50,13 +51,18 @@ void Shell::executeShell(void) {
 			return;
 	}
 	else if (parameter[COMMAND_POS] == "1_" || parameter[COMMAND_POS] == "1_FullWriteAndReadCompare") {
-
+		const int expectedData = 0xBEEFCAFE;
+		m_TestScript->FullWriteAndReadCompare(expectedData); //continue;
+		return;
 	}
 	else if (parameter[COMMAND_POS] == "2_" || parameter[COMMAND_POS] == "2_PartialLBAWrite") {
-
+		const int expectedData = 0xBEEFCAFE;
+		m_TestScript->PartialLBAWrite(expectedData); //continue;
+		return;
 	}
 	else if (parameter[COMMAND_POS] == "3_" || parameter[COMMAND_POS] == "3_WriteReadAging") {
-
+		m_TestScript->WriteReadAging(); //continue;
+		return;
 	}
 	cout << "INVALID COMMAND" << endl;
 	//}

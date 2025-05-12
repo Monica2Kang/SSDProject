@@ -1,5 +1,6 @@
 #pragma once
 #include "ISSDAdapter.h"
+#include "TestScript.h"
 #include <vector>
 #include <string>
 
@@ -36,6 +37,7 @@ public:
 
 protected:
 	ISSDAdapter* m_ISSDAdapter;
+	TestScript* m_TestScript;
 	std::string input;
 	std::vector<std::string> parameter;
 	int LBA;

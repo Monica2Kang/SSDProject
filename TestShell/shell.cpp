@@ -93,7 +93,7 @@ bool Shell::writeApi(void)
 			storeLBA();
 			if (isValidData(DATA_POS)) {
 				storeData(DATA_POS);
-				m_ISSDAdapter->wirteLba(LBA, data);
+				m_ISSDAdapter->writeLba(LBA, data);
 				cout << "[Write] Done\n" << endl;
 				return true;
 			}

@@ -16,7 +16,9 @@ public:
 public:
     void removeSSDFile(const char* filename) {
         std::ifstream ssdFile;
-        std::remove(filename);
+        if (0 == std::remove(filename)) {
+            std::cout << filename << " file is deleted." << std::endl;
+        }
         ssdFile.open(filename, std::ios::in | std::ios::out | std::ios::binary);
         bool fileOpened = ssdFile.is_open();
         EXPECT_FALSE(fileOpened);
@@ -24,9 +26,9 @@ public:
     void createSSDFile(const char* filename) {
         SSDFileStorageDevice ssdFile = { filename, FILE_STORAGE_CAPACITY };
         if (ssdFile.openFile())
-            std::cout << FILE_NAME << " file created." << std::endl;
+            std::cout << filename << " file is created." << std::endl;
         else
-            std::cout << FILE_NAME << " file is not created." << std::endl;
+            std::cout << filename << " file is not created." << std::endl;
         ssdFile.closeFile();
     }
     void openSSDFile(const char* filename) {
@@ -35,6 +37,32 @@ public:
         bool fileOpened = ssdFile.is_open();
         EXPECT_TRUE(fileOpened);
     }
+
+protected:
+    struct LBA_DATA {
+        int lba;
+        int data;
+    };
+
+    const vector<LBA_DATA> inRangeLbaData = {
+        {0, static_cast<int>(0x100)},
+        {1, static_cast<int>(0x1AFAED)},
+        {98, static_cast<int>(0xB1E8F0E2)},
+        {57, static_cast<int>(0xDEADBEEF)},
+        {32, static_cast<int>(0xABCDEF)},
+        {89, static_cast<int>(0xBEEF1082)},
+        {99, static_cast<int>(0xFFFFFFFF)},
+    };
+    const vector<LBA_DATA> outOfRangeLbaData = {
+        {-1, static_cast<int>(0x100)},
+        {-100, static_cast<int>(0x1AFAED)},
+        {132, static_cast<int>(0xABCDEF)},
+        {5557, static_cast<int>(0xDEADBEEF)},
+        {889, static_cast<int>(0xBEEF1082)},
+        {100, static_cast<int>(0xB1E8F0E2)},
+        {101, static_cast<int>(0x1082)},
+        {-15557, static_cast<int>(0xDEADBEEF)},
+    };
 };
 
 TEST_F(SSDFileStorageDeviceFixture, ssdFileStorageDummyInstanceCreationTC) {
@@ -52,3 +80,70 @@ TEST_F(SSDFileStorageDeviceFixture, ssdFileStorageCreationTCwithActualFile) {
     openSSDFile(FILE_NAME_TEMP);
     removeSSDFile(FILE_NAME_TEMP);
 }
+
+TEST_F(SSDFileStorageDeviceFixture, ssdFileReadDataTC4InBoundCheck) {
+    fSsd.openFile();
+    for (LBA_DATA lba_data : inRangeLbaData) {
+        int readData;
+        bool result = fSsd.readData(lba_data.lba, readData);
+        EXPECT_TRUE(result);
+    }
+    fSsd.closeFile();
+}
+
+TEST_F(SSDFileStorageDeviceFixture, ssdFileReadDataTC4OutOfBoundCheck) {
+    fSsd.openFile();
+    for (LBA_DATA lba_data : outOfRangeLbaData) {
+        int readData;
+        bool result = fSsd.readData(lba_data.lba, readData);
+        EXPECT_FALSE(result);
+    }
+    fSsd.closeFile();
+}
+
+TEST_F(SSDFileStorageDeviceFixture, ssdFileWriteDataTC4InBoundCheck) {
+    fSsd.openFile();
+    for (LBA_DATA lba_data : inRangeLbaData) {
+        bool result = fSsd.readData(lba_data.lba, lba_data.data);
+        EXPECT_TRUE(result);
+    }
+    fSsd.closeFile();
+}
+
+TEST_F(SSDFileStorageDeviceFixture, ssdFileWriteDataTC4OutOfBoundCheck) {
+    fSsd.openFile();
+    for (LBA_DATA lba_data : outOfRangeLbaData) {
+        bool result = fSsd.readData(lba_data.lba, lba_data.data);
+        EXPECT_FALSE(result);
+    }
+    fSsd.closeFile();
+}
+TEST_F(SSDFileStorageDeviceFixture, ssdFileWriteDataTC4FileNotOpened) {
+    for (LBA_DATA lba_data : inRangeLbaData) {
+        bool result = fSsd.readData(lba_data.lba, lba_data.data);
+        EXPECT_FALSE(result);
+    }
+    
+    fSsd.openFile();
+    for (LBA_DATA lba_data : inRangeLbaData) {
+        bool result = fSsd.readData(lba_data.lba, lba_data.data);
+        EXPECT_TRUE(result);
+    }
+    fSsd.closeFile();
+
+}
+
+TEST_F(SSDFileStorageDeviceFixture, ssdFileReadDataTC4FileNotOpened) {
+    for (LBA_DATA lba_data : inRangeLbaData) {
+        bool result = fSsd.readData(lba_data.lba, lba_data.data);
+        EXPECT_FALSE(result);
+    }
+
+    fSsd.openFile();
+    for (LBA_DATA lba_data : inRangeLbaData) {
+        bool result = fSsd.readData(lba_data.lba, lba_data.data);
+        EXPECT_TRUE(result);
+    }
+    fSsd.closeFile();
+}
+

@@ -7,7 +7,7 @@ using namespace std;
 
 class MockSSDAdapter : public ISSDAdapter {
 public:
-	MOCK_METHOD(void, wirteLba, (const int lba, const int data), (override));
+	MOCK_METHOD(void, writeLba, (const int lba, const int data), (override));
 	MOCK_METHOD(int, readLba, (const int lba), (override));
 	MOCK_METHOD(void, fullWrite, (const int data), (override));
 	MOCK_METHOD(void, fullRead, (), (override));
@@ -74,7 +74,7 @@ TEST(ShellFixture, validWriteApiTest) {
 
 	int writeLba = 1;
 	int data = 0xAAAABBBB;
-	EXPECT_CALL(ssdAdpater, wirteLba(writeLba, data))
+	EXPECT_CALL(ssdAdpater, writeLba(writeLba, data))
 		.Times(1);
 
 	instance.executeShell();

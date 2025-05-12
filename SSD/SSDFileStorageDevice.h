@@ -4,7 +4,9 @@
 class SSDFileStorageDevice {
 public:
     SSDFileStorageDevice() = default;
-    SSDFileStorageDevice(std::string filename, int maxLbaCapcity) : filename{ filename }, maxLbaCapcity{ maxLbaCapcity }, fileOpened{ false } {};
+    SSDFileStorageDevice(std::string filename, int maxLbaCapacity) : 
+        filename{ filename }, maxLbaCapacity{ maxLbaCapacity }, 
+        fileOpened{ false }, upperLbaLimit{ maxLbaCapacity - 1 } {};
 
     bool openFile(void);
     void closeFile(void);
@@ -15,11 +17,15 @@ public:
 private:
     bool _openFile(void);
     void _createFile(void);
+    bool _checkLbaBoundary(const int lba) const;
     bool _isFileOpened(void) const { return fileOpened; }
+    void _setFileOpened(const bool input) { fileOpened = input; }
 
 private:
     std::string filename;
     std::fstream fileHandle;
     bool fileOpened;
-    int maxLbaCapcity;
+    int maxLbaCapacity;
+    int upperLbaLimit;
+    int lowerLbaLimit = 0;
 };

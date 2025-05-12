@@ -1,80 +1,87 @@
 #include "gmock/gmock.h"
-#include "SSDCmdParser.h"
 #include <string>
+#include "SSDCmdParser.h"
+#include "SSDDevice.h"
 
 using std::string;
 using namespace testing;
 
-class SSDCmdParserFixture : public Test {
+class SSDCmdParserFixture : public SSDCmdParser, public Test {
 public:
+    SSDCmdParser parser;
+    const char* EXE_FILE_NAME = "SSD.exe";
+    const char* READ_COMMAND = "R";
+    const char* WRITE_COMMAND = "W";
+    const char* DEFAULT_LBA = "0";
+    const char* OVER_LBA = "100";
+    const char* DEFAULT_VALUE = "0x1234ABCD";
 };
 
-TEST_F(SSDCmdParserFixture, ReadSuccess) {
-    SSDCmdParser parser; 
-    const char* argv[] = { "SSD.exe", "R", "0" };
+TEST_F(SSDCmdParserFixture, InvalidCommand) {
+    const char* argv[] = { EXE_FILE_NAME };
     int argc = sizeof(argv) / sizeof(argv[0]);
 
-    string actual = parser.checkParsing(argc, argv);
-    string expected = "0x00000000";
+    bool actual = parser.checkParsing(argc, argv);
+    bool expected = PARSING_FAILED;
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_F(SSDCmdParserFixture, ReadSuccess) {
+    const char* argv[] = { EXE_FILE_NAME, READ_COMMAND, DEFAULT_LBA };
+    int argc = sizeof(argv) / sizeof(argv[0]);
+
+    bool actual = parser.checkParsing(argc, argv);
+    bool expected = PARSING_SUCCESS;
     EXPECT_EQ(expected, actual);
 }
 
 TEST_F(SSDCmdParserFixture, ReadFailInvalidLBA) {
-    SSDCmdParser parser;
-    const char* argv[] = { "SSD.exe", "R", "100" };
+    const char* argv[] = { EXE_FILE_NAME, READ_COMMAND, OVER_LBA };
     int argc = sizeof(argv) / sizeof(argv[0]);
 
-    string actual = parser.checkParsing(argc, argv);
-    string expected = "ERROR";
-    EXPECT_EQ(expected, actual);
+    EXPECT_THROW(parser.checkParsing(argc, argv), std::invalid_argument);
 }
 
 TEST_F(SSDCmdParserFixture, WriteSuccess) {
-    SSDCmdParser parser;
-    const char* argv[] = { "SSD.exe", "W", "0", "0x12345678" };
+    const char* argv[] = { EXE_FILE_NAME, WRITE_COMMAND, DEFAULT_LBA, DEFAULT_VALUE };
     int argc = sizeof(argv) / sizeof(argv[0]);
 
-    string actual = parser.checkParsing(argc, argv);
-    string expected = "";
+    bool actual = parser.checkParsing(argc, argv);
+    bool expected = PARSING_SUCCESS;
     EXPECT_EQ(expected, actual);
 }
 
 TEST_F(SSDCmdParserFixture, WriteFailInvalidLBA) {
-    SSDCmdParser parser;
-    const char* argv[] = { "SSD.exe", "W", "100", "0x12345678" };
+    const char* argv[] = { EXE_FILE_NAME, WRITE_COMMAND, OVER_LBA, DEFAULT_VALUE };
     int argc = sizeof(argv) / sizeof(argv[0]);
 
-    string actual = parser.checkParsing(argc, argv);
-    string expected = "ERROR";
-    EXPECT_EQ(expected, actual);
+    EXPECT_THROW(parser.checkParsing(argc, argv), std::invalid_argument);
 }
 
 TEST_F(SSDCmdParserFixture, WriteFailDecimalValue) {
-    SSDCmdParser parser;
-    const char* argv[] = { "SSD.exe", "W", "0", "12345678" };
+    const char* argv[] = { EXE_FILE_NAME, WRITE_COMMAND, DEFAULT_LBA, "12345678" };
     int argc = sizeof(argv) / sizeof(argv[0]);
 
-    string actual = parser.checkParsing(argc, argv);
-    string expected = "ERROR";
+    bool actual = parser.checkParsing(argc, argv);
+    bool expected = PARSING_FAILED;
     EXPECT_EQ(expected, actual);
 }
 
 TEST_F(SSDCmdParserFixture, WriteFailBigValue) {
-    SSDCmdParser parser;
-    const char* argv[] = { "SSD.exe", "W", "0", "0x1FFFFFFFF" };
+
+    const char* argv[] = { EXE_FILE_NAME, WRITE_COMMAND, DEFAULT_LBA, "0x1FFFFFFFF" };
     int argc = sizeof(argv) / sizeof(argv[0]);
 
-    string actual = parser.checkParsing(argc, argv);
-    string expected = "ERROR";
+    bool actual = parser.checkParsing(argc, argv);
+    bool expected = PARSING_FAILED;
     EXPECT_EQ(expected, actual);
 }
 
 TEST_F(SSDCmdParserFixture, WriteFailSmallValue) {
-    SSDCmdParser parser;
-    const char* argv[] = { "SSD.exe", "W", "0", "0x1" };
+    const char* argv[] = { EXE_FILE_NAME,WRITE_COMMAND, DEFAULT_LBA, "0x1" };
     int argc = sizeof(argv) / sizeof(argv[0]);
 
-    string actual = parser.checkParsing(argc, argv);
-    string expected = "ERROR";
+    bool actual = parser.checkParsing(argc, argv);
+    bool expected = PARSING_FAILED;
     EXPECT_EQ(expected, actual);
 }

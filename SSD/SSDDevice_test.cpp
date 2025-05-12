@@ -14,10 +14,10 @@ public:
     void invalidArgumentTest4readData(const int lba) {
         EXPECT_THROW(ssd.readData(lba), invalid_argument);
     }
-    void validArgumentTest4writeData(int lba) {
+    void validArgumentTest4writeData(const int lba) {
         EXPECT_NO_THROW(ssd.writeData(lba, SAMPLE_DATA));
     }
-    void invalidArgumentTest4writeData(int lba) {
+    void invalidArgumentTest4writeData(const int lba) {
         EXPECT_THROW(ssd.writeData(lba, SAMPLE_DATA), invalid_argument);
     }
 

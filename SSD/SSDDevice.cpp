@@ -5,16 +5,16 @@ SSDDevice::SSDDevice() {
 }
 
 int SSDDevice::readData(int lba) {
-    if (isLbaOutOfRange(lba)) throw std::invalid_argument("Out of LBA Ragne");
+    if (isLbaOutOfRange(lba)) throw std::invalid_argument("Out of LBA Range");
     return cellData[lba];
 }
 
-void SSDDevice::writeData(int lba, const int data) {
-    if (isLbaOutOfRange(lba)) throw std::invalid_argument("Out of LBA Ragne");
+void SSDDevice::writeData(const int lba, const int data) {
+    if (isLbaOutOfRange(lba)) throw std::invalid_argument("Out of LBA Range");
     cellData[lba] = data;
 }
 
-void SSDDevice::initializeCellData() {
+void SSDDevice::initializeCellData(void) {
     for (int lba = 0; lba < LBA_UPPER_LIMIT; lba++) {
         cellData[lba] = 0;
     }

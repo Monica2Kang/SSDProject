@@ -7,8 +7,10 @@ public:
     void writeData(int LBA, int data);
 
 private:
-    static const int MAX_LBA = 100;
-    int cellData[MAX_LBA];
+    static const int LBA_CAPACITY = 100;
+    static const int LBA_UPPER_LIMIT = LBA_CAPACITY - 1;
+    static const int LBA_LOWER_LIMIT = 0;
+    int cellData[LBA_CAPACITY];
 };
 
 //class SSDDeviceException : public exception {

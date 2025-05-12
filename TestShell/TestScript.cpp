@@ -3,7 +3,7 @@
 #include <ctime>
 #include "TestScript.h"
 
-int TestScript::FullWriteAndReadCompare(void) {
+int TestScript::FullWriteAndReadCompare(int data) {
 
 	/*
 	• 0 ~4번 LBA까지 Write 명령어를 수행한다.
@@ -18,19 +18,19 @@ int TestScript::FullWriteAndReadCompare(void) {
 	const int MAX_LBA = 100;
 	const int TEST_UNIT = 5;
 	int lba = 0;
-	int expectedData = 0xBEEFCAFE;
+	int expectedData = data;
 	int actualData = 0;
 
 	while (lba < MAX_LBA)
 	{
 		for (auto it = 0; it < TEST_UNIT; it++)
 		{
-			ssdAdapter.wirteLba(lba, expectedData);
+			ssdAdapter->wirteLba(lba, expectedData);
 		}
 
 		for (auto it = 0; it < TEST_UNIT; it++)
 		{
-			actualData = ssdAdapter.readLba(lba);
+			actualData = ssdAdapter->readLba(lba);
 			if (actualData != expectedData)
 			{
 				return FAIL;
@@ -43,7 +43,7 @@ int TestScript::FullWriteAndReadCompare(void) {
 	return PASS;
 }
 
-int TestScript::PartialLBAWrite(void) {
+int TestScript::PartialLBAWrite(int data) {
 	/*
 	* Loop는 30회
 	• 4번 LBA에 값을 적는다.
@@ -54,18 +54,18 @@ int TestScript::PartialLBAWrite(void) {
 	• LBA 0 ~ 4번, ReadCompare
 	*/
 	const int loop = 30;
-	const int expectedData = 0xBEEFCAFE;
+	const int expectedData = data;
 	for (int it = 0; it < loop; it++)
 	{
-		ssdAdapter.wirteLba(4, expectedData);
-		ssdAdapter.wirteLba(0, expectedData);
-		ssdAdapter.wirteLba(3, expectedData);
-		ssdAdapter.wirteLba(1, expectedData);
-		ssdAdapter.wirteLba(2, expectedData);
+		ssdAdapter->wirteLba(4, expectedData);
+		ssdAdapter->wirteLba(0, expectedData);
+		ssdAdapter->wirteLba(3, expectedData);
+		ssdAdapter->wirteLba(1, expectedData);
+		ssdAdapter->wirteLba(2, expectedData);
 
 		for (int lba = 0; lba < 5; lba++)
 		{
-			int actualData = ssdAdapter.readLba(lba);
+			int actualData = ssdAdapter->readLba(lba);
 			if (actualData != expectedData)
 			{
 				return FAIL;
@@ -99,16 +99,16 @@ int TestScript::WriteReadAging(void) {
 
 		expectedData1 = 0xBEEFCAFE;
 		expectedData2 = 0xBEEFCAFE;
-		ssdAdapter.wirteLba(lba1, expectedData1);
-		ssdAdapter.wirteLba(lba2, expectedData2);
+		ssdAdapter->wirteLba(lba1, expectedData1);
+		ssdAdapter->wirteLba(lba2, expectedData2);
 
-		int actualData = ssdAdapter.readLba(lba1);
+		int actualData = ssdAdapter->readLba(lba1);
 		if (actualData != expectedData1)
 		{
 			return FAIL;
 		}
 
-		actualData = ssdAdapter.readLba(lba2);
+		actualData = ssdAdapter->readLba(lba2);
 		if (actualData != expectedData2)
 		{
 			return FAIL;

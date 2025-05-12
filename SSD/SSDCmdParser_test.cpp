@@ -7,15 +7,12 @@ using namespace testing;
 
 class SSDCmdParserFixture : public Test {
 public:
-    int getArgc(const char* argv[]) {
-        return sizeof(argv) / sizeof(argv[0]);
-    }
 };
 
 TEST_F(SSDCmdParserFixture, ReadSuccess) {
-    SSDCmdParser parser;
+    SSDCmdParser parser; 
     const char* argv[] = { "SSD.exe", "R", "0" };
-    int argc = getArgc(argv);
+    int argc = sizeof(argv) / sizeof(argv[0]);
 
     string actual = parser.checkParsing(argc, argv);
     string expected = "0x00000000";
@@ -25,7 +22,7 @@ TEST_F(SSDCmdParserFixture, ReadSuccess) {
 TEST_F(SSDCmdParserFixture, ReadFailInvalidLBA) {
     SSDCmdParser parser;
     const char* argv[] = { "SSD.exe", "R", "100" };
-    int argc = getArgc(argv);
+    int argc = sizeof(argv) / sizeof(argv[0]);
 
     string actual = parser.checkParsing(argc, argv);
     string expected = "ERROR";
@@ -35,7 +32,7 @@ TEST_F(SSDCmdParserFixture, ReadFailInvalidLBA) {
 TEST_F(SSDCmdParserFixture, WriteSuccess) {
     SSDCmdParser parser;
     const char* argv[] = { "SSD.exe", "W", "0", "0x12345678" };
-    int argc = getArgc(argv);
+    int argc = sizeof(argv) / sizeof(argv[0]);
 
     string actual = parser.checkParsing(argc, argv);
     string expected = "";
@@ -45,7 +42,7 @@ TEST_F(SSDCmdParserFixture, WriteSuccess) {
 TEST_F(SSDCmdParserFixture, WriteFailInvalidLBA) {
     SSDCmdParser parser;
     const char* argv[] = { "SSD.exe", "W", "100", "0x12345678" };
-    int argc = getArgc(argv);
+    int argc = sizeof(argv) / sizeof(argv[0]);
 
     string actual = parser.checkParsing(argc, argv);
     string expected = "ERROR";
@@ -55,7 +52,7 @@ TEST_F(SSDCmdParserFixture, WriteFailInvalidLBA) {
 TEST_F(SSDCmdParserFixture, WriteFailDecimalValue) {
     SSDCmdParser parser;
     const char* argv[] = { "SSD.exe", "W", "0", "12345678" };
-    int argc = getArgc(argv);
+    int argc = sizeof(argv) / sizeof(argv[0]);
 
     string actual = parser.checkParsing(argc, argv);
     string expected = "ERROR";
@@ -65,7 +62,7 @@ TEST_F(SSDCmdParserFixture, WriteFailDecimalValue) {
 TEST_F(SSDCmdParserFixture, WriteFailBigValue) {
     SSDCmdParser parser;
     const char* argv[] = { "SSD.exe", "W", "0", "0x1FFFFFFFF" };
-    int argc = getArgc(argv);
+    int argc = sizeof(argv) / sizeof(argv[0]);
 
     string actual = parser.checkParsing(argc, argv);
     string expected = "ERROR";
@@ -75,7 +72,7 @@ TEST_F(SSDCmdParserFixture, WriteFailBigValue) {
 TEST_F(SSDCmdParserFixture, WriteFailSmallValue) {
     SSDCmdParser parser;
     const char* argv[] = { "SSD.exe", "W", "0", "0x1" };
-    int argc = getArgc(argv);
+    int argc = sizeof(argv) / sizeof(argv[0]);
 
     string actual = parser.checkParsing(argc, argv);
     string expected = "ERROR";

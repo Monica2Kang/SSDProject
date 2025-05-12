@@ -4,60 +4,150 @@
 #include <vector>
 #include <string>
 #include <cctype>
+#include <iomanip>
 #include "shell.h"
 
 using namespace std;
 
 Shell::Shell(ISSDAdapter* ISSDAdapter) : m_ISSDAdapter(ISSDAdapter)
 {
+	m_TestScript = new TestScript(m_ISSDAdapter);
 }
 
+#ifndef _DEBUG
 void Shell::executeShell(void) {
-	// while(true){
-		// setCommand();
+	while(true) {
+		setCommand("");
 
+		splitAndStore();
+
+		if (noEnterCommand()) {
+			cout << "INVALID COMMAND" << endl;
+			continue;
+		}
+
+		if (parameter[COMMAND_POS] == "write") { // write 3 0xAAAABBBB
+			if (writeApi()) continue;
+		}
+		else if (parameter[COMMAND_POS] == "read") { // read 2
+			if (readApi()) continue;
+		}
+		else if (parameter[COMMAND_POS] == "exit") { // exit
+			if (exitApi()) break;
+		}
+		else if (parameter[COMMAND_POS] == "help") { // help AmazingReviewer jungyeonKim
+			if (helpApi()) continue;
+		}
+		else if (parameter[COMMAND_POS] == "fullwrite") { // fullwrite 0xAAAABBBB
+			if (fullwriteApi()) continue;
+		}
+		else if (parameter[COMMAND_POS] == "fullread") { // fullread 
+			if (fullreadApi()) continue;
+		}
+		else if (parameter[COMMAND_POS] == "1_" || parameter[COMMAND_POS] == "1_FullWriteAndReadCompare") {
+			const int expectedData = 0xBEEFCAFE;
+			if (!(m_TestScript->FullWriteAndReadCompare(expectedData))) {
+				cout << "PASS\n" << endl;
+				continue;
+			}
+			cout << "FAIL\n" << endl;
+			continue;
+		}
+		else if (parameter[COMMAND_POS] == "2_" || parameter[COMMAND_POS] == "2_PartialLBAWrite") {
+			const int expectedData = 0xBEEFCAFE;
+			if (!(m_TestScript->PartialLBAWrite(expectedData))) {
+				cout << "PASS\n" << endl;
+				continue;
+			}
+			cout << "FAIL\n" << endl;
+			continue;
+		}
+		else if (parameter[COMMAND_POS] == "3_" || parameter[COMMAND_POS] == "3_WriteReadAging") {
+			if (!(m_TestScript->WriteReadAging())) {
+				cout << "PASS\n" << endl;
+				continue;
+			}
+			cout << "FAIL\n" << endl;
+			continue;
+		}
+
+		cout << "INVALID COMMAND" << endl;
+	}
+}
+
+void Shell::setCommand(string command)
+{
+	cout << "Shell> ";
+	getline(std::cin, input);
+}
+#else
+void Shell::executeShell(void) {
 	splitAndStore();
 
 	if (noEnterCommand()) {
 		cout << "INVALID COMMAND" << endl;
 		return;
-		//continue;
 	}
 
 	if (parameter[COMMAND_POS] == "write") { // write 3 0xAAAABBBB
-		if (writeApi()) //continue;
+		if (writeApi()) 
 			return;
 	}
 	else if (parameter[COMMAND_POS] == "read") { // read 2
-		if (readApi()) //continue;
+		if (readApi()) 
 			return;
 	}
 	else if (parameter[COMMAND_POS] == "exit") { // exit
-		if (exitApi()) //break;
+		if (exitApi()) 
 			return;
 	}
 	else if (parameter[COMMAND_POS] == "help") { // help AmazingReviewer jungyeonKim
-		if (helpApi()) //continue;
+		if (helpApi()) 
 			return;
 	}
 	else if (parameter[COMMAND_POS] == "fullwrite") { // fullwrite 0xAAAABBBB
-		if (fullwriteApi()) //continue;
+		if (fullwriteApi()) 
 			return;
 	}
 	else if (parameter[COMMAND_POS] == "fullread") { // fullread 
-		if (fullreadApi()) //continue;
+		if (fullreadApi()) 
 			return;
 	}
+	else if (parameter[COMMAND_POS] == "1_" || parameter[COMMAND_POS] == "1_FullWriteAndReadCompare") {
+		const int expectedData = 0xBEEFCAFE;
+		if (!(m_TestScript->FullWriteAndReadCompare(expectedData))) { 
+			cout << "PASS\n" << endl;
+			return; 
+		}
+		cout << "FAIL\n" << endl;
+		return;
+	}
+	else if (parameter[COMMAND_POS] == "2_" || parameter[COMMAND_POS] == "2_PartialLBAWrite") {
+		const int expectedData = 0xBEEFCAFE;
+		if (!(m_TestScript->PartialLBAWrite(expectedData))) { 
+			cout << "PASS\n" << endl;
+			return; 
+		}
+		cout << "FAIL\n" << endl;
+		return;
+	}
+	else if (parameter[COMMAND_POS] == "3_" || parameter[COMMAND_POS] == "3_WriteReadAging") {
+		if (!(m_TestScript->WriteReadAging())) { 
+			cout << "PASS\n" << endl;
+			return;
+		}
+		cout << "FAIL\n" << endl;
+		return;
+	}
 	cout << "INVALID COMMAND" << endl;
-	//}
 }
 
 void Shell::setCommand(string command)
 {
 	cout << "Shell> ";
 	input = command;
-	// getline(std::cin, input);
 }
+#endif
 
 void Shell::splitAndStore(void) {
 	parameter.clear();
@@ -93,23 +183,59 @@ bool Shell::writeApi(void)
 }
 
 bool Shell::readApi(void) {
-	return true;
+	if (isValidParameterSize(READ_PARAMETER_SIZE)) {
+		if (isValidLBA(LBA_POS)) {
+			storeLBA();
+			int printData = m_ISSDAdapter->readLba(LBA);
+			cout << "[Read] LBA " << LBA << " : 0x" << uppercase << setfill('0') << setw(8) << hex << printData << endl;
+			cout << endl;
+			return true;
+		}
+	}
+	return false;
 }
 
 bool Shell::exitApi(void) {
-	return true;
+	if (isValidParameterSize(EXIT_PARAMETER_SIZE)) {
+		return true;
+	}
+	return false;
 }
 
 bool Shell::helpApi(void) {
-	return true;
+	if (isValidParameterSize(HELP_PARAMETER_SIZE)) {
+		cout << "Team : AmazingReviewer" << endl;
+		cout << "Minju Kang, Namwook Kang, Janghwan Kim, Jungyeon Kim" << endl;
+		cout << "write > write [LBA] [data]" << endl;
+		cout << "read > read [LBA]" << endl;
+		cout << "exit > End the program" << endl;
+		cout << "help > Show command guide" << endl;
+		cout << "fullwrite > fullwrite[data]" << endl;
+		cout << "fullread > fullread" << endl;
+		return true;
+	}
+	return false;
 }
 
 bool Shell::fullwriteApi(void) {
-	return true;
+	if (isValidParameterSize(FULLWRITE_PARAMETER_SIZE)) {
+		if (isValidData(FULLWRITE_DATA_POS)) {
+			storeData(FULLWRITE_DATA_POS);
+			m_ISSDAdapter->fullWrite(data);
+			cout << "[Fullwrite] Done\n" << endl;
+			return true;
+		}
+	}
+	return false;
 }
 
 bool Shell::fullreadApi(void) {
-	return true;
+	if (isValidParameterSize(FULLREAD_PARAMETER_SIZE)) {
+		m_ISSDAdapter->fullRead();
+		cout << endl;
+		return true;
+	}
+	return false;
 }
 
 bool Shell::isValidParameterSize(const int size) {

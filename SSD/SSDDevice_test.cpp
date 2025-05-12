@@ -27,6 +27,14 @@ protected:
         int data;
     };
     static const int SAMPLE_DATA = static_cast<int>(0x1082);
+    const vector<LBA_DATA> inRangeLbaDatas = {
+    {0, static_cast<int>(0x100)},
+    {1, static_cast<int>(0x1AFAED)},
+    {32, static_cast<int>(0xABCDEF)},
+    {57, static_cast<int>(0xDEADBEEF)},
+    {89, static_cast<int>(0xBEEF1082)},
+    {98, static_cast<int>(0xB1E8F0E2)},
+    };
 };
 
 TEST_F(SSDDeviceFixture, ssdCreationTC) {
@@ -91,16 +99,7 @@ TEST_F(SSDDeviceFixture, ssdWriteReadDataConfirmTC) {
 }
 
 TEST_F(SSDDeviceFixture, ssdWriteReadDataConfirmTC4Multi) {
-    vector<LBA_DATA> lba_datas = {
-        {0, static_cast<int>(0x100)},
-        {1, static_cast<int>(0x1AFAED)},
-        {32, static_cast<int>(0xABCDEF)},
-        {57, static_cast<int>(0xDEADBEEF)},
-        {89, static_cast<int>(0xBEEF1082)},
-        {98, static_cast<int>(0xB1E8F0E2)},
-    };
-
-    for (LBA_DATA lba_data : lba_datas) {
+    for (LBA_DATA lba_data : inRangeLbaDatas) {
         ssd.writeData(lba_data.lba, lba_data.data);
         int actual = ssd.readData(lba_data.lba);
         EXPECT_EQ(lba_data.data, actual);

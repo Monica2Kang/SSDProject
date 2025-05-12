@@ -6,10 +6,18 @@
 
 using namespace std;
 
-bool SSDFileStorageDevice::writeData(int lba, int data) {
+bool SSDFileStorageDevice::openFile(void) {
     return true;
 }
 
-bool SSDFileStorageDevice::readData(int lba, int& data) {
+void SSDFileStorageDevice::closeFile(void) {
+
+}
+
+bool SSDFileStorageDevice::writeData(const int lba, const int data) {
+    return true;
+}
+
+bool SSDFileStorageDevice::readData(const int lba, int& data) {
     return true;
 }

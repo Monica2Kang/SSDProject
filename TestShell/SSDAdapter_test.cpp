@@ -7,7 +7,7 @@ using namespace std;
 
 class MockSSDAdapter : public ISSDAdapter {
 public:
-	MOCK_METHOD(void, wirteLba, (const int lba, const int data), (override));
+	MOCK_METHOD(void, writeLba, (const int lba, const int data), (override));
 	MOCK_METHOD(int, readLba, (const int lba), (override));
 	MOCK_METHOD(void, fullWrite, (const int data), (override));
 	MOCK_METHOD(void, fullRead, (), (override));
@@ -29,10 +29,10 @@ TEST_F(SSDAdapterFixture, ApiTestWriteLba) {
 	const int writeLba = 0;
 	const int data = 0xBEEFCAFE;
 
-	EXPECT_CALL(ssdMockAdpater, wirteLba(writeLba, data))
+	EXPECT_CALL(ssdMockAdpater, writeLba(writeLba, data))
 		.Times(1);
 
-	ssdMockAdpater.wirteLba(writeLba, data);
+	ssdMockAdpater.writeLba(writeLba, data);
 }
 
 TEST_F(SSDAdapterFixture, ApiTestReadLba) {
@@ -68,7 +68,7 @@ TEST_F(SSDAdapterFixture, AdpaterTestWriteLba) {
 	const int writeLba = 0;
 	const int data = 0xBEEFCAFE;
 
-	ssdAdpater.wirteLba(writeLba, data);
+	ssdAdpater.writeLba(writeLba, data);
 
 	EXPECT_NO_THROW();
 }

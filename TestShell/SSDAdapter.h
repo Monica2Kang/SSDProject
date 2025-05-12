@@ -6,7 +6,7 @@ using namespace std;
 
 class SSDAdapter : public ISSDAdapter{
 public:
-	void wirteLba(const int lba, const int data) override;
+	void writeLba(const int lba, const int data) override;
 	int readLba(const int lba) override;
 	void fullWrite(const int data) override;
 	void fullRead(void) override;

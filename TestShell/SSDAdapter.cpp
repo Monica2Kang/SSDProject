@@ -10,7 +10,7 @@
 
 using namespace std;
 
-void SSDAdapter::wirteLba(const int lba, const int data)
+void SSDAdapter::writeLba(const int lba, const int data)
 {
     std::stringstream ss;
     ss << "0x" << std::uppercase << std::hex << data;
@@ -31,7 +31,7 @@ void SSDAdapter::fullWrite(const int data)
     const int MAX_LBA = 100;
     for (auto lba = 0; lba < MAX_LBA; lba++)
     {
-        wirteLba(lba, data);
+        writeLba(lba, data);
     }
 }
 

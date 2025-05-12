@@ -1,19 +1,22 @@
 #pragma once
 
+#include "ISSDAdapter.h"
+#include "SSDAdapter.h"
+
 static const int PASS = 0;
 static const int FAIL = 1;
 
 class TestScript {
 public:
-	int FullWriteAndReadCompare(void) {
-		return PASS;
+	TestScript() = default;
+	TestScript(ISSDAdapter* obj) {
+		ssdAdapter = obj;
 	}
 
-	int PartialLBAWrite(void) {
-		return PASS;
-	}
+	int FullWriteAndReadCompare(const int data);
+	int PartialLBAWrite(const int data);
+	int WriteReadAging(void);
 
-	int WriteReadAging(void) {
-		return PASS;
-	}
+private:
+	ISSDAdapter* ssdAdapter;
 };

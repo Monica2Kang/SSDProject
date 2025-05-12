@@ -10,7 +10,6 @@ int main(int argc, const char* argv[]) {
 	SSDDevice device;
 	SSDCmdParser parser{device};
 	parser.checkParsing(argc, argv);
-	//std::cout << result << "\n";
 	return 0;
 #else
 	::testing::InitGoogleMock();

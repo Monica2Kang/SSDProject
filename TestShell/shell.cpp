@@ -52,22 +52,28 @@ void Shell::executeShell(void) {
 	}
 	else if (parameter[COMMAND_POS] == "1_" || parameter[COMMAND_POS] == "1_FullWriteAndReadCompare") {
 		const int expectedData = 0xBEEFCAFE;
-		if (!(m_TestScript->FullWriteAndReadCompare(expectedData))) { //continue;
-
+		if (!(m_TestScript->FullWriteAndReadCompare(expectedData))) { 
+			cout << "PASS\n" << endl;
+			return; //continue;
 		}
+		cout << "FAIL\n" << endl;
 		return;
 	}
 	else if (parameter[COMMAND_POS] == "2_" || parameter[COMMAND_POS] == "2_PartialLBAWrite") {
 		const int expectedData = 0xBEEFCAFE;
-		if (!(m_TestScript->PartialLBAWrite(expectedData))) { //continue;
-		
+		if (!(m_TestScript->PartialLBAWrite(expectedData))) { 
+			cout << "PASS\n" << endl;
+			return; //continue;
 		}
+		cout << "FAIL\n" << endl;
 		return;
 	}
 	else if (parameter[COMMAND_POS] == "3_" || parameter[COMMAND_POS] == "3_WriteReadAging") {
-		if (!(m_TestScript->WriteReadAging())) { //continue;
-		
+		if (!(m_TestScript->WriteReadAging())) { 
+			cout << "PASS\n" << endl;
+			return; //continue;
 		}
+		cout << "FAIL\n" << endl;
 		return;
 	}
 	cout << "INVALID COMMAND" << endl;

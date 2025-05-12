@@ -1,19 +1,16 @@
 #pragma once
 
+#include "SSDAdapter.h"
+
 static const int PASS = 0;
 static const int FAIL = 1;
 
 class TestScript {
 public:
-	int FullWriteAndReadCompare(void) {
-		return PASS;
-	}
+	int FullWriteAndReadCompare(void);
+	int PartialLBAWrite(void);
+	int WriteReadAging(void);
 
-	int PartialLBAWrite(void) {
-		return PASS;
-	}
-
-	int WriteReadAging(void) {
-		return PASS;
-	}
+private:
+	SSDAdapter ssdAdapter;
 };

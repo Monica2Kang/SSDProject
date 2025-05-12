@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <cctype>
+#include <iomanip>
 #include "shell.h"
 
 using namespace std;
@@ -47,6 +48,15 @@ void Shell::executeShell(void) {
 	else if (parameter[COMMAND_POS] == "fullread") { // fullread 
 		if (fullreadApi()) //continue;
 			return;
+	}
+	else if (parameter[COMMAND_POS] == "1_" || parameter[COMMAND_POS] == "1_FullWriteAndReadCompare") {
+
+	}
+	else if (parameter[COMMAND_POS] == "2_" || parameter[COMMAND_POS] == "2_PartialLBAWrite") {
+
+	}
+	else if (parameter[COMMAND_POS] == "3_" || parameter[COMMAND_POS] == "3_WriteReadAging") {
+
 	}
 	cout << "INVALID COMMAND" << endl;
 	//}
@@ -93,23 +103,59 @@ bool Shell::writeApi(void)
 }
 
 bool Shell::readApi(void) {
-	return true;
+	if (isValidParameterSize(READ_PARAMETER_SIZE)) {
+		if (isValidLBA(LBA_POS)) {
+			storeLBA();
+			int printData = m_ISSDAdapter->readLba(LBA);
+			cout << "[Read] LBA " << LBA << " : 0x" << uppercase << setfill('0') << setw(8) << hex << printData << endl;
+			cout << endl;
+			return true;
+		}
+	}
+	return false;
 }
 
 bool Shell::exitApi(void) {
-	return true;
+	if (isValidParameterSize(EXIT_PARAMETER_SIZE)) {
+		return true;
+	}
+	return false;
 }
 
 bool Shell::helpApi(void) {
+	if (isValidParameterSize(HELP_PARAMETER_SIZE)) {
+		cout << "Team : AmazingReviewer" << endl;
+		cout << "Minju Kang, Namwook Kang, Janghwan Kim, Jungyeon Kim" << endl;
+		cout << "write > write [LBA] [data]" << endl;
+		cout << "read > read [LBA]" << endl;
+		cout << "exit > End the program" << endl;
+		cout << "help > Show command guide" << endl;
+		cout << "fullwrite [data]" << endl;
+		cout << "fullread" << endl;
+		return true;
+	}
 	return true;
 }
 
 bool Shell::fullwriteApi(void) {
-	return true;
+	if (isValidParameterSize(FULLWRITE_PARAMETER_SIZE)) {
+		if (isValidData(FULLWRITE_DATA_POS)) {
+			storeData(FULLWRITE_DATA_POS);
+			m_ISSDAdapter->fullWrite(data);
+			cout << "[Fullwrite] Done\n" << endl;
+			return true;
+		}
+	}
+	return false;
 }
 
 bool Shell::fullreadApi(void) {
-	return true;
+	if (isValidParameterSize(FULLREAD_PARAMETER_SIZE)) {
+		m_ISSDAdapter->fullRead();
+		cout << endl;
+		return true;
+	}
+	return false;
 }
 
 bool Shell::isValidParameterSize(const int size) {

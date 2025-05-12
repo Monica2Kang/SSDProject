@@ -3,6 +3,7 @@
 
 class SSDDevice {
 public:
+    SSDDevice();
     int readData(int LBA);
     void writeData(int LBA, int data);
 

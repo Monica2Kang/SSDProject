@@ -20,6 +20,8 @@ private:
     bool _checkLbaBoundary(const int lba) const;
     bool _isFileOpened(void) const { return fileOpened; }
     void _setFileOpened(const bool input) { fileOpened = input; }
+    void _readFile(const int lba, int& data);
+    void _writeFile(const int lba, const int data);
 
 private:
     std::string filename;

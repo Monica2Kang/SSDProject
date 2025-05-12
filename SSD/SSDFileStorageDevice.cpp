@@ -21,6 +21,9 @@ bool SSDFileStorageDevice::writeData(const int lba, const int data) {
         return false;
     if (!_isFileOpened())
         return false;
+
+    _writeFile(lba, data);
+
     return true;
 }
 
@@ -30,6 +33,9 @@ bool SSDFileStorageDevice::readData(const int lba, int& data) {
         return false;
     if (!_isFileOpened())
         return false;
+
+    _readFile(lba, data);
+
     return true;
 }
 
@@ -56,6 +62,18 @@ void SSDFileStorageDevice::_createFile(void) {
     std::vector<int> cellData(maxLbaCapacity, 0);
     create_file.write(reinterpret_cast<const char*>(cellData.data()), cellData.size());
     create_file.close();
+}
+
+void SSDFileStorageDevice::_writeFile(const int lba, const int data) {
+    fstream file(filename, ios::in | ios::out | ios::binary);
+    file.seekp(lba * sizeof(int));
+    file.write(reinterpret_cast<const char*>(&data), sizeof(data));
+}
+
+void SSDFileStorageDevice::_readFile(const int lba, int& data) {
+    ifstream file(filename, ios::binary);
+    file.seekg(lba * sizeof(int));
+    file.read(reinterpret_cast<char*>(&data), sizeof(data));
 }
 
 bool SSDFileStorageDevice::_checkLbaBoundary(int lba) const {

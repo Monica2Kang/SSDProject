@@ -150,7 +150,7 @@ TEST_F(SSDFileStorageDeviceFixture, ssdFileReadDataTC4FileNotOpened) {
     fSsd.closeFile();
 }
 
-TEST_F(SSDFileStorageDeviceFixture, ssdFileReadDataTC4readData_0) {
+TEST_F(SSDFileStorageDeviceFixture, ssdFileReadDataTC4ReadData) {
     fSsd.closeFile();
     removeSSDFile(FILE_NAME);
     fSsd.openFile();

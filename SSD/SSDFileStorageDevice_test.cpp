@@ -22,7 +22,7 @@ TEST_F(SSDFileStorageDeviceFixture, ssdFileStorageCreationTC) {
     EXPECT_NE(&fSsd, nullptr);
 }
 
-TEST_F(SSDFileStorageDeviceFixture, ssdFileStorageCreationTC4ssd_nand_txt) {
+TEST_F(SSDFileStorageDeviceFixture, ssdFileStorageCreationTCwithActualFile) {
     std::ifstream check_file;
     
     std::remove(FILE_NAME);

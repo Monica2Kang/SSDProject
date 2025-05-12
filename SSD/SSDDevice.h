@@ -8,6 +8,7 @@ public:
     void writeData(int LBA, int data);
 
 private:
+    void initializeCellData();
     bool isLbaOutOfRange(const int lba) const ;
 
 private:

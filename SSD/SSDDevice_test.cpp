@@ -21,7 +21,11 @@ public:
         EXPECT_THROW(ssd.writeData(lba, SAMPLE_DATA), invalid_argument);
     }
 
-private:
+protected:
+    struct LBA_DATA {
+        int lba;
+        int data;
+    };
     static const int SAMPLE_DATA = static_cast<int>(0x1082);
 };
 
@@ -73,5 +77,32 @@ TEST_F(SSDDeviceFixture, ssdWriteDataTC_LBAOutOfRangeMinus) {
     vector<int> lba = { -1, -2, -110, -253,-1082, -337, -4 };
     for (int addr : lba) {
         invalidArgumentTest4writeData(addr);
+    }
+}
+
+TEST_F(SSDDeviceFixture, ssdWriteReadDataConfirmTC) {
+    ssd.writeData(0, static_cast < int>(0x0));
+    int actual = ssd.readData(0);
+    EXPECT_EQ(0, actual);
+
+    ssd.writeData(0, SAMPLE_DATA);
+    actual = ssd.readData(0);
+    EXPECT_EQ(SAMPLE_DATA, actual);
+}
+
+TEST_F(SSDDeviceFixture, ssdWriteReadDataConfirmTC4Multi) {
+    vector<LBA_DATA> lba_datas = { 
+        {0, static_cast<int>(0x100)}, 
+        {1, static_cast<int>(0x1AFAED)},
+        {32, static_cast<int>(0xABCDEF)}, 
+        {57, static_cast<int>(0xDEADBEEF)}, 
+        {89, static_cast<int>(0xBEEF1082)},
+        {98, static_cast<int>(0xB1E8F0E2)},
+    };
+    
+    for (LBA_DATA lba_data : lba_datas) {
+        ssd.writeData(lba_data.lba, lba_data.data);
+        int actual = ssd.readData(lba_data.lba);
+        EXPECT_EQ(lba_data.data, actual);
     }
 }

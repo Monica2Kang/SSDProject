@@ -9,8 +9,8 @@ using std::vector;
 class SSDCmdParser {
 public:
     SSDCmdParser(void){
-        SSDDevice device;
-        m_device = device;
+        //SSDDevice device;
+        //m_device = device;
     }
 
     bool checkParsing(int argc, const char* argv[]);

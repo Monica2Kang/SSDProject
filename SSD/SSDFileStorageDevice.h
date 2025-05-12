@@ -8,9 +8,14 @@ public:
 
     bool openFile(void);
     void closeFile(void);
-    bool isFileOpened(void) { return fileOpened; }
+
     bool writeData(const int lba, const int data);
     bool readData(const int lba, int &data);
+
+private:
+    bool _openFile(void);
+    void _createFile(void);
+    bool _isFileOpened(void) const { return fileOpened; }
 
 private:
     std::string filename;

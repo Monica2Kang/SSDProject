@@ -7,21 +7,33 @@
 using namespace std;
 
 bool SSDFileStorageDevice::openFile(void) {
-    if (fileOpened) {
+    if (_isFileOpened()) {
         return true;
     }
-
-    std::ifstream check_file(filename, std::ios::binary);
-    if (!check_file) {
-        std::ofstream create_file(filename, std::ios::binary);
-        std::vector<int> zeros(maxLbaCapcity, 0);
-        create_file.write(reinterpret_cast<const char*>(zeros.data()), zeros.size());
-        create_file.close();
+    if (!_openFile()) {
+        _createFile();
     }
+    return _openFile();
+}
 
+bool SSDFileStorageDevice::writeData(int lba, int data) {
+    return true;
+}
+
+bool SSDFileStorageDevice::readData(int lba, int& data) {
+    return true;
+}
+
+bool SSDFileStorageDevice::_openFile(void) {
     fileHandle.open(filename, std::ios::in | std::ios::out | std::ios::binary);
-    fileOpened = fileHandle.is_open();
-    return fileOpened;
+    return fileHandle.is_open();
+}
+
+void SSDFileStorageDevice::_createFile(void) {
+    std::ofstream create_file(filename, std::ios::binary);
+    std::vector<int> cellData(maxLbaCapcity, 0);
+    create_file.write(reinterpret_cast<const char*>(cellData.data()), cellData.size());
+    create_file.close();
 }
 
 void SSDFileStorageDevice::closeFile(void) {
@@ -29,12 +41,4 @@ void SSDFileStorageDevice::closeFile(void) {
         fileHandle.close();
         fileOpened = false;
     }
-}
-
-bool SSDFileStorageDevice::writeData(const int lba, const int data) {
-    return true;
-}
-
-bool SSDFileStorageDevice::readData(const int lba, int& data) {
-    return true;
 }

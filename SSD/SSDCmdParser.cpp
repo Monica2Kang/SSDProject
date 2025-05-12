@@ -27,7 +27,7 @@ bool SSDCmdParser::checkParsing(int argc, const char* argv[]) {
             return PARSING_FAILED; 
         }
 
-        int hexValue = std::stoul(value, nullptr, 16);
+        int hexValue = static_cast<int>(std::stoul(value, nullptr, 16));
         m_device.writeData(LBA, hexValue);
         return PARSING_SUCCESS;
     }

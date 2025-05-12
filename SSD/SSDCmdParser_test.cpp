@@ -6,12 +6,7 @@
 using std::string;
 using namespace testing;
 
-namespace {
-    const bool PARSING_FAILED = false;
-    const bool PARSING_SUCCESS = true;
-}
-
-class SSDCmdParserFixture : public Test {
+class SSDCmdParserFixture : public SSDCmdParser, public Test {
 public:
     SSDCmdParser parser;
 };

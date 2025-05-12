@@ -15,9 +15,10 @@ public:
 
     bool checkParsing(int argc, const char* argv[]);
 
-private:
-    SSDDevice m_device;
     static const bool PARSING_FAILED = false;
     static const bool PARSING_SUCCESS = true;
+
+private:
+    SSDDevice m_device;
     static const int VALID_COMMAND_SIZE = 3;
 };

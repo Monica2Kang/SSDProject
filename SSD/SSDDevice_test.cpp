@@ -38,3 +38,10 @@ TEST_F(SSDDeviceFixture, ssdReadDataTC4LBAOutOfRange) {
         invalidArgumentTest(addr);
     }
 }
+
+TEST_F(SSDDeviceFixture, ssdReadDataTC4LBAOutOfRangeMinus) {
+    vector<int> lba = { -1, -2, -110, -253,-1082, -337, -4 };
+    for (int addr : lba) {
+        invalidArgumentTest(addr);
+    }
+}

@@ -39,6 +39,16 @@ bool SSDFileStorageDevice::readData(const int lba, int& data) {
     return true;
 }
 
+bool SSDFileStorageDevice::removeFile(void) {
+    fileHandle.close();
+    if (0 == std::remove(static_cast<const char*>(filename.c_str()))) {
+        std::cout << filename << " file is deleted." << std::endl;
+    }
+    fileHandle.open(filename, std::ios::in | std::ios::out | std::ios::binary);
+    return !fileHandle.is_open();
+}
+
+
 void SSDFileStorageDevice::closeFile(void) {
     if (fileOpened) {
         fileHandle.close();

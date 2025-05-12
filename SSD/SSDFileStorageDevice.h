@@ -13,6 +13,7 @@ public:
 
     bool writeData(const int lba, const int data);
     bool readData(const int lba, int &data);
+    bool removeFile(void);
 
 private:
     bool _openFile(void);

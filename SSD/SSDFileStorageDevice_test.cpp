@@ -121,7 +121,7 @@ TEST_F(SSDFileStorageDeviceFixture, ssdFileWriteDataTC4OutOfBoundCheck) {
     fSsd.closeFile();
 }
 
-TEST_F(SSDFileStorageDeviceFixture, ssdFileWriteDataTC_FileNotOpened) {
+TEST_F(SSDFileStorageDeviceFixture, ssdFileWriteDataTC4FileNotOpened) {
     for (LBA_DATA lba_data : inRangeLbaData) {
         bool result = fSsd.readData(lba_data.lba, lba_data.data);
         EXPECT_FALSE(result);
@@ -171,7 +171,7 @@ TEST_F(SSDFileStorageDeviceFixture, ssdFileReadDataTC4ReadData) {
 
 TEST_F(SSDFileStorageDeviceFixture, ssdFileWriteReadConfirmDataTC) {
     fSsd.closeFile();
-    removeSSDFile(FILE_NAME);
+    fSsd.removeFile();
     fSsd.openFile();
 
     for (LBA_DATA lba_data : inRangeLbaData) {

@@ -3,12 +3,19 @@
 
 class SSDDevice {
 public:
+    SSDDevice();
     int readData(int LBA);
     void writeData(int LBA, int data);
 
 private:
-    static const int MAX_LBA = 100;
-    int cellData[MAX_LBA];
+    void initializeCellData();
+    bool isLbaOutOfRange(const int lba) const ;
+
+private:
+    static const int LBA_CAPACITY = 100;
+    static const int LBA_UPPER_LIMIT = LBA_CAPACITY - 1;
+    static const int LBA_LOWER_LIMIT = 0;
+    int cellData[LBA_CAPACITY];
 };
 
 //class SSDDeviceException : public exception {

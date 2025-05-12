@@ -14,9 +14,9 @@ SSDFileLogger::~SSDFileLogger() {
     }
 }
 
-void SSDFileLogger::logData(int value) {
-    outfile << "0x" << std::uppercase << std::setfill('0') << std::setw(8)
-        << std::hex << (value & 0x7FFFFFFF) << std::endl;
+void SSDFileLogger::logData(const unsigned int value) {
+    outfile << "0x" << std::uppercase << std::setfill('0') << std::setw(OUTPUT_DIGIT)
+        << std::hex << value << std::endl;
 }
 
 void SSDFileLogger::logError(void) {

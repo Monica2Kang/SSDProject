@@ -21,10 +21,10 @@ public:
         EXPECT_THROW(ssd.writeData(lba, SAMPLE_DATA), invalid_argument);
     }
 
-    std::string intToHexString(int value) const {
+    std::string intToHexString(const unsigned int value) const {
         std::ostringstream oss;
-        oss << "0x" << std::uppercase << std::setfill('0') << std::setw(8)
-            << std::hex << (value & 0x7FFFFFFF);
+        oss << "0x" << std::uppercase << std::setfill('0') << std::setw(OUTPUT_DIGIT)
+            << std::hex << value;
         return oss.str();
     }
 
@@ -49,7 +49,7 @@ public:
             throw std::runtime_error("Cannot Open the File.");
         }
 
-        std::string target = intToHexString(value);
+        std::string target = intToHexString(static_cast<unsigned int>(value));
         std::string line;
         while (std::getline(infile, line)) {
             if (line.find(target) != std::string::npos) {
@@ -64,6 +64,7 @@ protected:
         int lba;
         int data;
     };
+    const int OUTPUT_DIGIT = 8;
     const char* FILE_NAME_OUTPUT = "ssd_output.txt";
     static const int SAMPLE_DATA = static_cast<int>(0x1082);
     const vector<LBA_DATA> inRangeLbaDatas = {

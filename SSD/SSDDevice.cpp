@@ -23,7 +23,7 @@ int SSDDevice::readData(const int lba) {
         fLog.logData(0x0);
         throw std::exception("Untouched Data.");
     }
-    fLog.logData(data);
+    fLog.logData(static_cast<unsigned int>(data));
 
     return data;
 }

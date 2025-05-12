@@ -59,21 +59,21 @@ TEST_F(SSDDeviceFixture, ssdReadDataTC4LBAOutOfRangeMinus) {
     }
 }
 
-TEST_F(SSDDeviceFixture, ssdWriteDataTC_LBAInRange) {
+TEST_F(SSDDeviceFixture, ssdWriteDataTC4LBAInRange) {
     vector<int> lba = { 0, 1, 10, 20, 30, 53, 75, 97, 98, 99 };
     for (int addr : lba) {
         validArgumentTest4writeData(addr);
     }
 }
 
-TEST_F(SSDDeviceFixture, ssdWriteDataTC_LBAOutOfRange) {
+TEST_F(SSDDeviceFixture, ssdWriteDataTC4LBAOutOfRange) {
     vector<int> lba = { 100, 101, 110, 253, 337, 1553, 25675 };
     for (int addr : lba) {
         invalidArgumentTest4writeData(addr);
     }
 }
 
-TEST_F(SSDDeviceFixture, ssdWriteDataTC_LBAOutOfRangeMinus) {
+TEST_F(SSDDeviceFixture, ssdWriteDataTC4LBAOutOfRangeMinus) {
     vector<int> lba = { -1, -2, -110, -253,-1082, -337, -4 };
     for (int addr : lba) {
         invalidArgumentTest4writeData(addr);

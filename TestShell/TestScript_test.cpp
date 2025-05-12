@@ -7,7 +7,7 @@ using namespace std;
 
 class MockSSDAdapter : public ISSDAdapter {
 public:
-	MOCK_METHOD(void, wirteLba, (const int lba, const int data), (override));
+	MOCK_METHOD(void, writeLba, (const int lba, const int data), (override));
 	MOCK_METHOD(int, readLba, (const int lba), (override));
 	MOCK_METHOD(void, fullWrite, (const int data), (override));
 	MOCK_METHOD(void, fullRead, (), (override));
@@ -26,7 +26,7 @@ TEST_F(TestScriptFixture, FullWriteAndReadCompare1) {
 	TestScript* mockScript = new TestScript(&mockSSDAdapter);
 	const int MAX_LBA = 100;
 	const int expectedData = 0xBEEFCAFE;
-	EXPECT_CALL(mockSSDAdapter, wirteLba)
+	EXPECT_CALL(mockSSDAdapter, writeLba)
 		.Times(MAX_LBA);
 
 	EXPECT_CALL(mockSSDAdapter, readLba)
@@ -40,7 +40,7 @@ TEST_F(TestScriptFixture, PartialLBAWrite1) {
 	TestScript* mockScript = new TestScript(&mockSSDAdapter);
 	const int loop = 150;
 	const int expectedData = 0xBEEFCAFE;
-	EXPECT_CALL(mockSSDAdapter, wirteLba)
+	EXPECT_CALL(mockSSDAdapter, writeLba)
 		.Times(loop);
 
 	EXPECT_CALL(mockSSDAdapter, readLba)
@@ -58,7 +58,7 @@ TEST_F(TestScriptFixture, WriteReadAging1) {
 	const int loop = 60;
 	const int expectedData = 0xBEEFCAFE;
 
-	EXPECT_CALL(mockSSDAdapter, wirteLba)
+	EXPECT_CALL(mockSSDAdapter, writeLba)
 		.Times(loop);
 
 	EXPECT_CALL(mockSSDAdapter, readLba)

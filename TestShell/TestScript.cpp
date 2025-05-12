@@ -25,12 +25,12 @@ int TestScript::FullWriteAndReadCompare(const int data) {
 	{
 		for (auto it = 0; it < TEST_UNIT; it++)
 		{
-			ssdAdapter->wirteLba(lba, expectedData);
+			ssdAdapter->writeLba(lba + it, expectedData);
 		}
 
 		for (auto it = 0; it < TEST_UNIT; it++)
 		{
-			actualData = ssdAdapter->readLba(lba);
+			actualData = ssdAdapter->readLba(lba + it);
 			if (actualData != expectedData)
 			{
 				return FAIL;
@@ -57,11 +57,11 @@ int TestScript::PartialLBAWrite(const int data) {
 	const int expectedData = data;
 	for (int it = 0; it < loop; it++)
 	{
-		ssdAdapter->wirteLba(4, expectedData);
-		ssdAdapter->wirteLba(0, expectedData);
-		ssdAdapter->wirteLba(3, expectedData);
-		ssdAdapter->wirteLba(1, expectedData);
-		ssdAdapter->wirteLba(2, expectedData);
+		ssdAdapter->writeLba(4, expectedData);
+		ssdAdapter->writeLba(0, expectedData);
+		ssdAdapter->writeLba(3, expectedData);
+		ssdAdapter->writeLba(1, expectedData);
+		ssdAdapter->writeLba(2, expectedData);
 
 		for (int lba = 0; lba < 5; lba++)
 		{
@@ -99,8 +99,8 @@ int TestScript::WriteReadAging(void) {
 
 		expectedData1 = 0xBEEFCAFE;
 		expectedData2 = 0xBEEFCAFE;
-		ssdAdapter->wirteLba(lba1, expectedData1);
-		ssdAdapter->wirteLba(lba2, expectedData2);
+		ssdAdapter->writeLba(lba1, expectedData1);
+		ssdAdapter->writeLba(lba2, expectedData2);
 
 		int actualData = ssdAdapter->readLba(lba1);
 		if (actualData != expectedData1)

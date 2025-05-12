@@ -43,6 +43,26 @@ protected:
         int lba;
         int data;
     };
+
+    const vector<LBA_DATA> inRangeLbaData = {
+        {0, static_cast<int>(0x100)},
+        {1, static_cast<int>(0x1AFAED)},
+        {98, static_cast<int>(0xB1E8F0E2)},
+        {57, static_cast<int>(0xDEADBEEF)},
+        {32, static_cast<int>(0xABCDEF)},
+        {89, static_cast<int>(0xBEEF1082)},
+        {99, static_cast<int>(0xFFFFFFFF)},
+    };
+    const vector<LBA_DATA> outOfRangeLbaData = {
+        {-1, static_cast<int>(0x100)},
+        {-100, static_cast<int>(0x1AFAED)},
+        {132, static_cast<int>(0xABCDEF)},
+        {5557, static_cast<int>(0xDEADBEEF)},
+        {889, static_cast<int>(0xBEEF1082)},
+        {100, static_cast<int>(0xB1E8F0E2)},
+        {101, static_cast<int>(0x1082)},
+        {-15557, static_cast<int>(0xDEADBEEF)},
+    };
 };
 
 TEST_F(SSDFileStorageDeviceFixture, ssdFileStorageDummyInstanceCreationTC) {
@@ -62,17 +82,7 @@ TEST_F(SSDFileStorageDeviceFixture, ssdFileStorageCreationTCwithActualFile) {
 }
 
 TEST_F(SSDFileStorageDeviceFixture, ssdFileReadDataTC4InBoundCheck) {
-    vector<LBA_DATA> lba_datas = {
-        {0, static_cast<int>(0x100)},
-        {1, static_cast<int>(0x1AFAED)},
-        {32, static_cast<int>(0xABCDEF)},
-        {57, static_cast<int>(0xDEADBEEF)},
-        {89, static_cast<int>(0xBEEF1082)},
-        {98, static_cast<int>(0xB1E8F0E2)},
-        {99, static_cast<int>(0xFFFFFFFF)},
-    };
-
-    for (LBA_DATA lba_data : lba_datas) {
+    for (LBA_DATA lba_data : inRangeLbaData) {
         int readData;
         bool result = fSsd.readData(lba_data.lba, readData);
         EXPECT_TRUE(result);
@@ -80,18 +90,7 @@ TEST_F(SSDFileStorageDeviceFixture, ssdFileReadDataTC4InBoundCheck) {
 }
 
 TEST_F(SSDFileStorageDeviceFixture, ssdFileReadDataTC4OutOfBoundCheck) {
-    vector<LBA_DATA> lba_datas = {
-        {-1, static_cast<int>(0x100)},
-        {-100, static_cast<int>(0x1AFAED)},
-        {132, static_cast<int>(0xABCDEF)},
-        {5557, static_cast<int>(0xDEADBEEF)},
-        {889, static_cast<int>(0xBEEF1082)},
-        {100, static_cast<int>(0xB1E8F0E2)},
-        {101, static_cast<int>(0x1082)},
-        {-5557, static_cast<int>(0xDEADBEEF)},
-    };
-
-    for (LBA_DATA lba_data : lba_datas) {
+    for (LBA_DATA lba_data : outOfRangeLbaData) {
         int readData;
         bool result = fSsd.readData(lba_data.lba, readData);
         EXPECT_FALSE(result);
@@ -99,37 +98,44 @@ TEST_F(SSDFileStorageDeviceFixture, ssdFileReadDataTC4OutOfBoundCheck) {
 }
 
 TEST_F(SSDFileStorageDeviceFixture, ssdFileWriteDataTC4InBoundCheck) {
-    vector<LBA_DATA> lba_datas = {
-        {0, static_cast<int>(0x100)},
-        {1, static_cast<int>(0x1AFAED)},
-        {32, static_cast<int>(0xABCDEF)},
-        {57, static_cast<int>(0xDEADBEEF)},
-        {89, static_cast<int>(0xBEEF1082)},
-        {98, static_cast<int>(0xBEEFCAFE)},
-        {99, static_cast<int>(0xFFFFFFFF)},
-    };
-
-    for (LBA_DATA lba_data : lba_datas) {
+    for (LBA_DATA lba_data : inRangeLbaData) {
         bool result = fSsd.readData(lba_data.lba, lba_data.data);
         EXPECT_TRUE(result);
     }
 }
 
 TEST_F(SSDFileStorageDeviceFixture, ssdFileWriteDataTC4OutOfBoundCheck) {
-    vector<LBA_DATA> lba_datas = {
-        {-1, static_cast<int>(0x100)},
-        {-100, static_cast<int>(0x1AFAED)},
-        {132, static_cast<int>(0xABCDEF)},
-        {5557, static_cast<int>(0xDEADBEEF)},
-        {889, static_cast<int>(0xBEEF1082)},
-        {100, static_cast<int>(0xB1E8F0E2)},
-        {101, static_cast<int>(0x1082)},
-        {-5557, static_cast<int>(0xDEADBEEF)},
-    };
-
-    for (LBA_DATA lba_data : lba_datas) {
+    for (LBA_DATA lba_data : outOfRangeLbaData) {
         bool result = fSsd.readData(lba_data.lba, lba_data.data);
         EXPECT_FALSE(result);
     }
+}
+TEST_F(SSDFileStorageDeviceFixture, ssdFileWriteDataTC4FileNotOpened) {
+    for (LBA_DATA lba_data : inRangeLbaData) {
+        bool result = fSsd.readData(lba_data.lba, lba_data.data);
+        EXPECT_FALSE(result);
+    }
+    
+    fSsd.openFile();
+    for (LBA_DATA lba_data : inRangeLbaData) {
+        bool result = fSsd.readData(lba_data.lba, lba_data.data);
+        EXPECT_FALSE(result);
+    }
+    fSsd.closeFile();
+
+}
+
+TEST_F(SSDFileStorageDeviceFixture, ssdFileReadDataTC4FileNotOpened) {
+    for (LBA_DATA lba_data : inRangeLbaData) {
+        bool result = fSsd.readData(lba_data.lba, lba_data.data);
+        EXPECT_FALSE(result);
+    }
+
+    fSsd.openFile();
+    for (LBA_DATA lba_data : inRangeLbaData) {
+        bool result = fSsd.readData(lba_data.lba, lba_data.data);
+        EXPECT_FALSE(result);
+    }
+    fSsd.closeFile();
 }
 

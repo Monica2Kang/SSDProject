@@ -1,11 +1,11 @@
-#include "SSDCmdParser.h"
 #include <string>
 #include <vector>
+#include "SSDCmdParser.h"
 
 using std::string;
 using std::vector;
 
-string SSDCmdParser::checkParsing(int argc, const char* argv[]) const {
+bool SSDCmdParser::checkParsing(int argc, const char* argv[]) {
     //make tokens
     std::vector<std::string> tokens;
     for (int i = 0; i < argc; ++i) {
@@ -13,23 +13,25 @@ string SSDCmdParser::checkParsing(int argc, const char* argv[]) const {
     }
 
     //parse each tokens
-    string ssd = tokens[0];
-    if (ssd != "SSD.exe") return "ASSERT";
-
     string command = tokens[1];
-    if (!(command == "R" || command == "W")) return "ASSERT";
-
-    unsigned int LBA = std::stoi(tokens[2]);
-    if (LBA > 99) return "ERROR";
+    int LBA = std::stoi(tokens[2]);
 
     if (command == "W") {
         string value = tokens[3];
-        if (value.find("0x") == string::npos) return "ERROR";
-        if (value.length() != 10) return "ERROR";
-        //unsigned int hexValue = std::stoul(value, nullptr, 16);
-        return "";
+        if (value.find("0x") == string::npos || value.length() != 10) {
+            return PARSING_FAILED; 
+        }
+
+        int hexValue = std::stoul(value, nullptr, 16);
+        m_device.writeData(LBA, hexValue);
+        return PARSING_SUCCESS;
     }
 
-    //if(command == "R")
-    return "0x00000000"; //case : no data
+    if (command == "R") {
+        m_device.readData(LBA);
+        return PARSING_SUCCESS;
+    }
+
+    return PARSING_FAILED;
 }
+

@@ -51,7 +51,7 @@ void Shell::executeShell(void) {
 				continue;
 			}
 			cout << "FAIL\n" << endl;
-			return;
+			continue;
 		}
 		else if (parameter[COMMAND_POS] == "2_" || parameter[COMMAND_POS] == "2_PartialLBAWrite") {
 			const int expectedData = 0xBEEFCAFE;
@@ -60,7 +60,7 @@ void Shell::executeShell(void) {
 				continue;
 			}
 			cout << "FAIL\n" << endl;
-			return;
+			continue;
 		}
 		else if (parameter[COMMAND_POS] == "3_" || parameter[COMMAND_POS] == "3_WriteReadAging") {
 			if (!(m_TestScript->WriteReadAging())) {
@@ -68,7 +68,7 @@ void Shell::executeShell(void) {
 				continue;
 			}
 			cout << "FAIL\n" << endl;
-			return;
+			continue;
 		}
 
 		cout << "INVALID COMMAND" << endl;

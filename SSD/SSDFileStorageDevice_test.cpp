@@ -75,6 +75,10 @@ public:
         }
         fSsd.closeFile();
     }
+    void removeAndCreateFile(void) {
+        fSsd.closeFile();
+        fSsd.removeFile();
+    }
 protected:
     struct LBA_DATA {
         int lba;
@@ -124,23 +128,12 @@ TEST_F(SSDFileStorageDeviceFixture, ssdFileReadDataTC4InBoundCheck) {
 }
 
 TEST_F(SSDFileStorageDeviceFixture, ssdFileReadDataTC4OutOfBoundCheck) {
-    fSsd.openFile();
-    for (LBA_DATA lba_data : outOfRangeLbaData) {
-        int readData;
-        bool result = fSsd.readData(lba_data.lba, readData);
-        EXPECT_FALSE(result);
-    }
-    fSsd.closeFile();
+    doOutOfRangeBoundaryCheck(false);
 }
 
 // ssdFileWriteDataTCs
 TEST_F(SSDFileStorageDeviceFixture, ssdFileWriteDataTC4InBoundCheck) {
-    fSsd.openFile();
-    for (LBA_DATA lba_data : inRangeLbaData) {
-        bool result = fSsd.readData(lba_data.lba, lba_data.data);
-        EXPECT_TRUE(result);
-    }
-    fSsd.closeFile();
+    doInRangeBoundaryCheck(true);
 }
 
 TEST_F(SSDFileStorageDeviceFixture, ssdFileWriteDataTC4OutOfBoundCheck) {
@@ -148,6 +141,7 @@ TEST_F(SSDFileStorageDeviceFixture, ssdFileWriteDataTC4OutOfBoundCheck) {
 }
 
 TEST_F(SSDFileStorageDeviceFixture, ssdFileWriteDataTC4FileNotOpened) {
+    // No file opened
     for (LBA_DATA lba_data : inRangeLbaData) {
         bool result = fSsd.readData(lba_data.lba, lba_data.data);
         EXPECT_FALSE(result);
@@ -156,6 +150,7 @@ TEST_F(SSDFileStorageDeviceFixture, ssdFileWriteDataTC4FileNotOpened) {
 }
 
 TEST_F(SSDFileStorageDeviceFixture, ssdFileReadDataTC4FileNotOpened) {
+    // No file opened
     for (LBA_DATA lba_data : inRangeLbaData) {
         bool result = fSsd.readData(lba_data.lba, lba_data.data);
         EXPECT_FALSE(result);
@@ -163,15 +158,12 @@ TEST_F(SSDFileStorageDeviceFixture, ssdFileReadDataTC4FileNotOpened) {
     doInRangeBoundaryCheck(true);
 }
 
-TEST_F(SSDFileStorageDeviceFixture, ssdFileReadDataTC4ReadData) {
-    fSsd.closeFile();
-    fSsd.removeFile();
-
+TEST_F(SSDFileStorageDeviceFixture, ssdFileReadDataTC4ReadData_0) {
+    removeAndCreateFile();
     doReadDataConfirmation();
 }
 
 TEST_F(SSDFileStorageDeviceFixture, ssdFileWriteReadConfirmDataTC) {
-    fSsd.closeFile();
-    fSsd.removeFile();
+    removeAndCreateFile();
     doReadDataConfirmation();
 }

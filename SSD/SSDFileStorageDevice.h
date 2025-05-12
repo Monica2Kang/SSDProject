@@ -13,6 +13,7 @@ public:
 
     bool writeData(const int lba, const int data);
     bool readData(const int lba, int &data);
+    bool removeFile(void);
 
 private:
     bool _openFile(void);
@@ -20,6 +21,8 @@ private:
     bool _checkLbaBoundary(const int lba) const;
     bool _isFileOpened(void) const { return fileOpened; }
     void _setFileOpened(const bool input) { fileOpened = input; }
+    void _readFile(const int lba, int& data);
+    void _writeFile(const int lba, const int data);
 
 private:
     std::string filename;

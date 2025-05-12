@@ -17,10 +17,14 @@ bool SSDFileStorageDevice::openFile(void) {
 }
 
 bool SSDFileStorageDevice::writeData(const int lba, const int data) {
+    if (lba < lowerLbaLimit || upperLbaLimit < lba)
+        return false;
     return true;
 }
 
 bool SSDFileStorageDevice::readData(const int lba, int& data) {
+    if (lba < lowerLbaLimit || upperLbaLimit < lba)
+        return false;
     return true;
 }
 
@@ -31,7 +35,7 @@ bool SSDFileStorageDevice::_openFile(void) {
 
 void SSDFileStorageDevice::_createFile(void) {
     std::ofstream create_file(filename, std::ios::binary);
-    std::vector<int> cellData(maxLbaCapcity, 0);
+    std::vector<int> cellData(maxLbaCapacity, 0);
     create_file.write(reinterpret_cast<const char*>(cellData.data()), cellData.size());
     create_file.close();
 }

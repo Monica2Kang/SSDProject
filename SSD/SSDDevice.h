@@ -1,24 +1,23 @@
 ﻿#pragma once
 #include <stdexcept>
+#include "SSDFileStorageDevice.h"
 
 class SSDDevice {
 public:
     SSDDevice();
-    int readData(int LBA);
-    void writeData(int LBA, int data);
+    ~SSDDevice();
+    int readData(const int lba);
+    void writeData(const int lba, const int data);
 
 private:
-    void initializeCellData();
-    bool isLbaOutOfRange(const int lba) const ;
+    void initializeCellData(void);
+    bool isLbaOutOfRange(const int lba) const;
 
 private:
     static const int LBA_CAPACITY = 100;
     static const int LBA_UPPER_LIMIT = LBA_CAPACITY - 1;
     static const int LBA_LOWER_LIMIT = 0;
+    const char* FILE_NAME = "ssd_nand.txt";
     int cellData[LBA_CAPACITY];
+    SSDFileStorageDevice fSsd{ FILE_NAME, LBA_CAPACITY };
 };
-
-//class SSDDeviceException : public exception {
-//public:
-//    explicit SSDDeviceException(char const* _exception) : exception{ _exception } {}
-//};

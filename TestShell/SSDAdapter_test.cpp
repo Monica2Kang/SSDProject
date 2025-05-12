@@ -28,7 +28,7 @@ TEST_F(SSDAdapterFixture, ApiTestWriteLba) {
 	MockSSDAdapter ssdAdpater;
 
 	const int writeLba = 0;
-	const int data = 0xCAFECAFE;
+	const int data = 0xBEEFCAFE;
 
 	EXPECT_CALL(ssdAdpater, wirteLba(writeLba, data))
 		.Times(1);
@@ -40,7 +40,7 @@ TEST_F(SSDAdapterFixture, ApiTestReadLba) {
 	MockSSDAdapter ssdAdpater;
 
 	const int readLba = 0;
-	const int data = 0xCAFECAFE;
+	const int data = 0xBEEFCAFE;
 
 	EXPECT_CALL(ssdAdpater, readLba(readLba))
 		.Times(1)
@@ -54,7 +54,7 @@ TEST_F(SSDAdapterFixture, ApiTestReadLba) {
 TEST_F(SSDAdapterFixture, ApiTestFullWrite) {
 	MockSSDAdapter ssdAdpater;
 
-	const int data = 0xCAFECAFE;
+	const int data = 0xBEEFCAFE;
 
 	EXPECT_CALL(ssdAdpater, fullWrite(data))
 		.Times(1);
@@ -76,7 +76,7 @@ TEST_F(SSDAdapterFixture, AdpaterTestWriteLba) {
 	SSDAdapter ssdAdpater;
 
 	const int writeLba = 0;
-	const int data = 0xCAFECAFE;
+	const int data = 0xBEEFCAFE;
 
 	ssdAdpater.wirteLba(writeLba, data);
 
@@ -87,7 +87,7 @@ TEST_F(SSDAdapterFixture, AdpaterTestWriteLba) {
 TEST_F(SSDAdapterFixture, AdpaterTestFullWrite) {
 	SSDAdapter ssdAdpater;
 
-	const int data = 0xCAFECAFE;
+	const int data = 0xBEEFCAFE;
 
 	ssdAdpater.fullWrite(data);
 

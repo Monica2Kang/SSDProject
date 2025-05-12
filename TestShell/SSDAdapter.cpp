@@ -38,7 +38,7 @@ void SSDAdapter::fullRead(void)
 {
 }
 
-void SSDAdapter::_ExecuteSSDCommand(std::string argument)
+void SSDAdapter::_ExecuteSSDCommand(const std::string argument)
 {
     std::string exePath = "..\\x64\\Release\\SSD.exe";
     std::string command = exePath + " " + argument;

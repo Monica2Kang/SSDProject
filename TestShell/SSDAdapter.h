@@ -1,7 +1,7 @@
 #pragma once
-
-#include "ISSDAdapter.h"
 #include <string>
+#include "ISSDAdapter.h"
+
 class SSDAdapter : public ISSDAdapter{
 public:
 	void wirteLba(const int lba, const int data) override;
@@ -10,5 +10,5 @@ public:
 	void fullRead(void) override;
 
 private:
-	void _ExecuteSSDCommand(std::string command);
+	void _ExecuteSSDCommand(const std::string command);
 };

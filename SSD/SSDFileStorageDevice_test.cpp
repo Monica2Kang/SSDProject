@@ -46,7 +46,7 @@ TEST_F(SSDFileStorageDeviceFixture, ssdFileStorageCreationTC) {
     EXPECT_NE(&fSsd, nullptr);
 }
 
-TEST_F(SSDFileStorageDeviceFixture, ssdFileStorageCreationTC_ssd_nand_txt) {
+TEST_F(SSDFileStorageDeviceFixture, ssdFileStorageCreationTCwithActualFile) {
     removeSSDFile(FILE_NAME_TEMP);
     createSSDFile(FILE_NAME_TEMP);
     openSSDFile(FILE_NAME_TEMP);

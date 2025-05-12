@@ -148,11 +148,11 @@ bool Shell::helpApi(void) {
 		cout << "read > read [LBA]" << endl;
 		cout << "exit > End the program" << endl;
 		cout << "help > Show command guide" << endl;
-		cout << "fullwrite [data]" << endl;
-		cout << "fullread" << endl;
+		cout << "fullwrite > fullwrite[data]" << endl;
+		cout << "fullread > fullread" << endl;
 		return true;
 	}
-	return true;
+	return false;
 }
 
 bool Shell::fullwriteApi(void) {

@@ -8,6 +8,7 @@ public:
     ~SSDDevice();
     int readData(const int lba);
     void writeData(const int lba, const int data);
+    void reinitializeFile(void);
 
 private:
     void initializeCellData(void);

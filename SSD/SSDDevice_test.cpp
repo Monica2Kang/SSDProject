@@ -41,10 +41,11 @@ TEST_F(SSDDeviceFixture, ssdCreationTC) {
     EXPECT_NE(&ssd, nullptr);
 }
 
-//TEST_F(SSDDeviceFixture, ssdReadDataTC) {
-//    int actual = ssd.readData(0);
-//    EXPECT_EQ(0, actual);
-//}
+TEST_F(SSDDeviceFixture, ssdReadDataTC) {
+    ssd.reinitializeFile();
+    int actual = ssd.readData(0);
+    EXPECT_EQ(0, actual);
+}
 
 TEST_F(SSDDeviceFixture, ssdReadDataTC4LBAInRange) {
     vector<int> lba = { 0, 1, 10, 20, 30, 53, 75, 97, 98, 99 };

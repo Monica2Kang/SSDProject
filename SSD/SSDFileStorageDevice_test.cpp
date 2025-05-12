@@ -25,10 +25,11 @@ public:
     }
     void createSSDFile(const char* filename) {
         SSDFileStorageDevice ssdFile = { filename, FILE_STORAGE_CAPACITY };
-        if (ssdFile.openFile())
-            std::cout << filename << " file is created." << std::endl;
-        else
-            std::cout << filename << " file is not created." << std::endl;
+        ssdFile.openFile();
+        //if (ssdFile.openFile())
+        //    std::cout << filename << " file is created." << std::endl;
+        //else
+        //    std::cout << filename << " file is not created." << std::endl;
         ssdFile.closeFile();
     }
     void openSSDFile(const char* filename) {
@@ -158,12 +159,17 @@ TEST_F(SSDFileStorageDeviceFixture, ssdFileReadDataTC4FileNotOpened) {
     doInRangeBoundaryCheck(true);
 }
 
-TEST_F(SSDFileStorageDeviceFixture, ssdFileReadDataTC4ReadData_0) {
+TEST_F(SSDFileStorageDeviceFixture, ssdFileReadDataTC4ReadData) {
     removeAndCreateFile();
     doReadDataConfirmation();
 }
 
 TEST_F(SSDFileStorageDeviceFixture, ssdFileWriteReadConfirmDataTC) {
+    removeAndCreateFile();
+    doReadDataConfirmation();
+}
+
+TEST_F(SSDFileStorageDeviceFixture, ssdFileWriteReadConfirmDataTC_WriteBianryZero4AllRange) {
     removeAndCreateFile();
     doReadDataConfirmation();
 }

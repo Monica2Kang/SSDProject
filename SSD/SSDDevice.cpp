@@ -7,7 +7,6 @@ SSDDevice::SSDDevice() {
 }
 
 SSDDevice::~SSDDevice() {
-    initializeCellData();
     fSsd.closeFile();
 }
 
@@ -23,6 +22,11 @@ void SSDDevice::writeData(const int lba, const int data) {
     if (isLbaOutOfRange(lba)) throw std::invalid_argument("Out of LBA Range");
     fSsd.writeData(lba, data);
     cellData[lba] = data;
+}
+
+void SSDDevice::reinitializeFile(void) {
+    fSsd.removeFile();
+    fSsd.openFile();
 }
 
 void SSDDevice::initializeCellData(void) {

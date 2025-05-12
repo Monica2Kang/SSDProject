@@ -27,7 +27,6 @@ bool SSDFileStorageDevice::writeData(const int lba, const int data) {
     return true;
 }
 
-
 bool SSDFileStorageDevice::readData(const int lba, int& data) {
     if (_checkLbaBoundary(lba))
         return false;
@@ -82,7 +81,8 @@ void SSDFileStorageDevice::_writeFile(const int lba, const int data) {
 }
 
 void SSDFileStorageDevice::_readFile(const int lba, int& data) {
-    ifstream file(filename, ios::binary);
+    fstream file(filename, ios::in | ios::out | ios::binary);
+    //ifstream file(filename, ios::binary);
     file.seekg(lba * sizeof(int));
     file.read(reinterpret_cast<char*>(&data), sizeof(data));
 }

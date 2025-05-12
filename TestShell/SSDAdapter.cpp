@@ -5,12 +5,17 @@
 #include <fstream>
 #include <string>
 #include <filesystem>
+#include <sstream>
+#include <iomanip>
+#include <string>
 
 using namespace std;
 
 void SSDAdapter::wirteLba(const int lba, const int data)
 {
-    std::string argument = "SSD W " + std::to_string(lba) + " " + std::to_string(data);
+    std::stringstream ss;
+    ss << "0x" << std::uppercase << std::hex << data;
+    std::string argument = "W " + std::to_string(lba) + " " + ss.str();
 
     _ExecuteSSDCommand(argument);
 }
@@ -36,7 +41,7 @@ void SSDAdapter::fullRead(void)
 void SSDAdapter::_ExecuteSSDCommand(std::string argument)
 {
     std::string exePath = "..\\x64\\Release\\SSD.exe";
-    std::string command = exePath + "\" \"" + argument + "\"";
+    std::string command = exePath + " " + argument;
 
     
     std::ifstream file(exePath);

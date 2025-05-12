@@ -45,18 +45,16 @@ TEST_F(SSDCmdParserFixture, WriteFailInvalidLBA) {
     const char* argv[] = { "SSD.exe", "W", "100", "0x12345678" };
     int argc = sizeof(argv) / sizeof(argv[0]);
 
-    parser.checkParsing(argc, argv);
-    //string expected = "ERROR";
-    //EXPECT_EQ(expected, actual);
+    EXPECT_THROW(parser.checkParsing(argc, argv), std::invalid_argument);
 }
 
 TEST_F(SSDCmdParserFixture, WriteFailDecimalValue) {
     const char* argv[] = { "SSD.exe", "W", "0", "12345678" };
     int argc = sizeof(argv) / sizeof(argv[0]);
 
-    parser.checkParsing(argc, argv);
-    //string expected = "ERROR";
-    //EXPECT_EQ(expected, actual);
+    bool actual = parser.checkParsing(argc, argv);
+    bool expected = PARSING_FAILED;
+    EXPECT_EQ(expected, actual);
 }
 
 TEST_F(SSDCmdParserFixture, WriteFailBigValue) {
@@ -64,16 +62,16 @@ TEST_F(SSDCmdParserFixture, WriteFailBigValue) {
     const char* argv[] = { "SSD.exe", "W", "0", "0x1FFFFFFFF" };
     int argc = sizeof(argv) / sizeof(argv[0]);
 
-    parser.checkParsing(argc, argv);
-    //string expected = "ERROR";
-    //EXPECT_EQ(expected, actual);
+    bool actual = parser.checkParsing(argc, argv);
+    bool expected = PARSING_FAILED;
+    EXPECT_EQ(expected, actual);
 }
 
 TEST_F(SSDCmdParserFixture, WriteFailSmallValue) {
     const char* argv[] = { "SSD.exe", "W", "0", "0x1" };
     int argc = sizeof(argv) / sizeof(argv[0]);
 
-    parser.checkParsing(argc, argv);
-    //string expected = "ERROR";
-    //EXPECT_EQ(expected, actual);
+    bool actual = parser.checkParsing(argc, argv);
+    bool expected = PARSING_FAILED;
+    EXPECT_EQ(expected, actual);
 }

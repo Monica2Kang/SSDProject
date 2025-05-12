@@ -14,7 +14,7 @@ Shell::Shell(ISSDAdapter* ISSDAdapter) : m_ISSDAdapter(ISSDAdapter)
 
 void Shell::executeShell(void) {
 	// while(true){
-		// getCommand();
+		// setCommand();
 
 	splitAndStore();
 
@@ -52,7 +52,7 @@ void Shell::executeShell(void) {
 	//}
 }
 
-void Shell::getCommand(string command)
+void Shell::setCommand(string command)
 {
 	cout << "Shell> ";
 	input = command;
@@ -92,7 +92,7 @@ bool Shell::writeApi(void)
 	return false;
 }
 
-bool Shell::readApi(void){
+bool Shell::readApi(void) {
 	return true;
 }
 
@@ -104,22 +104,22 @@ bool Shell::helpApi(void) {
 	return true;
 }
 
-bool Shell::fullwriteApi(void){
+bool Shell::fullwriteApi(void) {
 	return true;
 }
 
-bool Shell::fullreadApi(void){
+bool Shell::fullreadApi(void) {
 	return true;
 }
 
-bool Shell::isValidParameterSize(int size) {
+bool Shell::isValidParameterSize(const int size) {
 	if (parameter.size() == size) {
 		return true;
 	}
 	return false;
 }
 
-bool Shell::isValidLBA(int pos) {
+bool Shell::isValidLBA(const int pos) {
 	if (parameter[pos].empty() || parameter[pos].length() > 2) {
 		return false;
 	}
@@ -133,7 +133,7 @@ bool Shell::isValidLBA(int pos) {
 	return true;
 }
 
-bool Shell::isValidData(int pos) {
+bool Shell::isValidData(const int pos) {
 	const string str = parameter[pos];
 
 	if (str.empty() || str.length() != DATA_LENGTH) {
@@ -157,6 +157,6 @@ void Shell::storeLBA(void) {
 	LBA = stoi(parameter[LBA_POS]);
 }
 
-void Shell::storeData(int pos) {
+void Shell::storeData(const int pos) {
 	data = static_cast<int>(stoul(parameter[pos], nullptr, 16));
 }

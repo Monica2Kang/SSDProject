@@ -30,7 +30,7 @@ TEST(ShellFixture, noCommandTest) {
 	Shell instance{ &ssdAdpater };
 
 	const string command = "";
-	instance.getCommand(command);
+	instance.setCommand(command);
 
 	EXPECT_NO_THROW(instance.executeShell());
 }
@@ -40,7 +40,7 @@ TEST(ShellFixture, invalidCommandTest) {
 	Shell instance{ &ssdAdpater };
 
 	const string command = "wrate 3 0xAAAABBBB";
-	instance.getCommand(command);
+	instance.setCommand(command);
 
 	EXPECT_NO_THROW(instance.executeShell());
 }
@@ -50,7 +50,7 @@ TEST(ShellFixture, invalidLBATest) {
 	Shell instance{ &ssdAdpater };
 
 	const string command = "write 100 0xAAAABBBB";
-	instance.getCommand(command);
+	instance.setCommand(command);
 
 	EXPECT_NO_THROW(instance.executeShell());
 }
@@ -60,7 +60,7 @@ TEST(ShellFixture, invalidDataTest) {
 	Shell instance{ &ssdAdpater };
 
 	const string command = "write 1 0x000000G";
-	instance.getCommand(command);
+	instance.setCommand(command);
 
 	EXPECT_NO_THROW(instance.executeShell());
 }
@@ -70,7 +70,7 @@ TEST(ShellFixture, validWriteApiTest) {
 	Shell instance{ &ssdAdpater };
 
 	const string command = "write 1 0xAAAABBBB";
-	instance.getCommand(command);
+	instance.setCommand(command);
 
 	int writeLba = 1;
 	int data = 0xAAAABBBB;

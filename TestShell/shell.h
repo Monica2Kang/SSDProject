@@ -19,7 +19,7 @@ public:
 
 	Shell(ISSDAdapter* ISSDAdapter);
 	void executeShell(void);
-	void getCommand(std::string command);
+	void setCommand(std::string command);
 	void splitAndStore(void);
 	bool noEnterCommand(void);
 	bool writeApi(void);
@@ -28,11 +28,11 @@ public:
 	bool helpApi(void);
 	bool fullwriteApi(void);
 	bool fullreadApi(void);
-	bool isValidParameterSize(int size);
-	bool isValidLBA(int pos);
-	bool isValidData(int pos);
+	bool isValidParameterSize(const int size);
+	bool isValidLBA(const int pos);
+	bool isValidData(const int pos);
 	void storeLBA(void);
-	void storeData(int pos);
+	void storeData(const int pos);
 
 protected:
 	ISSDAdapter* m_ISSDAdapter;

@@ -82,33 +82,41 @@ TEST_F(SSDFileStorageDeviceFixture, ssdFileStorageCreationTCwithActualFile) {
 }
 
 TEST_F(SSDFileStorageDeviceFixture, ssdFileReadDataTC4InBoundCheck) {
+    fSsd.openFile();
     for (LBA_DATA lba_data : inRangeLbaData) {
         int readData;
         bool result = fSsd.readData(lba_data.lba, readData);
         EXPECT_TRUE(result);
     }
+    fSsd.closeFile();
 }
 
 TEST_F(SSDFileStorageDeviceFixture, ssdFileReadDataTC4OutOfBoundCheck) {
+    fSsd.openFile();
     for (LBA_DATA lba_data : outOfRangeLbaData) {
         int readData;
         bool result = fSsd.readData(lba_data.lba, readData);
         EXPECT_FALSE(result);
     }
+    fSsd.closeFile();
 }
 
 TEST_F(SSDFileStorageDeviceFixture, ssdFileWriteDataTC4InBoundCheck) {
+    fSsd.openFile();
     for (LBA_DATA lba_data : inRangeLbaData) {
         bool result = fSsd.readData(lba_data.lba, lba_data.data);
         EXPECT_TRUE(result);
     }
+    fSsd.closeFile();
 }
 
 TEST_F(SSDFileStorageDeviceFixture, ssdFileWriteDataTC4OutOfBoundCheck) {
+    fSsd.openFile();
     for (LBA_DATA lba_data : outOfRangeLbaData) {
         bool result = fSsd.readData(lba_data.lba, lba_data.data);
         EXPECT_FALSE(result);
     }
+    fSsd.closeFile();
 }
 TEST_F(SSDFileStorageDeviceFixture, ssdFileWriteDataTC4FileNotOpened) {
     for (LBA_DATA lba_data : inRangeLbaData) {
@@ -119,7 +127,7 @@ TEST_F(SSDFileStorageDeviceFixture, ssdFileWriteDataTC4FileNotOpened) {
     fSsd.openFile();
     for (LBA_DATA lba_data : inRangeLbaData) {
         bool result = fSsd.readData(lba_data.lba, lba_data.data);
-        EXPECT_FALSE(result);
+        EXPECT_TRUE(result);
     }
     fSsd.closeFile();
 
@@ -134,7 +142,7 @@ TEST_F(SSDFileStorageDeviceFixture, ssdFileReadDataTC4FileNotOpened) {
     fSsd.openFile();
     for (LBA_DATA lba_data : inRangeLbaData) {
         bool result = fSsd.readData(lba_data.lba, lba_data.data);
-        EXPECT_FALSE(result);
+        EXPECT_TRUE(result);
     }
     fSsd.closeFile();
 }

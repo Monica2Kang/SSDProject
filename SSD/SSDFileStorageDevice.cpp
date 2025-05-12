@@ -17,20 +17,38 @@ bool SSDFileStorageDevice::openFile(void) {
 }
 
 bool SSDFileStorageDevice::writeData(const int lba, const int data) {
-    if (lba < lowerLbaLimit || upperLbaLimit < lba)
+    if (_checkLbaBoundary(lba))
+        return false;
+    if (!_isFileOpened())
         return false;
     return true;
 }
 
+
 bool SSDFileStorageDevice::readData(const int lba, int& data) {
-    if (lba < lowerLbaLimit || upperLbaLimit < lba)
+    if (_checkLbaBoundary(lba))
+        return false;
+    if (!_isFileOpened())
         return false;
     return true;
+}
+
+void SSDFileStorageDevice::closeFile(void) {
+    if (fileOpened) {
+        fileHandle.close();
+        _setFileOpened(false);
+    }
 }
 
 bool SSDFileStorageDevice::_openFile(void) {
     fileHandle.open(filename, std::ios::in | std::ios::out | std::ios::binary);
-    return fileHandle.is_open();
+    if (fileHandle.is_open()) {
+        _setFileOpened(true);
+    }
+    else {
+        _setFileOpened(false);
+    }
+    return _isFileOpened();
 }
 
 void SSDFileStorageDevice::_createFile(void) {
@@ -40,9 +58,6 @@ void SSDFileStorageDevice::_createFile(void) {
     create_file.close();
 }
 
-void SSDFileStorageDevice::closeFile(void) {
-    if (fileOpened) {
-        fileHandle.close();
-        fileOpened = false;
-    }
+bool SSDFileStorageDevice::_checkLbaBoundary(int lba) const {
+    return lba < lowerLbaLimit || upperLbaLimit < lba;
 }

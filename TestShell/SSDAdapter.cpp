@@ -1,7 +1,18 @@
 #include "SSDAdapter.h"
+#include <stdexcept>
+#include <algorithm>
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <filesystem>
+
+using namespace std;
 
 void SSDAdapter::wirteLba(const int lba, const int data)
 {
+    std::string argument = "SSD W " + std::to_string(lba) + " " + std::to_string(data);
+
+    _ExecuteSSDCommand(argument);
 }
 
 int SSDAdapter::readLba(const int lba)
@@ -11,8 +22,32 @@ int SSDAdapter::readLba(const int lba)
 
 void SSDAdapter::fullWrite(const int data)
 {
+    const int MAX_LBA = 100;
+    for (auto lba = 0; lba < MAX_LBA; lba++)
+    {
+        wirteLba(lba, data);
+    }
 }
 
 void SSDAdapter::fullRead(void)
 {
+}
+
+void SSDAdapter::_ExecuteSSDCommand(std::string argument)
+{
+    std::string exePath = "..\\x64\\Release\\SSD.exe";
+    std::string command = exePath + "\" \"" + argument + "\"";
+
+    
+    std::ifstream file(exePath);
+    if (file.good() == false) {
+        throw std::runtime_error("SSD Execution File Error - File not found.");
+
+    }
+
+    int result = system(command.c_str());
+    if (result == 1)
+    {
+        throw std::runtime_error("SSD Execution File Error - File return error.");
+    }
 }

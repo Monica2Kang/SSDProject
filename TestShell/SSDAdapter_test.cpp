@@ -71,3 +71,25 @@ TEST_F(SSDAdapterFixture, ApiTestFullRead) {
 
 	ssdAdpater.fullRead();
 }
+
+TEST_F(SSDAdapterFixture, AdpaterTestWriteLba) {
+	SSDAdapter ssdAdpater;
+
+	const int writeLba = 0;
+	const int data = 0xCAFECAFE;
+
+	ssdAdpater.wirteLba(writeLba, data);
+
+	EXPECT_NO_THROW();
+}
+
+
+TEST_F(SSDAdapterFixture, AdpaterTestFullWrite) {
+	SSDAdapter ssdAdpater;
+
+	const int data = 0xCAFECAFE;
+
+	ssdAdpater.fullWrite(data);
+
+	EXPECT_NO_THROW();
+}

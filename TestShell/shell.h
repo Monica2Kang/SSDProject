@@ -1,5 +1,6 @@
 #pragma once
 #include "ISSDAdapter.h"
+#include "TestScript.h"
 #include <vector>
 #include <string>
 
@@ -16,6 +17,8 @@ public:
 	const int HELP_PARAMETER_SIZE = 3;
 	const int FULLWRITE_PARAMETER_SIZE = 2;
 	const int FULLREAD_PARAMETER_SIZE = 1;
+	const int PASS = 0;
+	const int FAIL = 1;
 
 	Shell(ISSDAdapter* ISSDAdapter);
 	void executeShell(void);
@@ -36,6 +39,7 @@ public:
 
 protected:
 	ISSDAdapter* m_ISSDAdapter;
+	TestScript* m_TestScript;
 	std::string input;
 	std::vector<std::string> parameter;
 	int LBA;

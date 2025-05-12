@@ -13,8 +13,8 @@ public:
 		ssdAdapter = obj;
 	}
 
-	int FullWriteAndReadCompare(int data);
-	int PartialLBAWrite(int data);
+	int FullWriteAndReadCompare(const int data);
+	int PartialLBAWrite(const int data);
 	int WriteReadAging(void);
 
 private:

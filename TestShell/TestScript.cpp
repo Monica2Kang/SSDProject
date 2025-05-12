@@ -3,7 +3,7 @@
 #include <ctime>
 #include "TestScript.h"
 
-int TestScript::FullWriteAndReadCompare(int data) {
+int TestScript::FullWriteAndReadCompare(const int data) {
 
 	/*
 	• 0 ~4번 LBA까지 Write 명령어를 수행한다.
@@ -43,7 +43,7 @@ int TestScript::FullWriteAndReadCompare(int data) {
 	return PASS;
 }
 
-int TestScript::PartialLBAWrite(int data) {
+int TestScript::PartialLBAWrite(const int data) {
 	/*
 	* Loop는 30회
 	• 4번 LBA에 값을 적는다.

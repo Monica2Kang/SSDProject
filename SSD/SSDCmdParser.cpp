@@ -1,12 +1,16 @@
 #include <string>
 #include <vector>
+#include <iostream>
 #include "SSDCmdParser.h"
 
 using std::string;
 using std::vector;
+using std::cout;
 
 bool SSDCmdParser::checkParsing(int argc, const char* argv[]) {
     //make tokens
+    if (argc < VALID_COMMAND_SIZE) return PARSING_FAILED;
+
     std::vector<std::string> tokens;
     for (int i = 0; i < argc; ++i) {
         tokens.emplace_back(argv[i]);
@@ -15,6 +19,7 @@ bool SSDCmdParser::checkParsing(int argc, const char* argv[]) {
     //parse each tokens
     string command = tokens[1];
     int LBA = std::stoi(tokens[2]);
+    //cout << "argv : " << command << " " << LBA << "\n";
 
     if (command == "W") {
         string value = tokens[3];

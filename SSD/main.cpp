@@ -7,8 +7,7 @@ using std::string;
 
 int main(int argc, const char* argv[]) {
 #ifndef _DEBUG
-	SSDDevice device;
-	SSDCmdParser parser{device};
+	SSDCmdParser parser;
 	parser.checkParsing(argc, argv);
 	return 0;
 #else

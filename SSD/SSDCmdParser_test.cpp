@@ -13,9 +13,16 @@ namespace {
 
 class SSDCmdParserFixture : public Test {
 public:
-    SSDDevice device;
-    SSDCmdParser parser{ device };
+    SSDCmdParser parser;
 };
+
+TEST_F(SSDCmdParserFixture, InvalidCommand) {
+    const char* argv[] = { "SSD.exe" };
+    int argc = sizeof(argv) / sizeof(argv[0]);
+    bool actual = parser.checkParsing(argc, argv);
+    bool expected = PARSING_FAILED;
+    EXPECT_EQ(expected, actual);
+}
 
 TEST_F(SSDCmdParserFixture, ReadSuccess) {
     const char* argv[] = { "SSD.exe", "R", "0" };

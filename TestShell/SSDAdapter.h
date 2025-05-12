@@ -2,6 +2,8 @@
 #include <string>
 #include "ISSDAdapter.h"
 
+using namespace std;
+
 class SSDAdapter : public ISSDAdapter{
 public:
 	void wirteLba(const int lba, const int data) override;
@@ -10,5 +12,7 @@ public:
 	void fullRead(void) override;
 
 private:
-	void _ExecuteSSDCommand(const std::string command);
+	void _ExecuteSSDCommand(const string command);
+	int _ReadDataFromSSDOutputFile(void);
+	string _CheckExecutionResultFromSSDOutputFile(void);
 };

@@ -15,7 +15,8 @@ public:
 
 class SSDAdapterFixture : public Test {
 public:
-	
+	MockSSDAdapter ssdMockAdpater;
+	SSDAdapter ssdAdpater;
 };
 
 TEST_F(SSDAdapterFixture, InterfaceTest) {
@@ -25,56 +26,45 @@ TEST_F(SSDAdapterFixture, InterfaceTest) {
 }
 
 TEST_F(SSDAdapterFixture, ApiTestWriteLba) {
-	MockSSDAdapter ssdAdpater;
-
 	const int writeLba = 0;
 	const int data = 0xBEEFCAFE;
 
-	EXPECT_CALL(ssdAdpater, wirteLba(writeLba, data))
+	EXPECT_CALL(ssdMockAdpater, wirteLba(writeLba, data))
 		.Times(1);
 
-	ssdAdpater.wirteLba(writeLba, data);
+	ssdMockAdpater.wirteLba(writeLba, data);
 }
 
 TEST_F(SSDAdapterFixture, ApiTestReadLba) {
-	MockSSDAdapter ssdAdpater;
-
 	const int readLba = 0;
 	const int data = 0xBEEFCAFE;
 
-	EXPECT_CALL(ssdAdpater, readLba(readLba))
+	EXPECT_CALL(ssdMockAdpater, readLba(readLba))
 		.Times(1)
 		.WillOnce(Return(data));
 
-	int returnData = ssdAdpater.readLba(readLba);
+	int returnData = ssdMockAdpater.readLba(readLba);
 	
 	EXPECT_EQ(returnData, data);
 }
 
 TEST_F(SSDAdapterFixture, ApiTestFullWrite) {
-	MockSSDAdapter ssdAdpater;
-
 	const int data = 0xBEEFCAFE;
 
-	EXPECT_CALL(ssdAdpater, fullWrite(data))
+	EXPECT_CALL(ssdMockAdpater, fullWrite(data))
 		.Times(1);
 
-	ssdAdpater.fullWrite(data);
+	ssdMockAdpater.fullWrite(data);
 }
 
 TEST_F(SSDAdapterFixture, ApiTestFullRead) {
-	MockSSDAdapter ssdAdpater;
-
-
-	EXPECT_CALL(ssdAdpater, fullRead())
+	EXPECT_CALL(ssdMockAdpater, fullRead())
 		.Times(1);
 
-	ssdAdpater.fullRead();
+	ssdMockAdpater.fullRead();
 }
 
 TEST_F(SSDAdapterFixture, AdpaterTestWriteLba) {
-	SSDAdapter ssdAdpater;
-
 	const int writeLba = 0;
 	const int data = 0xBEEFCAFE;
 
@@ -83,13 +73,28 @@ TEST_F(SSDAdapterFixture, AdpaterTestWriteLba) {
 	EXPECT_NO_THROW();
 }
 
-
 TEST_F(SSDAdapterFixture, AdpaterTestFullWrite) {
-	SSDAdapter ssdAdpater;
-
 	const int data = 0xBEEFCAFE;
 
 	ssdAdpater.fullWrite(data);
+
+	EXPECT_NO_THROW();
+}
+
+TEST_F(SSDAdapterFixture, AdpaterTestReadLba) {
+	const int readLba = 0;
+	const int data = 0xBEEFCAFE;
+
+	int expectedValue = ssdAdpater.readLba(readLba);
+
+	EXPECT_EQ(expectedValue, data);
+	EXPECT_NO_THROW();
+}
+
+TEST_F(SSDAdapterFixture, AdpaterTestFullRead) {
+	const int data = 0xBEEFCAFE;
+
+	ssdAdpater.fullRead();
 
 	EXPECT_NO_THROW();
 }

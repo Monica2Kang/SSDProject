@@ -1,5 +1,6 @@
 ﻿#include "SSDFileStorageDevice.h"
 #include "SSDDevice.h"
+#include "SSDFileLogger.h"
 
 SSDDevice::SSDDevice() {
     initializeCellData();
@@ -11,11 +12,19 @@ SSDDevice::~SSDDevice() {
 }
 
 int SSDDevice::readData(const int lba) {
-    if (isLbaOutOfRange(lba)) 
+    SSDFileLogger fLog;
+
+    if (isLbaOutOfRange(lba)) {
+        fLog.logError();
         throw std::invalid_argument("Out of LBA Range.");
+    }
     int data = 0;
-    if (false == fSsd.readData(lba, data)) 
+    if (false == fSsd.readData(lba, data)) {
+        fLog.logData(0x0);
         throw std::exception("Untouched Data.");
+    }
+    fLog.logData(data);
+
     return data;
 }
 

@@ -45,7 +45,6 @@ bool SSDFileStorageDevice::removeFile(void) {
     return !fileHandle.is_open();
 }
 
-
 void SSDFileStorageDevice::closeFile(void) {
     if (fileOpened) {
         fileHandle.close();

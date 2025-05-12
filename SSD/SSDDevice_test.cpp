@@ -21,11 +21,50 @@ public:
         EXPECT_THROW(ssd.writeData(lba, SAMPLE_DATA), invalid_argument);
     }
 
+    std::string intToHexString(int value) const {
+        std::ostringstream oss;
+        oss << "0x" << std::uppercase << std::setfill('0') << std::setw(8)
+            << std::hex << (value & 0x7FFFFFFF);
+        return oss.str();
+    }
+
+    bool containsError() const {
+        std::ifstream infile(FILE_NAME_OUTPUT);
+        if (!infile.is_open()) {
+            throw std::runtime_error("Cannot Open the File.");
+        }
+
+        std::string line;
+        while (std::getline(infile, line)) {
+            if (line.find("ERROR") != std::string::npos) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool containsValue(int value) const {
+        std::ifstream infile(FILE_NAME_OUTPUT);
+        if (!infile.is_open()) {
+            throw std::runtime_error("Cannot Open the File.");
+        }
+
+        std::string target = intToHexString(value);
+        std::string line;
+        while (std::getline(infile, line)) {
+            if (line.find(target) != std::string::npos) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 protected:
     struct LBA_DATA {
         int lba;
         int data;
     };
+    const char* FILE_NAME_OUTPUT = "ssd_output.txt";
     static const int SAMPLE_DATA = static_cast<int>(0x1082);
     const vector<LBA_DATA> inRangeLbaDatas = {
     {0, static_cast<int>(0x100)},
@@ -53,7 +92,7 @@ TEST_F(SSDDeviceFixture, ssdReadDataTC) {
 TEST_F(SSDDeviceFixture, ssdReadDataTC4LBAInRange) {
     vector<int> lba = { 0, 1, 10, 20, 30, 53, 75, 97, 98, 99 };
     for (int addr : lba) {
-        ssd.writeData(addr, 0);
+        ssd.writeData(addr, addr);
         validArgumentTest4readData(addr);
     }
 }
@@ -115,5 +154,31 @@ TEST_F(SSDDeviceFixture, ssdReadDataTC4UntouchedLba) {
     ssd.reinitializeFile();
     for (auto inRangeLbaData : inRangeLbaDatas) {
         EXPECT_THROW(ssd.readData(inRangeLbaData.lba), exception);
+    }
+}
+
+TEST_F(SSDDeviceFixture, ssdReadDataTC4FileOutputCheckData) {
+    for (LBA_DATA lba_data : inRangeLbaDatas) {
+        ssd.writeData(lba_data.lba, lba_data.data);
+        int actual = ssd.readData(lba_data.lba);
+        EXPECT_EQ(lba_data.data, actual);
+        EXPECT_TRUE(containsValue(actual));
+    }
+}
+
+TEST_F(SSDDeviceFixture, ssdReadDataTC4FileOutputCheckUntouched) {
+    ssd.reinitializeFile();
+    for (auto inRangeLbaData : inRangeLbaDatas) {
+        EXPECT_THROW(ssd.readData(inRangeLbaData.lba), exception);
+        EXPECT_TRUE(containsValue(0x0));
+    }
+}
+
+TEST_F(SSDDeviceFixture, ssdReadDataTC4FileOutputCheckError) {
+    ssd.reinitializeFile();
+    vector<int> lba = { 100, 101, 110, 253, 337, 1553, 25675 };
+    for (int addr : lba) {
+        EXPECT_THROW(ssd.readData(addr), exception);
+        EXPECT_TRUE(containsError());
     }
 }

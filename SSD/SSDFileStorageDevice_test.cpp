@@ -7,11 +7,7 @@ using namespace testing;
 using namespace std;
 
 class SSDFileStorageDeviceFixture : public Test {
-public:
-    const char* FILE_NAME = "ssd_nand.txt";
-    const char* FILE_NAME_TEMP = "ssd_nand_temp.txt";
-    const int FILE_STORAGE_CAPACITY = 100;
-    SSDFileStorageDevice fSsd = { FILE_NAME, FILE_STORAGE_CAPACITY };
+
 public:
     void removeSSDFile(const char* filename) {
         std::ifstream ssdFile;
@@ -79,11 +75,17 @@ public:
         fSsd.closeFile();
         fSsd.removeFile();
     }
+
 protected:
     struct LBA_DATA {
         int lba;
         int data;
     };
+
+    const char* FILE_NAME = "ssd_nand.txt";
+    const char* FILE_NAME_TEMP = "ssd_nand_temp.txt";
+    const int FILE_STORAGE_CAPACITY = 100;
+    SSDFileStorageDevice fSsd = { FILE_NAME, FILE_STORAGE_CAPACITY };
 
     const vector<LBA_DATA> inRangeLbaData = {
         {0, static_cast<int>(0x100)},
@@ -124,7 +126,8 @@ TEST_F(SSDFileStorageDeviceFixture, ssdFileStorageCreationTCwithActualFile) {
 
 // ssdFileReadDataTCs
 TEST_F(SSDFileStorageDeviceFixture, ssdFileReadDataTC4InBoundCheck) {
-
+    fSsd.removeFile();
+    fSsd.openFile();
     doInRangeBoundaryCheck(false);
 
     fSsd.openFile();

@@ -135,12 +135,14 @@
     <ClCompile Include="SSDCmdParser_test.cpp" />
     <ClCompile Include="SSDDevice.cpp" />
     <ClCompile Include="SSDDevice_test.cpp" />
+    <ClCompile Include="SSDFileLogger.cpp" />
     <ClCompile Include="SSDFileStorageDevice.cpp" />
     <ClCompile Include="SSDFileStorageDevice_test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SSDCmdParser.h" />
     <ClInclude Include="SSDDevice.h" />
+    <ClInclude Include="SSDFileLogger.h" />
     <ClInclude Include="SSDFileStorageDevice.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

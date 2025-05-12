@@ -48,6 +48,9 @@
     <ClCompile Include="SSDFileStorageDevice_test.cpp">
       <Filter>테스트 파일</Filter>
     </ClCompile>
+    <ClCompile Include="SSDFileLogger.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SSDCmdParser.h">
@@ -57,6 +60,9 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="SSDFileStorageDevice.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="SSDFileLogger.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

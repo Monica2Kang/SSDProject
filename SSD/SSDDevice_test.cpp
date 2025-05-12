@@ -43,13 +43,17 @@ TEST_F(SSDDeviceFixture, ssdCreationTC) {
 
 TEST_F(SSDDeviceFixture, ssdReadDataTC) {
     ssd.reinitializeFile();
-    int actual = ssd.readData(0);
-    EXPECT_EQ(0, actual);
+    EXPECT_THROW(ssd.readData(-1), invalid_argument);
+    EXPECT_THROW(ssd.readData(0), exception);
+    //ssd.writeData(0, 0);
+    //int actual = ssd.readData(0);
+    //EXPECT_EQ(0, actual);
 }
 
 TEST_F(SSDDeviceFixture, ssdReadDataTC4LBAInRange) {
     vector<int> lba = { 0, 1, 10, 20, 30, 53, 75, 97, 98, 99 };
     for (int addr : lba) {
+        ssd.writeData(addr, 0);
         validArgumentTest4readData(addr);
     }
 }
@@ -104,5 +108,12 @@ TEST_F(SSDDeviceFixture, ssdWriteReadDataConfirmTC4Multi) {
         ssd.writeData(lba_data.lba, lba_data.data);
         int actual = ssd.readData(lba_data.lba);
         EXPECT_EQ(lba_data.data, actual);
+    }
+}
+
+TEST_F(SSDDeviceFixture, ssdReadDataTC4UntouchedLba) {
+    ssd.reinitializeFile();
+    for (auto inRangeLbaData : inRangeLbaDatas) {
+        EXPECT_THROW(ssd.readData(inRangeLbaData.lba), exception);
     }
 }

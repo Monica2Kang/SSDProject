@@ -11,15 +11,16 @@ SSDDevice::~SSDDevice() {
 }
 
 int SSDDevice::readData(const int lba) {
-    if (isLbaOutOfRange(lba)) throw std::invalid_argument("Out of LBA Range");
+    if (isLbaOutOfRange(lba)) 
+        throw std::invalid_argument("Out of LBA Range.");
     int data = 0;
-    fSsd.readData(lba, data);
+    if (false == fSsd.readData(lba, data)) 
+        throw std::exception("Untouched Data.");
     return data;
-    //return cellData[lba];
 }
 
 void SSDDevice::writeData(const int lba, const int data) {
-    if (isLbaOutOfRange(lba)) throw std::invalid_argument("Out of LBA Range");
+    if (isLbaOutOfRange(lba)) throw std::invalid_argument("Out of LBA Range.");
     fSsd.writeData(lba, data);
     cellData[lba] = data;
 }
@@ -39,4 +40,3 @@ void SSDDevice::initializeCellData(void) {
 bool SSDDevice::isLbaOutOfRange(const int lba) const {
     return LBA_UPPER_LIMIT < lba || lba < LBA_LOWER_LIMIT;
 }
-

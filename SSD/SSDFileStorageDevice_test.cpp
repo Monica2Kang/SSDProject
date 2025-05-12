@@ -1,7 +1,6 @@
 ﻿#include <iostream>
 #include <fstream>
 #include "gmock/gmock.h"
-
 #include "SSDFileStorageDevice.h"
 
 using namespace testing;
@@ -26,10 +25,6 @@ public:
     void createSSDFile(const char* filename) {
         SSDFileStorageDevice ssdFile = { filename, FILE_STORAGE_CAPACITY };
         ssdFile.openFile();
-        //if (ssdFile.openFile())
-        //    std::cout << filename << " file is created." << std::endl;
-        //else
-        //    std::cout << filename << " file is not created." << std::endl;
         ssdFile.closeFile();
     }
     void openSSDFile(const char* filename) {
@@ -66,8 +61,12 @@ public:
         for (LBA_DATA lba_data : inRangeLbaData) {
             int readData;
             bool result = fSsd.readData(lba_data.lba, readData);
+            EXPECT_FALSE(result);
+            fSsd.writeData(lba_data.lba, lba_data.data);
+            result = fSsd.readData(lba_data.lba, readData);
             EXPECT_TRUE(result);
-            EXPECT_EQ(readData, 0x00);
+            //EXPECT_TRUE(result);
+            //EXPECT_EQ(readData, 0x00);
         }
         for (LBA_DATA lba_data : outOfRangeLbaData) {
             int readData;
@@ -125,11 +124,21 @@ TEST_F(SSDFileStorageDeviceFixture, ssdFileStorageCreationTCwithActualFile) {
 
 // ssdFileReadDataTCs
 TEST_F(SSDFileStorageDeviceFixture, ssdFileReadDataTC4InBoundCheck) {
-    doInRangeBoundaryCheck(true);
+
+    doInRangeBoundaryCheck(false);
+
+    fSsd.openFile();
+    for (LBA_DATA lba_data : inRangeLbaData) {
+        fSsd.writeData(lba_data.lba, lba_data.data);
+        bool result = fSsd.readData(lba_data.lba, lba_data.data);
+        EXPECT_TRUE(result);
+    }
+    fSsd.closeFile();
+
 }
 
 TEST_F(SSDFileStorageDeviceFixture, ssdFileReadDataTC4OutOfBoundCheck) {
-    doOutOfRangeBoundaryCheck(false);
+    doOutOfRangeBoundaryCheck(false); 
 }
 
 // ssdFileWriteDataTCs

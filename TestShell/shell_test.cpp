@@ -142,3 +142,65 @@ TEST(ShellFixture, validFullreadApiTest) {
 
 	instance.executeShell();
 }
+
+TEST(ShellFixture, validFullWriteAndReadCompare) {
+	MockSSDAdapter ssdAdpater;
+	Shell instance{ &ssdAdpater };
+
+	const string command = "1_";
+	instance.setCommand(command);
+
+	const int MAX_LBA = 100;
+	const int expectedData = 0xBEEFCAFE;
+	
+	EXPECT_CALL(ssdAdpater, writeLba)
+		.Times(MAX_LBA);
+
+	EXPECT_CALL(ssdAdpater, readLba)
+		.Times(MAX_LBA)
+		.WillRepeatedly(Return(expectedData));
+
+	EXPECT_NO_THROW(instance.executeShell());
+}
+
+TEST(ShellFixture, validPartialLBAWrite) {
+	MockSSDAdapter ssdAdpater;
+	Shell instance{ &ssdAdpater };
+
+	const string command = "2_";
+	instance.setCommand(command);
+
+	const int loop = 150;
+	const int expectedData = 0xBEEFCAFE;
+
+
+	EXPECT_CALL(ssdAdpater, writeLba)
+		.Times(loop);
+
+	EXPECT_CALL(ssdAdpater, readLba)
+		.Times(loop)
+		.WillRepeatedly(Return(expectedData));
+
+
+	EXPECT_NO_THROW(instance.executeShell());
+}
+
+TEST(ShellFixture, validWriteReadAging) {
+	MockSSDAdapter ssdAdpater;
+	Shell instance{ &ssdAdpater };
+
+	const string command = "3_";
+	instance.setCommand(command);
+
+	const int loop = 60;
+	const int expectedData = 0xBEEFCAFE;
+
+	EXPECT_CALL(ssdAdpater, writeLba)
+		.Times(loop);
+
+	EXPECT_CALL(ssdAdpater, readLba)
+		.Times(loop)
+		.WillRepeatedly(Return(expectedData));
+
+	EXPECT_NO_THROW(instance.executeShell());
+}

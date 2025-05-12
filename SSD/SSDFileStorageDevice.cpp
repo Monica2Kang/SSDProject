@@ -71,6 +71,7 @@ void SSDFileStorageDevice::_createFile(void) {
     std::ofstream create_file(filename, std::ios::binary);
     std::vector<int> cellData(maxLbaCapacity, 0);
     create_file.write(reinterpret_cast<const char*>(cellData.data()), cellData.size());
+    std::cout << filename << " file is created." << std::endl;
     create_file.close();
 }
 

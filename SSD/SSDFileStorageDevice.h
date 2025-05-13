@@ -32,5 +32,5 @@ private:
     int maxMapCapacity;
     int upperLbaLimit;
     int lowerLbaLimit = 0;
-    const int TOUCHED_FLAG = 1;
+    static const int TOUCHED_FLAG = 1;
 };

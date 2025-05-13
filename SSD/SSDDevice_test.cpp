@@ -64,16 +64,36 @@ protected:
         int lba;
         int data;
     };
+    struct LBA_RANGE {
+        int lba;
+        int range;
+        bool expected;
+    };
+
     const int OUTPUT_DIGIT = 8;
     const char* FILE_NAME_OUTPUT = "ssd_output.txt";
     static const int SAMPLE_DATA = static_cast<int>(0x1082);
     const vector<LBA_DATA> inRangeLbaDatas = {
-    {0, static_cast<int>(0x100)},
-    {1, static_cast<int>(0x1AFAED)},
-    {32, static_cast<int>(0xABCDEF)},
-    {57, static_cast<int>(0xDEADBEEF)},
-    {89, static_cast<int>(0xBEEF1082)},
-    {98, static_cast<int>(0xB1E8F0E2)},
+        {0, static_cast<int>(0x100)},
+        {1, static_cast<int>(0x1AFAED)},
+        {32, static_cast<int>(0xABCDEF)},
+        {57, static_cast<int>(0xDEADBEEF)},
+        {89, static_cast<int>(0xBEEF1082)},
+        {98, static_cast<int>(0xB1E8F0E2)},
+    };
+
+    const vector<LBA_RANGE> eraseLbaRanges = {
+        {0, static_cast<int>(0), true },
+        {1, static_cast<int>(10), true },
+        {32, static_cast<int>(11), false },
+        {57, static_cast<int>(3), true },
+        {89, static_cast<int>(5), true },
+        {99, static_cast<int>(0), true },
+        {100, static_cast<int>(5), false },
+        {101, static_cast<int>(5), false },
+        {-1, static_cast<int>(5), false },
+        {98, static_cast<int>(-1), false },
+        {198, static_cast<int>(3), false },
     };
 };
 
@@ -181,5 +201,29 @@ TEST_F(SSDDeviceFixture, ssdReadDataTC4FileOutputCheckError) {
     for (int addr : lba) {
         EXPECT_THROW(ssd.readData(addr), exception);
         EXPECT_TRUE(containsError());
+    }
+}
+
+TEST_F(SSDDeviceFixture, ssdReadDataTC4FileOutputCheckForcedError) {
+    for (LBA_DATA lba_data : inRangeLbaDatas) {
+        ssd.writeData(lba_data.lba, lba_data.data);
+        int actual = ssd.readData(lba_data.lba);
+        EXPECT_EQ(lba_data.data, actual);
+        EXPECT_TRUE(containsValue(actual));
+
+        ssd.printError();
+        EXPECT_TRUE(containsError());
+    }
+}
+
+TEST_F(SSDDeviceFixture, ssdEraseDataTC4RangeCheck) {
+    for (LBA_RANGE lba_range : eraseLbaRanges) {
+        if (lba_range.expected) {
+            EXPECT_NO_THROW(ssd.eraseData(lba_range.lba, lba_range.range));
+        }
+        else {
+            EXPECT_THROW(ssd.eraseData(lba_range.lba, lba_range.range), invalid_argument);
+            EXPECT_TRUE(containsError());
+        }
     }
 }

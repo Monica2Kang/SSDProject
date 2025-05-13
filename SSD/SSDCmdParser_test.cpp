@@ -107,6 +107,24 @@ TEST_F(SSDCmdParserFixture, EraseSuccessSizePositive) {
     EXPECT_EQ(expected, actual);
 }
 
+TEST_F(SSDCmdParserFixture, EraseFailMinuxSize) {
+    const char* argv[] = { EXE_FILE_NAME, ERASE_COMMAND, DEFAULT_LBA, "-1"};
+    int argc = sizeof(argv) / sizeof(argv[0]);
+
+    bool actual = parser.checkParsing(argc, argv);
+    bool expected = PARSING_FAILED;
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_F(SSDCmdParserFixture, EraseFailOverSize) {
+    const char* argv[] = { EXE_FILE_NAME, ERASE_COMMAND, DEFAULT_LBA, "11"};
+    int argc = sizeof(argv) / sizeof(argv[0]);
+
+    bool actual = parser.checkParsing(argc, argv);
+    bool expected = PARSING_FAILED;
+    EXPECT_EQ(expected, actual);
+}
+
 /* ex)  90 10 : 90~99 -> success
 *       91 10 : 91~100 -> fail
 *       99 2  : 99~100 -> fail

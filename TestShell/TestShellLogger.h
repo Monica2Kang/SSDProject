@@ -17,7 +17,6 @@ public:
         return instance;
     }
 
-    // 로그 출력 함수
     void log(const std::string& functionName, const std::string& message) {
         std::ostringstream oss;
         oss << getCurrentTime() << " "

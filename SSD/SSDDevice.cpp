@@ -1,6 +1,6 @@
 ﻿#include "SSDFileStorageDevice.h"
 #include "SSDDevice.h"
-#include "SSDFileLogger.h"
+#include "SSDFileOutput.h"
 
 SSDDevice::SSDDevice() {
     initializeCellData();
@@ -12,7 +12,7 @@ SSDDevice::~SSDDevice() {
 }
 
 int SSDDevice::readData(const int lba) {
-    SSDFileLogger fLog;
+    SSDFileOutput fLog;
 
     if (isLbaOutOfRange(lba)) {
         fLog.logError();

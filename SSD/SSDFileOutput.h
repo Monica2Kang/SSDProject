@@ -4,11 +4,11 @@
 #include <iomanip>
 #include <string>
 
-class SSDFileLogger {
+class SSDFileOutput {
 
 public:
-    SSDFileLogger();
-    ~SSDFileLogger();
+    SSDFileOutput();
+    ~SSDFileOutput();
 
     void logData(const unsigned int value);
     void logError(void);

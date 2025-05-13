@@ -7,6 +7,7 @@
 #include <chrono>
 #include <ctime>
 #include <mutex>
+#include <thread>
 
 #define TEST_SHELL_LOG(...) Logger::getInstance().log(__FUNCTION__, __VA_ARGS__)
 
@@ -53,6 +54,8 @@ private:
     Logger() = default;
 
     std::string logFilePath = "latest.log";
+    std::string previousFilePath = "";
+
     const int MAX_SIZE = 10 * 1024; // 10KB
     const int NAME_SIZE = 30;
 
@@ -95,12 +98,27 @@ private:
         return oss.str();
     }
 
+    std::string generateZipFileName(const std::string path) {
+        size_t dotPos = path.find_last_of('.');
+        if (dotPos == std::string::npos) return path + ".zip";
+        return path.substr(0, dotPos) + ".zip";
+    }
+
     void rotateLogFileIfNeeded() {
         if (logFilePath.empty() || getFileSize(logFilePath) < MAX_SIZE)
             return;
 
         std::string rotatedPath = generateRotatedFileName();
         std::rename(logFilePath.c_str(), rotatedPath.c_str());
-        std::ofstream(logFilePath).close(); // 💡 optionally recreate empty log file immediately
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        std::ofstream(logFilePath).close();
+
+        if (previousFilePath.empty() == false)
+        {
+            std::string zipPath = generateZipFileName(previousFilePath);
+            std::rename(previousFilePath.c_str(), zipPath.c_str());
+        }
+
+        previousFilePath = rotatedPath;
     }
 };

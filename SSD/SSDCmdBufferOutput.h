@@ -4,10 +4,10 @@
 #include <iomanip>
 #include <string>
 
-class SSDBufferOutput {
+class SSDCmdBufferOutput {
 public:
-    SSDBufferOutput();
-    ~SSDBufferOutput();
+    SSDCmdBufferOutput();
+    ~SSDCmdBufferOutput();
     
 private:
     std::ofstream outfile;

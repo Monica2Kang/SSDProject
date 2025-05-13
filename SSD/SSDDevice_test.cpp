@@ -183,3 +183,15 @@ TEST_F(SSDDeviceFixture, ssdReadDataTC4FileOutputCheckError) {
         EXPECT_TRUE(containsError());
     }
 }
+
+TEST_F(SSDDeviceFixture, ssdReadDataTC4FileOutputCheckForcedError) {
+    for (LBA_DATA lba_data : inRangeLbaDatas) {
+        ssd.writeData(lba_data.lba, lba_data.data);
+        int actual = ssd.readData(lba_data.lba);
+        EXPECT_EQ(lba_data.data, actual);
+        EXPECT_TRUE(containsValue(actual));
+
+        ssd.printError();
+        EXPECT_TRUE(containsError());
+    }
+}

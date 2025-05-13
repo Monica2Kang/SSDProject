@@ -9,6 +9,7 @@ public:
     int readData(const int lba);
     void writeData(const int lba, const int data);
     void reinitializeFile(void);
+    void printError(void);
 
 private:
     void initializeCellData(void);

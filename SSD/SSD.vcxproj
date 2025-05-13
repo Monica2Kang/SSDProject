@@ -131,6 +131,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="SSDBufferOutput.cpp" />
+    <ClCompile Include="SSDBufferOutput_test.cpp" />
     <ClCompile Include="SSDCmdParser.cpp" />
     <ClCompile Include="SSDCmdParser_test.cpp" />
     <ClCompile Include="SSDDevice.cpp" />
@@ -140,6 +142,7 @@
     <ClCompile Include="SSDFileStorageDevice_test.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="SSDBufferOutput.h" />
     <ClInclude Include="SSDCmdParser.h" />
     <ClInclude Include="SSDDevice.h" />
     <ClInclude Include="SSDFileOutput.h" />

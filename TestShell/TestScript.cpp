@@ -1,7 +1,102 @@
 ﻿#include <iostream>
+#include <istream>
+#include <sstream>
 #include <cstdlib>
 #include <ctime>
+#include <filesystem>
+#include <fstream>
+
 #include "TestScript.h"
+
+using namespace std;
+
+int TestScript::runTest(const string str) {
+	
+	inputTestScript= str;
+	cout << "runTest input : " << str << endl;
+	if (checkTestExist()) {
+		return excuteTest();
+	}
+	else {
+		return FAIL;
+	}
+}
+
+bool TestScript::checkTestExist() {
+	bool isExist = false;
+	try {
+		for (const auto& file : filesystem::directory_iterator(testDir)) {
+			if (file.is_regular_file() && file.path().extension() == ".txt") {
+				if (file.path().filename().string().substr(0, inputTestScript.size()) == inputTestScript) {
+					ScriptFilePath = file.path().string();
+					cout << "ScriptFilePath : " << ScriptFilePath << endl;
+					isExist = true;
+					break;
+				}
+			}
+		}
+	}
+	catch (const filesystem::filesystem_error& e){
+		isExist = false;
+	}
+	cout << "isExist : " << isExist << endl;
+	return isExist;
+}
+
+
+int TestScript::excuteTest() {
+	fstream file(ScriptFilePath);
+	if (!file.is_open()) {
+		cout << "file is open" << endl;
+		return FAIL;
+	}
+
+	vector<string> parameter;
+	vector<int> expectedData(100, 0);
+	int LBA;
+	int data;
+	int size;
+	string line;
+
+	int num = 0;
+	while (getline(file, line)) {
+		
+		parameter.clear();
+		stringstream ss(line);
+		string word;
+
+		while (ss >> word) {
+			parameter.push_back(word);
+		}
+		
+		if (parameter[0] == "write") {
+			LBA = stoi(parameter[1]);
+			data = static_cast<int>(stoul(parameter[2], nullptr, 16));
+			ssdAdapter->writeLba(LBA, data);
+			expectedData[LBA] = data;
+		}
+		else if (parameter[0] == "read") {
+			LBA = stoi(parameter[1]);
+			int resultData = ssdAdapter->readLba(LBA);
+			if (resultData != expectedData[LBA]) {
+				cout << num << " :: " << expectedData[LBA] << ", " << resultData << endl;
+				return FAIL;
+			}
+		}
+		else if (parameter[0] == "erase") {
+			LBA = stoi(parameter[1]);
+			size = stoi(parameter[2]);
+			ssdAdapter->erase(LBA, size);
+			for (int i = LBA; i < LBA + size; i++) {
+				expectedData[i] = 0;
+			}
+		}
+		num++;
+	}
+
+	return PASS;
+}
+
 
 int TestScript::FullWriteAndReadCompare(const int data) {
 

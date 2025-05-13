@@ -12,6 +12,9 @@ public:
     const char* EXE_FILE_NAME = "SSD.exe";
     const char* READ_COMMAND = "R";
     const char* WRITE_COMMAND = "W";
+    const char* ERASE_COMMAND = "E";
+    const char* FLUSH_COMMAND = "F";
+
     const char* DEFAULT_LBA = "0";
     const char* OVER_LBA = "100";
     const char* DEFAULT_VALUE = "0x1234ABCD";
@@ -83,5 +86,72 @@ TEST_F(SSDCmdParserFixture, WriteFailSmallValue) {
 
     bool actual = parser.checkParsing(argc, argv);
     bool expected = PARSING_FAILED;
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_F(SSDCmdParserFixture, EraseSuccessSizeZero) {
+    const char* argv[] = { EXE_FILE_NAME, ERASE_COMMAND, DEFAULT_LBA, "0"};
+    int argc = sizeof(argv) / sizeof(argv[0]);
+
+    bool actual = parser.checkParsing(argc, argv);
+    bool expected = PARSING_SUCCESS;
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_F(SSDCmdParserFixture, EraseSuccessSizePositive) {
+    const char* argv[] = { EXE_FILE_NAME, ERASE_COMMAND, DEFAULT_LBA, "5"};
+    int argc = sizeof(argv) / sizeof(argv[0]);
+
+    bool actual = parser.checkParsing(argc, argv);
+    bool expected = PARSING_SUCCESS;
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_F(SSDCmdParserFixture, EraseFailMinuxSize) {
+    const char* argv[] = { EXE_FILE_NAME, ERASE_COMMAND, DEFAULT_LBA, "-1"};
+    int argc = sizeof(argv) / sizeof(argv[0]);
+
+    bool actual = parser.checkParsing(argc, argv);
+    bool expected = PARSING_FAILED;
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_F(SSDCmdParserFixture, EraseFailOverSize) {
+    const char* argv[] = { EXE_FILE_NAME, ERASE_COMMAND, DEFAULT_LBA, "11"};
+    int argc = sizeof(argv) / sizeof(argv[0]);
+
+    bool actual = parser.checkParsing(argc, argv);
+    bool expected = PARSING_FAILED;
+    EXPECT_EQ(expected, actual);
+}
+
+/* ex)  90 10 : 90~99 -> success
+*       91 10 : 91~100 -> fail
+*       99 2  : 99~100 -> fail
+*/
+TEST_F(SSDCmdParserFixture, EraseFailOutOfRange1) {
+    const char* argv[] = { EXE_FILE_NAME, ERASE_COMMAND, "91", "10"};
+    int argc = sizeof(argv) / sizeof(argv[0]);
+
+    bool actual = parser.checkParsing(argc, argv);
+    bool expected = PARSING_FAILED;
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_F(SSDCmdParserFixture, EraseFailOutOfRange2) {
+    const char* argv[] = { EXE_FILE_NAME, ERASE_COMMAND, "99", "2"};
+    int argc = sizeof(argv) / sizeof(argv[0]);
+
+    bool actual = parser.checkParsing(argc, argv);
+    bool expected = PARSING_FAILED;
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_F(SSDCmdParserFixture, FlushSuccess) {
+    const char* argv[] = { EXE_FILE_NAME, FLUSH_COMMAND};
+    int argc = sizeof(argv) / sizeof(argv[0]);
+
+    bool actual = parser.checkParsing(argc, argv);
+    bool expected = PARSING_SUCCESS;
     EXPECT_EQ(expected, actual);
 }

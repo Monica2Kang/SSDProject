@@ -51,10 +51,10 @@
     <ClCompile Include="SSDFileOutput.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="SSDBufferOutput.cpp">
+    <ClCompile Include="SSDCmdBufferOutput.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="SSDBufferOutput_test.cpp">
+    <ClCompile Include="SSDCmdBufferOutput_test.cpp">
       <Filter>테스트 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -71,7 +71,7 @@
     <ClInclude Include="SSDFileOutput.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="SSDBufferOutput.h">
+    <ClInclude Include="SSDCmdBufferOutput.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

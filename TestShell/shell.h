@@ -28,6 +28,19 @@ public:
 	Shell(ISSDAdapter* ISSDAdapter);
 	void executeShell(void);
 	void setCommand(std::string command);
+
+protected:
+	ISSDAdapter* m_ISSDAdapter;
+	TestScript* m_TestScript;
+	std::string input;
+	std::vector<std::string> parameter;
+	int LBA;
+	int data;
+	int LBASize;
+	int endLBA;
+	
+
+private:
 	void splitAndStore(void);
 	bool noEnterCommand(void);
 	bool writeApi(void);
@@ -47,14 +60,4 @@ public:
 	void storeData(const int pos);
 	void storeSize(void);
 	void storeLBARange(void);
-
-protected:
-	ISSDAdapter* m_ISSDAdapter;
-	TestScript* m_TestScript;
-	std::string input;
-	std::vector<std::string> parameter;
-	int LBA;
-	int data;
-	int LBASize;
-	int endLBA;
 };

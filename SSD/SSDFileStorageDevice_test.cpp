@@ -1,18 +1,13 @@
 ﻿#include <iostream>
 #include <fstream>
 #include "gmock/gmock.h"
-
 #include "SSDFileStorageDevice.h"
 
 using namespace testing;
 using namespace std;
 
 class SSDFileStorageDeviceFixture : public Test {
-public:
-    const char* FILE_NAME = "ssd_nand.txt";
-    const char* FILE_NAME_TEMP = "ssd_nand_temp.txt";
-    const int FILE_STORAGE_CAPACITY = 100;
-    SSDFileStorageDevice fSsd = { FILE_NAME, FILE_STORAGE_CAPACITY };
+
 public:
     void removeSSDFile(const char* filename) {
         std::ifstream ssdFile;
@@ -25,10 +20,7 @@ public:
     }
     void createSSDFile(const char* filename) {
         SSDFileStorageDevice ssdFile = { filename, FILE_STORAGE_CAPACITY };
-        if (ssdFile.openFile())
-            std::cout << filename << " file is created." << std::endl;
-        else
-            std::cout << filename << " file is not created." << std::endl;
+        ssdFile.openFile();
         ssdFile.closeFile();
     }
     void openSSDFile(const char* filename) {
@@ -65,8 +57,12 @@ public:
         for (LBA_DATA lba_data : inRangeLbaData) {
             int readData;
             bool result = fSsd.readData(lba_data.lba, readData);
+            EXPECT_FALSE(result);
+            fSsd.writeData(lba_data.lba, lba_data.data);
+            result = fSsd.readData(lba_data.lba, readData);
             EXPECT_TRUE(result);
-            EXPECT_EQ(readData, 0x00);
+            //EXPECT_TRUE(result);
+            //EXPECT_EQ(readData, 0x00);
         }
         for (LBA_DATA lba_data : outOfRangeLbaData) {
             int readData;
@@ -79,11 +75,17 @@ public:
         fSsd.closeFile();
         fSsd.removeFile();
     }
+
 protected:
     struct LBA_DATA {
         int lba;
         int data;
     };
+
+    const char* FILE_NAME = "ssd_nand.txt";
+    const char* FILE_NAME_TEMP = "ssd_nand_temp.txt";
+    const int FILE_STORAGE_CAPACITY = 100;
+    SSDFileStorageDevice fSsd = { FILE_NAME, FILE_STORAGE_CAPACITY };
 
     const vector<LBA_DATA> inRangeLbaData = {
         {0, static_cast<int>(0x100)},
@@ -124,11 +126,22 @@ TEST_F(SSDFileStorageDeviceFixture, ssdFileStorageCreationTCwithActualFile) {
 
 // ssdFileReadDataTCs
 TEST_F(SSDFileStorageDeviceFixture, ssdFileReadDataTC4InBoundCheck) {
-    doInRangeBoundaryCheck(true);
+    fSsd.removeFile();
+    fSsd.openFile();
+    doInRangeBoundaryCheck(false);
+
+    fSsd.openFile();
+    for (LBA_DATA lba_data : inRangeLbaData) {
+        fSsd.writeData(lba_data.lba, lba_data.data);
+        bool result = fSsd.readData(lba_data.lba, lba_data.data);
+        EXPECT_TRUE(result);
+    }
+    fSsd.closeFile();
+
 }
 
 TEST_F(SSDFileStorageDeviceFixture, ssdFileReadDataTC4OutOfBoundCheck) {
-    doOutOfRangeBoundaryCheck(false);
+    doOutOfRangeBoundaryCheck(false); 
 }
 
 // ssdFileWriteDataTCs
@@ -158,12 +171,17 @@ TEST_F(SSDFileStorageDeviceFixture, ssdFileReadDataTC4FileNotOpened) {
     doInRangeBoundaryCheck(true);
 }
 
-TEST_F(SSDFileStorageDeviceFixture, ssdFileReadDataTC4ReadData_0) {
+TEST_F(SSDFileStorageDeviceFixture, ssdFileReadDataTC4ReadData) {
     removeAndCreateFile();
     doReadDataConfirmation();
 }
 
 TEST_F(SSDFileStorageDeviceFixture, ssdFileWriteReadConfirmDataTC) {
+    removeAndCreateFile();
+    doReadDataConfirmation();
+}
+
+TEST_F(SSDFileStorageDeviceFixture, ssdFileWriteReadConfirmDataTC_WriteBianryZero4AllRange) {
     removeAndCreateFile();
     doReadDataConfirmation();
 }

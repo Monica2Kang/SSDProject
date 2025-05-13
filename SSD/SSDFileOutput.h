@@ -10,8 +10,8 @@ public:
     SSDFileOutput();
     ~SSDFileOutput();
 
-    void logData(const unsigned int value);
-    void logError(void);
+    void printData(const unsigned int value);
+    void printError(void);
 
 private:
     std::ofstream outfile;

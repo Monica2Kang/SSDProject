@@ -6,13 +6,16 @@
 using namespace testing;
 using namespace std;
 
-class SSDFileStorageDeviceFixture : public Test {
+namespace {
 
+}
+
+class SSDFileStorageDeviceFixture : public Test {
 public:
     void removeSSDFile(const char* filename) {
         std::ifstream ssdFile;
         if (0 == std::remove(filename)) {
-            std::cout << filename << " file is deleted." << std::endl;
+            //std::cout << filename << " file is deleted." << std::endl;
         }
         ssdFile.open(filename, std::ios::in | std::ios::out | std::ios::binary);
         bool fileOpened = ssdFile.is_open();

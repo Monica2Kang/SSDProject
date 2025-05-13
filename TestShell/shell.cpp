@@ -225,7 +225,7 @@ bool Shell::eraseApi(void) {
 			if (isValidSize(SIZE_POS)) {
 				storeSize();
 				// cut max 10 size / call SSD E LBA SIZE
-				// m_ISSDAdapter->erase(int LBA, int size);
+				m_ISSDAdapter->erase(LBA, LBASize);
 				return true;
 			}
 		}

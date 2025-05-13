@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -18,7 +18,7 @@ public:
         return instance;
     }
 
-    // ·Î±× Ãâ·Â ÇÔ¼ö
+    // ë¡œê·¸ ì¶œë ¥ í•¨ìˆ˜
     void log(const std::string& functionName, const std::string& message) {
         std::ostringstream oss;
         oss << getCurrentTime() << " "
@@ -26,14 +26,10 @@ public:
             << " : " << message;
 
         std::string logLine = oss.str();
-
-        // ÆÄÀÏ Ãâ·Â
-        std::ofstream ofs(logFilePath, std::ios::app);
-        if (!logFilePath.empty()) {
+        {
+            std::ofstream ofs(logFilePath, std::ios::app);
             if (ofs.is_open()) {
                 ofs << logLine << std::endl;
-                ofs.flush();
-                ofs.close();
             }
         }
 
@@ -106,5 +102,6 @@ private:
 
         std::string rotatedPath = generateRotatedFileName();
         std::rename(logFilePath.c_str(), rotatedPath.c_str());
+        std::ofstream(logFilePath).close(); // ðŸ’¡ optionally recreate empty log file immediately
     }
 };

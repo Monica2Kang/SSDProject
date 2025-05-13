@@ -22,6 +22,8 @@ private:
     static const int LBA_UPPER_LIMIT = LBA_CAPACITY - 1;
     static const int LBA_LOWER_LIMIT = 0;
     static const int MAX_ERASE_RANGE = 10;
+    static const int MIN_ERASE_RANGE = 0;
+
     const char* FILE_NAME = "ssd_nand.txt";
     int cellData[LBA_CAPACITY];
     SSDFileStorageDevice fSsd{ FILE_NAME, LBA_CAPACITY };

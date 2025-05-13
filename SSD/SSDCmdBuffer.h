@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <fstream>
+#include <iomanip>
 #include <string>
 
 class SSDCmdBuffer {
@@ -10,6 +11,7 @@ public:
     
 private:
     std::ofstream outfile;
-    const std::string& folderName = "buffer";
+    const char* folderName = "buffer";
     const std::string& fileEmptyName = "empty.txt";
+    const int MAX_FILE_COUNT = 5;
 };

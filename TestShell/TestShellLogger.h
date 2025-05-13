@@ -8,7 +8,6 @@
 #include <ctime>
 #include <mutex>
 
-//#define TEST_SHELL_LOG(msg) Logger::getInstance().log(__FUNCTION__, msg)
 #define TEST_SHELL_LOG(...) Logger::getInstance().log(__FUNCTION__, __VA_ARGS__)
 
 class Logger {
@@ -22,7 +21,7 @@ public:
     void log(const std::string& functionName, const std::string& message) {
         std::ostringstream oss;
         oss << getCurrentTime() << " "
-            << std::left << std::setw(30) << (functionName + "()")
+            << std::left << std::setw(NAME_SIZE) << (functionName + "()")
             << " : " << message;
 
         std::string logLine = oss.str();
@@ -55,7 +54,8 @@ private:
     Logger() = default;
 
     std::string logFilePath = "latest.log";
-    const std::uintmax_t MAX_SIZE = 10 * 1024; // 10KB
+    const int MAX_SIZE = 10 * 1024; // 10KB
+    const int NAME_SIZE = 30;
 
     std::string getCurrentTime() {
         auto now = std::chrono::system_clock::now();

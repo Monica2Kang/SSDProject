@@ -6,7 +6,7 @@
 #include <iomanip>
 #include <chrono>
 #include <ctime>
-#include <mutex>
+#include "FileManager.h"
 
 #define TEST_SHELL_LOG(...) Logger::getInstance().log(__FUNCTION__, __VA_ARGS__)
 
@@ -31,7 +31,7 @@ public:
             }
         }
 
-        rotateLogFileIfNeeded();
+        FILE_MANAGER.checkSizeAndRotate(logFilePath, generateRotatedFileName(), MAX_SIZE);
     }
 
     void log(const std::string& functionName, int v1) {
@@ -72,12 +72,6 @@ private:
         return oss.str();
     }
 
-    std::size_t getFileSize(const std::string& filename) {
-        std::ifstream in(filename, std::ios::binary | std::ios::ate);
-        if (!in.is_open()) return 0;
-        return static_cast<std::size_t>(in.tellg());
-    }
-
     std::string generateRotatedFileName() {
         std::time_t t = std::time(nullptr);
         std::tm tm;
@@ -93,14 +87,5 @@ private:
             << tm.tm_min << "m_"
             << tm.tm_sec << "s.log";
         return oss.str();
-    }
-
-    void rotateLogFileIfNeeded() {
-        if (logFilePath.empty() || getFileSize(logFilePath) < MAX_SIZE)
-            return;
-
-        std::string rotatedPath = generateRotatedFileName();
-        std::rename(logFilePath.c_str(), rotatedPath.c_str());
-        std::ofstream(logFilePath).close(); // 💡 optionally recreate empty log file immediately
     }
 };

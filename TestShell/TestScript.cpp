@@ -1,7 +1,9 @@
 ﻿#include <iostream>
 #include <cstdlib>
 #include <ctime>
+#include <sstream>
 #include "TestScript.h"
+#include "FileManager.h"
 
 int TestScript::FullWriteAndReadCompare(const int data) {
 
@@ -116,4 +118,121 @@ int TestScript::WriteReadAging(void) {
 	}
 
 	return PASS;
+}
+
+std::vector<std::string> TestScript::splitCommand(const std::string& input) {
+	std::vector<std::string> result;
+	std::istringstream iss(input);
+	std::string token;
+
+	while (iss >> token) {
+		result.push_back(token);
+	}
+
+	return result;
+}
+
+int TestScript::runScenario(const std::string scenarioPath)
+{
+	bool bExist = FILE_MANAGER.fileExists(scenarioPath);
+	if (bExist == false)
+	{
+		return FAIL;
+	}
+
+	int line = 1;
+
+	do {
+		std::string argument = FILE_MANAGER.readLine(scenarioPath, line++);
+		if (argument == "") return PASS;
+
+		std::vector<std::string> command = splitCommand(argument);
+
+		if (command[0].compare("W") == 0)
+		{
+			int lba = stoi(command[1]);
+			int data = strtoul(command[2].c_str(), nullptr, 16);
+			ssdAdapter->writeLba(lba, data);
+		}
+		else if (command[0].compare("R") == 0)
+		{
+			int lba = stoi(command[1]);
+			ssdAdapter->readLba(lba);
+		}
+		else if (command[0].compare("E") == 0)
+		{
+			int lba = stoi(command[1]);
+			int size = strtoul(command[2].c_str(), nullptr, 16);
+			ssdAdapter->writeLba(lba, size);
+		}
+		else
+		{
+			return FAIL;
+		}
+
+	} while (1);
+	
+}
+
+void TestScript::makeScenario(void)
+{
+	// 
+	const std::string scenarioPath = SCENARIO_DIR + "\\1_FullWriteAndReadCompare.txt";
+	bool bExist = FILE_MANAGER.fileExists(scenarioPath);
+	if (bExist == true)
+	{
+		FILE_MANAGER.removeFileIfExists(scenarioPath);
+	}
+	else
+	{
+		FILE_MANAGER.createFile(scenarioPath);
+	}
+
+	const int MAX_LBA = 100;
+	const int TEST_UNIT = 5;
+	int lba = 0;
+	int expectedData = 0xBEEFCAFE;
+	int actualData = 0;
+
+	while (lba < MAX_LBA)
+	{
+		for (auto it = 0; it < TEST_UNIT; it++)
+		{
+			//ssdAdapter->writeLba(lba + it, expectedData);
+			std::string argument = _writeCommand(lba + it, expectedData);
+			FILE_MANAGER.appendLine(scenarioPath, argument);
+		}
+
+		for (auto it = 0; it < TEST_UNIT; it++)
+		{
+			//actualData = ssdAdapter->readLba(lba + it);
+			std::string argument = _readCommand(lba + it);
+			FILE_MANAGER.appendLine(scenarioPath, argument);
+		}
+
+		lba += TEST_UNIT;
+	}
+}
+
+std::string TestScript::_writeCommand(const int lba, const int data)
+{
+	std::stringstream ss;
+	ss << "0x" << std::uppercase << std::hex << data;
+	std::string argument = "W " + std::to_string(lba) + " " + ss.str();
+
+	return argument;
+}
+
+std::string TestScript::_readCommand(const int lba)
+{
+	std::string argument = "R " + std::to_string(lba);
+
+	return argument;
+}
+
+std::string TestScript::_eraseCommand(const int lba, const int size)
+{
+	std::string argument = "E " + std::to_string(lba) + " " + std::to_string(size);
+
+	return argument;
 }

@@ -18,6 +18,7 @@ public:
 	const int ERASE_PARAMETER_SIZE = 3;
 	const int EXIT_PARAMETER_SIZE = 1;
 	const int HELP_PARAMETER_SIZE = 1;
+	const int FLUSH_PARAMETER_SIZE = 1;
 	const int FULLWRITE_PARAMETER_SIZE = 2;
 	const int FULLREAD_PARAMETER_SIZE = 1;
 	const int PASS = 0;
@@ -35,6 +36,7 @@ public:
 	bool eraseRangeApi(void);
 	bool exitApi(void);
 	bool helpApi(void);
+	bool flushApi(void);
 	bool fullwriteApi(void);
 	bool fullreadApi(void);
 	bool isValidParameterSize(const int size);

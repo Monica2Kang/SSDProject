@@ -45,6 +45,9 @@ void Shell::executeShell(void) {
 		else if (parameter[COMMAND_POS] == "help") { // help AmazingReviewer jungyeonKim
 			if (helpApi()) continue;
 		}
+		else if (parameter[COMMAND_POS] == "flush") { // flush
+			if (flushApi()) continue;
+		}
 		else if (parameter[COMMAND_POS] == "fullwrite") { // fullwrite 0xAAAABBBB
 			if (fullwriteApi()) continue;
 		}
@@ -217,19 +220,25 @@ bool Shell::eraseApi(void) {
 			storeLBA();
 			if (isValidSize(SIZE_POS)) {
 				storeSize();
-				// 여기서 size를 최대 10개씩 자르면서 SSD erase를 수행해야 한다.
+				// cut max 10 size / call SSD E LBA SIZE
+				// m_ISSDAdapter->erase(int LBA, int size);
+				return true;
 			}
 		}
 	}
+	return false;
 }
 
 bool Shell::eraseRangeApi(void) {
 	if (isValidParameterSize(ERASE_PARAMETER_SIZE)) {
 		if (isValidLBA(LBA_POS) && isValidLBA(END_LBA_POS)) {
 			storeLBARange();
-			// 여기서 LBA ~ endLBA까지 최대 10개씩 자르면서 SSD erase를 수행해야 한다.
+			// LBA ~ endLBA / cut 10 size / call SSD E LBA SIZE
+			// m_ISSDAdapter->eraseRange(int startLBA, int endLBA);
+			return true;
 		}
 	}
+	return false;
 }
 
 bool Shell::exitApi(void) {
@@ -251,6 +260,14 @@ bool Shell::helpApi(void) {
 		cout << "fullwrite > fullwrite[data]" << endl;
 		cout << "fullread > fullread" << endl;
 		cout << endl;
+		return true;
+	}
+	return false;
+}
+
+bool Shell::flushApi(void) {
+	if (isValidParameterSize(FLUSH_PARAMETER_SIZE)) {
+		// m_ISSDAdapter->flush();
 		return true;
 	}
 	return false;

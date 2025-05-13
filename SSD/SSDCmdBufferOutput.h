@@ -12,7 +12,7 @@ public:
     void createFilesInFolder(std::vector<std::string>& files);
     std::vector<std::string> getFileListForDebug(void);
 
-    const std::string& fileEmptyName = "empty.";
+    const std::string& fileEmptyName = "empty";
     const int MAX_FILE_COUNT = 5;
     
 private:

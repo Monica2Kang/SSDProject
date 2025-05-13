@@ -16,7 +16,7 @@ bool SSDCmdParser::checkParsing(int argc, const char* argv[]) {
 
     //parse each tokens
     string command = tokens[1];
-    int LBA = std::stoi(tokens[2]);
+    int lba = std::stoi(tokens[2]);
 
     if (command == "W") {
         string value = tokens[3];
@@ -26,15 +26,36 @@ bool SSDCmdParser::checkParsing(int argc, const char* argv[]) {
         }
 
         int hexValue = static_cast<int>(std::stoul(value, nullptr, 16));
-        m_device.writeData(LBA, hexValue);
+        m_device.writeData(lba, hexValue);
         return PARSING_SUCCESS;
     }
 
     if (command == "R") {
-        m_device.readData(LBA);
+        m_device.readData(lba);
         return PARSING_SUCCESS;
     }
 
+    if (command == "E") {
+        int size = std::stoi(tokens[3]);
+        if (size == 0) return PARSING_SUCCESS; //Do nothing
+
+        /* ex)  90 10 : 90~99 -> success
+        *       91 10 : 91~100 -> fail
+        *       99 2  : 99~100 -> fail
+        */
+        if (lba + size > MAX_LBA) {
+            m_device.printError();
+            return PARSING_FAILED;
+        }
+        
+        //m_device.eraseData(LBA, size);
+        return PARSING_SUCCESS;
+    }
+    
+    if (command == "F") {
+        //m_device.flushData();
+        return PARSING_SUCCESS;
+    }
     return PARSING_FAILED;
 }
 

@@ -8,10 +8,7 @@ using std::vector;
 
 class SSDCmdParser {
 public:
-    SSDCmdParser(void){
-        //SSDDevice device;
-        //m_device = device;
-    }
+    SSDCmdParser(void) = default;
 
     bool checkParsing(int argc, const char* argv[]);
 
@@ -21,4 +18,5 @@ public:
 private:
     SSDDevice m_device;
     static const int VALID_COMMAND_SIZE = 3;
+    static const int MAX_LBA = 100;
 };

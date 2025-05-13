@@ -27,7 +27,7 @@ void SSDCmdBuffer::clear(void) {
 }
 
 bool SSDCmdBuffer::_checkEraseLbaRangeInvalid(int lba, int range) const {
-    return lba < LBA_LOWER_LIMIT || lba + range - 1 > LBA_UPPER_LIMIT || range < 0 || range > MAX_ERASE_RANGE;
+    return lba < LBA_LOWER_LIMIT || lba + range - 1 > LBA_UPPER_LIMIT || range < MIN_ERASE_RANGE || range > MAX_ERASE_RANGE;
 }
 
 bool SSDCmdBuffer::_checkLbaOutOfRange(int lba) const {

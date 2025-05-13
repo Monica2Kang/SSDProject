@@ -74,5 +74,5 @@ bool SSDDevice::_isLbaOutOfRange(const int lba) const {
 }
 
 bool SSDDevice::_isEraseRangeInvalid(const int range) const {
-    return MAX_ERASE_RANGE < range || range < LBA_LOWER_LIMIT;
+    return MAX_ERASE_RANGE < range || range < MIN_ERASE_RANGE;
 }

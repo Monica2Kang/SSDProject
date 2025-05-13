@@ -23,6 +23,7 @@ void Shell::executeShell(void) {
 
 		if (noEnterCommand()) {
 			cout << "INVALID COMMAND" << endl;
+			cout << endl;
 			continue;
 		}
 
@@ -212,6 +213,7 @@ bool Shell::helpApi(void) {
 		cout << "help > Show command guide" << endl;
 		cout << "fullwrite > fullwrite[data]" << endl;
 		cout << "fullread > fullread" << endl;
+		cout << endl;
 		return true;
 	}
 	return false;
@@ -246,37 +248,43 @@ bool Shell::isValidParameterSize(const int size) {
 }
 
 bool Shell::isValidLBA(const int pos) {
-	if (parameter[pos].empty() || parameter[pos].length() > 2) {
-		return false;
-	}
+	const string str = parameter[pos];
+	int isDigitCount = 0;
 
-	for (char ch : parameter[pos]) {
-		if (!isdigit(ch)) {
-			return false;
+	if (!(str.empty()) && str.length() <= 2) {
+		for (char ch : str) {
+			if (isdigit(ch)) {
+				isDigitCount++;
+			}
 		}
 	}
 
-	return true;
+	if (str.length() == isDigitCount) {
+		return true;
+	}
+	
+	return false;
 }
 
 bool Shell::isValidData(const int pos) {
 	const string str = parameter[pos];
+	int hexTypeCount = 0;
 
-	if (str.empty() || str.length() != DATA_LENGTH) {
-		return false;
-	}
-
-	if (!(str[0] == '0' && str[1] == 'x')) {
-		return false;
-	}
-
-	for (int i = 2; i < DATA_LENGTH; i++) {
-		if (!((str[i] >= 'A' && str[i] <= 'F') || (str[i] >= '0' && str[i] <= '9'))) {
-			return false;
+	if (!str.empty() && str.length() == DATA_LENGTH) {
+		if (str[0] == '0' && str[1] == 'x') {
+			for (int i = 2; i < DATA_LENGTH; i++) {
+				if ((str[i] >= 'A' && str[i] <= 'F') || (str[i] >= '0' && str[i] <= '9')) {
+					hexTypeCount++;
+				}
+			}
 		}
 	}
 
-	return true;
+	if (hexTypeCount == 8) {
+		return true;
+	}
+
+	return false;
 }
 
 void Shell::storeLBA(void) {

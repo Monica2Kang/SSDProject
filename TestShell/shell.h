@@ -14,7 +14,7 @@ public:
 	const int WRITE_PARAMETER_SIZE = 3;
 	const int READ_PARAMETER_SIZE = 2;
 	const int EXIT_PARAMETER_SIZE = 1;
-	const int HELP_PARAMETER_SIZE = 3;
+	const int HELP_PARAMETER_SIZE = 1;
 	const int FULLWRITE_PARAMETER_SIZE = 2;
 	const int FULLREAD_PARAMETER_SIZE = 1;
 	const int PASS = 0;

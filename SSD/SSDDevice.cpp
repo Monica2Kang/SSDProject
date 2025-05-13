@@ -48,10 +48,11 @@ void SSDDevice::eraseData(const int lba, const int range) {
         fOutput.printError();
         throw std::invalid_argument("Out of LBA Range.");
     }
-    if (!_isEraseRangeValid(range)) {
+    if (_isEraseRangeInvalid(range)) {
         fOutput.printError();
         throw std::invalid_argument("Out of e Range.");
     }
+
     for (int curLba = lba; curLba < lba + range; curLba++)
         fSsd.writeData(curLba, 0x00);
 }
@@ -72,6 +73,6 @@ bool SSDDevice::_isLbaOutOfRange(const int lba) const {
     return LBA_UPPER_LIMIT < lba || lba < LBA_LOWER_LIMIT;
 }
 
-bool SSDDevice::_isEraseRangeValid(const int range) const {
-    return !(MAX_ERASE_RANGE < range || range < 0);
+bool SSDDevice::_isEraseRangeInvalid(const int range) const {
+    return MAX_ERASE_RANGE < range || range < 0;
 }

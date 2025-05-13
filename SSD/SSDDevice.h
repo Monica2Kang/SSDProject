@@ -15,7 +15,7 @@ public:
 private:
     void _initializeCellData(void);
     bool _isLbaOutOfRange(const int lba) const;
-    bool _isEraseRangeValid(const int range) const;
+    bool _isEraseRangeInvalid(const int range) const;
 
 private:
     static const int LBA_CAPACITY = 100;

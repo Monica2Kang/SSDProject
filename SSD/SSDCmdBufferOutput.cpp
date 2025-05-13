@@ -8,11 +8,37 @@ using namespace std;
 
 SSDCmdBufferOutput::SSDCmdBufferOutput() {
     // file open with overwrite mode
-
+    _createFolder();
+    _clearFilesInFolder();
 }
 
 SSDCmdBufferOutput::~SSDCmdBufferOutput() {
 
+}
+
+void SSDCmdBufferOutput::createFilesInFolder(vector<string>& files) {
+    _clearFilesInFolder();
+    for (int index = files.size(); index < MAX_FILE_COUNT; index++) {
+        files.emplace_back(fileEmptyName);
+    }
+    _clearFileNameForDebug();
+
+    int fileNumber = 1;
+    for (string fileName : files) {
+        string filePath = string(folderName) + "\\" + to_string(fileNumber++) + "_" + fileName;
+        _storeFileNameForDebug(fileName);
+        ofstream file(filePath);
+        if (file.is_open()) {
+            file.close();
+        }
+        else {
+            throw runtime_error("Cannot create file");
+        }
+    }
+}
+
+vector<string> SSDCmdBufferOutput::getFileListForDebug(void) {
+    return m_fileListForDebug;
 }
 
 bool SSDCmdBufferOutput::_folderExists(void) {
@@ -22,13 +48,13 @@ bool SSDCmdBufferOutput::_folderExists(void) {
 
 void SSDCmdBufferOutput::_createFolder(void) {
     if (!_folderExists()) {
-        if (mkdir(folderName) != 0) {
+        if (_mkdir(folderName) != 0) {
             throw runtime_error("Cannot create the buffer folder");
         }
     }
-    else {
-        throw runtime_error("buffer folder is already created");
-    }
+    //else {
+    //    throw runtime_error("buffer folder is already created");
+    //}
 }
 
 void SSDCmdBufferOutput::_clearFilesInFolder(void) {
@@ -53,16 +79,10 @@ void SSDCmdBufferOutput::_clearFilesInFolder(void) {
     FindClose(hFind);
 }
 
-void SSDCmdBufferOutput::_createFilesInFolder(void) {
-    string fileName = "";
-    string filePath = string(folderName) + "\\" + fileName;
-    ofstream file(filePath);
-    if (file.is_open()) {
-        file.close();
-    }
-    else {
-        throw runtime_error("Cannot create file");
-    }
-
+void SSDCmdBufferOutput::_storeFileNameForDebug(string fileName) {
+    m_fileListForDebug.emplace_back(fileName);
 }
 
+void SSDCmdBufferOutput::_clearFileNameForDebug(void) {
+    m_fileListForDebug.clear();
+}

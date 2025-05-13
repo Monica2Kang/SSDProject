@@ -10,15 +10,18 @@ public:
 	const int COMMAND_POS = 0;
 	const int LBA_POS = 1;
 	const int DATA_POS = 2;
+	const int SIZE_POS = 2;
 	const int FULLWRITE_DATA_POS = 1;
 	const int WRITE_PARAMETER_SIZE = 3;
 	const int READ_PARAMETER_SIZE = 2;
+	const int ERASE_PARAMETER_SIZE = 3;
 	const int EXIT_PARAMETER_SIZE = 1;
 	const int HELP_PARAMETER_SIZE = 1;
 	const int FULLWRITE_PARAMETER_SIZE = 2;
 	const int FULLREAD_PARAMETER_SIZE = 1;
 	const int PASS = 0;
 	const int FAIL = 1;
+	const int MAX_SIZE = 100;
 
 	Shell(ISSDAdapter* ISSDAdapter);
 	void executeShell(void);
@@ -27,6 +30,7 @@ public:
 	bool noEnterCommand(void);
 	bool writeApi(void);
 	bool readApi(void);
+	bool eraseApi(void);
 	bool exitApi(void);
 	bool helpApi(void);
 	bool fullwriteApi(void);
@@ -34,8 +38,10 @@ public:
 	bool isValidParameterSize(const int size);
 	bool isValidLBA(const int pos);
 	bool isValidData(const int pos);
+	bool isValidSize(const int pos);
 	void storeLBA(void);
 	void storeData(const int pos);
+	void storeSize(void);
 
 protected:
 	ISSDAdapter* m_ISSDAdapter;
@@ -44,4 +50,5 @@ protected:
 	std::vector<std::string> parameter;
 	int LBA;
 	int data;
+	int LBASize;
 };

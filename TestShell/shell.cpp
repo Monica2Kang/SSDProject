@@ -33,6 +33,9 @@ void Shell::executeShell(void) {
 		else if (parameter[COMMAND_POS] == "read") { // read 2
 			if (readApi()) continue;
 		}
+		else if (parameter[COMMAND_POS] == "erase") { // erase 2 1
+			if (eraseApi()) continue;
+		}
 		else if (parameter[COMMAND_POS] == "exit") { // exit
 			if (exitApi()) break;
 		}
@@ -196,6 +199,18 @@ bool Shell::readApi(void) {
 	return false;
 }
 
+bool Shell::eraseApi(void) {
+	if (isValidParameterSize(ERASE_PARAMETER_SIZE)) {
+		if (isValidLBA(LBA_POS)) {
+			storeLBA();
+			if (isValidSize(SIZE_POS)) {
+				storeSize();
+				// 여기서 adapter를 콜하면 size를 10개로 자르면서 SSD erase를 수행해야 한다.
+			}
+		}
+	}
+}
+
 bool Shell::exitApi(void) {
 	if (isValidParameterSize(EXIT_PARAMETER_SIZE)) {
 		return true;
@@ -209,6 +224,7 @@ bool Shell::helpApi(void) {
 		cout << "Minju Kang, Namwook Kang, Janghwan Kim, Jungyeon Kim" << endl;
 		cout << "write > write [LBA] [data]" << endl;
 		cout << "read > read [LBA]" << endl;
+		cout << "erase > erase [LBA] [SIZE]" << endl;
 		cout << "exit > End the program" << endl;
 		cout << "help > Show command guide" << endl;
 		cout << "fullwrite > fullwrite[data]" << endl;
@@ -287,10 +303,44 @@ bool Shell::isValidData(const int pos) {
 	return false;
 }
 
-void Shell::storeLBA(void) {
+bool Shell::isValidSize(const int pos) {
+	const string str = parameter[SIZE_POS];
+	int isDigitCount = 0;
+
+	if (!parameter[SIZE_POS].empty()) {
+		for (char ch : str) {
+			if (isdigit(ch)) {
+				isDigitCount++;
+			}
+		}
+	}
+
+	if (str.length() == isDigitCount) {
+		int tempSize = stoi(str);
+		if (tempSize != 0) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void Shell::storeLBA(void) { // 0 ~ 99
 	LBA = stoi(parameter[LBA_POS]);
 }
 
 void Shell::storeData(const int pos) {
 	data = static_cast<int>(stoul(parameter[pos], nullptr, 16));
+}
+
+void Shell::storeSize(void) {
+	int tempSize = stoi(parameter[SIZE_POS]); // 1 ~ INF
+	int totalSize = LBA + tempSize;
+
+	if (totalSize > MAX_SIZE) {
+		LBASize = MAX_SIZE - LBA;
+	}
+	else { // totalSize <= MAX_SIZE
+		LBASize = tempSize;
+	}
 }

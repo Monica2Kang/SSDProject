@@ -23,6 +23,7 @@ void Shell::executeShell(void) {
 
 		if (noEnterCommand()) {
 			cout << "INVALID COMMAND" << endl;
+			cout << endl;
 			continue;
 		}
 
@@ -32,11 +33,20 @@ void Shell::executeShell(void) {
 		else if (parameter[COMMAND_POS] == "read") { // read 2
 			if (readApi()) continue;
 		}
+		else if (parameter[COMMAND_POS] == "erase") { // erase 2 1
+			if (eraseApi()) continue;
+		}
+		else if (parameter[COMMAND_POS] == "erase_range") { // erase_range 0 99
+			if (eraseRangeApi()) continue;
+		}
 		else if (parameter[COMMAND_POS] == "exit") { // exit
 			if (exitApi()) break;
 		}
 		else if (parameter[COMMAND_POS] == "help") { // help AmazingReviewer jungyeonKim
 			if (helpApi()) continue;
+		}
+		else if (parameter[COMMAND_POS] == "flush") { // flush
+			if (flushApi()) continue;
 		}
 		else if (parameter[COMMAND_POS] == "fullwrite") { // fullwrite 0xAAAABBBB
 			if (fullwriteApi()) continue;
@@ -72,6 +82,7 @@ void Shell::executeShell(void) {
 		}
 
 		cout << "INVALID COMMAND" << endl;
+		cout << endl;
 	}
 }
 
@@ -97,12 +108,24 @@ void Shell::executeShell(void) {
 		if (readApi()) 
 			return;
 	}
+	else if (parameter[COMMAND_POS] == "erase") { // erase 2 1
+		if (eraseApi()) 
+			return;
+	}
+	else if (parameter[COMMAND_POS] == "erase_range") { // erase_range 0 99
+		if (eraseRangeApi()) 
+			return;
+	}
 	else if (parameter[COMMAND_POS] == "exit") { // exit
 		if (exitApi()) 
 			return;
 	}
 	else if (parameter[COMMAND_POS] == "help") { // help AmazingReviewer jungyeonKim
 		if (helpApi()) 
+			return;
+	}
+	else if (parameter[COMMAND_POS] == "flush") { // flush
+		if (flushApi()) 
 			return;
 	}
 	else if (parameter[COMMAND_POS] == "fullwrite") { // fullwrite 0xAAAABBBB
@@ -195,6 +218,33 @@ bool Shell::readApi(void) {
 	return false;
 }
 
+bool Shell::eraseApi(void) {
+	if (isValidParameterSize(ERASE_PARAMETER_SIZE)) {
+		if (isValidLBA(LBA_POS)) {
+			storeLBA();
+			if (isValidSize(SIZE_POS)) {
+				storeSize();
+				// cut max 10 size / call SSD E LBA SIZE
+				// m_ISSDAdapter->erase(int LBA, int size);
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+bool Shell::eraseRangeApi(void) {
+	if (isValidParameterSize(ERASE_PARAMETER_SIZE)) {
+		if (isValidLBA(LBA_POS) && isValidLBA(END_LBA_POS)) {
+			storeLBARange();
+			// LBA ~ endLBA / cut 10 size / call SSD E LBA SIZE
+			// m_ISSDAdapter->eraseRange(int startLBA, int endLBA);
+			return true;
+		}
+	}
+	return false;
+}
+
 bool Shell::exitApi(void) {
 	if (isValidParameterSize(EXIT_PARAMETER_SIZE)) {
 		return true;
@@ -208,10 +258,20 @@ bool Shell::helpApi(void) {
 		cout << "Minju Kang, Namwook Kang, Janghwan Kim, Jungyeon Kim" << endl;
 		cout << "write > write [LBA] [data]" << endl;
 		cout << "read > read [LBA]" << endl;
+		cout << "erase > erase [LBA] [SIZE]" << endl;
 		cout << "exit > End the program" << endl;
 		cout << "help > Show command guide" << endl;
 		cout << "fullwrite > fullwrite[data]" << endl;
 		cout << "fullread > fullread" << endl;
+		cout << endl;
+		return true;
+	}
+	return false;
+}
+
+bool Shell::flushApi(void) {
+	if (isValidParameterSize(FLUSH_PARAMETER_SIZE)) {
+		// m_ISSDAdapter->flush();
 		return true;
 	}
 	return false;
@@ -246,43 +306,88 @@ bool Shell::isValidParameterSize(const int size) {
 }
 
 bool Shell::isValidLBA(const int pos) {
-	if (parameter[pos].empty() || parameter[pos].length() > 2) {
-		return false;
-	}
+	const string str = parameter[pos];
+	int isDigitCount = 0;
 
-	for (char ch : parameter[pos]) {
-		if (!isdigit(ch)) {
-			return false;
+	if (!(str.empty()) && str.length() <= 2) {
+		for (char ch : str) {
+			if (isdigit(ch)) {
+				isDigitCount++;
+			}
 		}
 	}
 
-	return true;
+	if (str.length() == isDigitCount) {
+		return true;
+	}
+	
+	return false;
 }
 
 bool Shell::isValidData(const int pos) {
 	const string str = parameter[pos];
+	int hexTypeCount = 0;
 
-	if (str.empty() || str.length() != DATA_LENGTH) {
-		return false;
-	}
-
-	if (!(str[0] == '0' && str[1] == 'x')) {
-		return false;
-	}
-
-	for (int i = 2; i < DATA_LENGTH; i++) {
-		if (!((str[i] >= 'A' && str[i] <= 'F') || (str[i] >= '0' && str[i] <= '9'))) {
-			return false;
+	if (!str.empty() && str.length() == DATA_LENGTH) {
+		if (str[0] == '0' && str[1] == 'x') {
+			for (int i = 2; i < DATA_LENGTH; i++) {
+				if ((str[i] >= 'A' && str[i] <= 'F') || (str[i] >= '0' && str[i] <= '9')) {
+					hexTypeCount++;
+				}
+			}
 		}
 	}
 
-	return true;
+	if (hexTypeCount == 8) {
+		return true;
+	}
+
+	return false;
 }
 
-void Shell::storeLBA(void) {
+bool Shell::isValidSize(const int pos) {
+	const string str = parameter[SIZE_POS];
+	int isDigitCount = 0;
+
+	if (!parameter[SIZE_POS].empty()) {
+		for (char ch : str) {
+			if (isdigit(ch)) {
+				isDigitCount++;
+			}
+		}
+	}
+
+	if (str.length() == isDigitCount) {
+		int tempSize = stoi(str);
+		if (tempSize != 0) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void Shell::storeLBA(void) { // 0 ~ 99
 	LBA = stoi(parameter[LBA_POS]);
 }
 
 void Shell::storeData(const int pos) {
 	data = static_cast<int>(stoul(parameter[pos], nullptr, 16));
+}
+
+void Shell::storeSize(void) {
+	int tempSize = stoi(parameter[SIZE_POS]); // 1 ~ INF
+	int totalSize = LBA + tempSize;
+
+	if (totalSize > MAX_SIZE) {
+		LBASize = MAX_SIZE - LBA;
+	}
+	else { // totalSize <= MAX_SIZE
+		LBASize = tempSize;
+	}
+}
+
+void Shell::storeLBARange(void) {
+	LBA = stoi(parameter[LBA_POS]);
+	endLBA = stoi(parameter[END_LBA_POS]);
 }

@@ -7,7 +7,8 @@
 #include <filesystem>
 #include <sstream>
 #include <iomanip>
-
+#include <vector>
+#include <windows.h>
 using namespace std;
 
 void SSDAdapter::writeLba(const int lba, const int data)
@@ -17,12 +18,14 @@ void SSDAdapter::writeLba(const int lba, const int data)
     std::string argument = "W " + std::to_string(lba) + " " + ss.str();
 
     _ExecuteSSDCommand(argument);
-
-    _CheckExecutionResultFromSSDOutputFile();
 }
 
 int SSDAdapter::readLba(const int lba)
 {
+    std::string argument = "R " + std::to_string(lba);
+
+    _ExecuteSSDCommand(argument);
+
 	return _ReadDataFromSSDOutputFile();
 }
 
@@ -62,16 +65,24 @@ void SSDAdapter::fullRead(void)
 void SSDAdapter::_ExecuteSSDCommand(const std::string argument)
 {
     std::string exePath = "..\\x64\\Release\\SSD.exe";
-    std::string command = exePath + " " + argument;
+    std::string command = "\"" + exePath + "\" " + argument;
 
     
-    std::ifstream file(exePath);
-    if (file.good() == false) {
-        throw std::runtime_error("SSD Execution File Error - File not found.");
-
+    std::ifstream ssdFile(exePath);
+    if (ssdFile.good() == false) {
+        std::string exePath2 = ".\\SSD.exe";
+        std::ifstream ssdFile2(exePath2);
+        if (ssdFile2.good() == false)
+        {
+            throw std::runtime_error("SSD Execution File Error - File not found.");
+        }
+        else
+        {
+            command = "\"" + exePath2 + "\" " + argument;
+        }
     }
 
-    int result = system(command.c_str());
+    int result = std::system(command.c_str());
     if (result == 1)
     {
         throw std::runtime_error("SSD Execution File Error - File return error.");
@@ -89,7 +100,7 @@ int SSDAdapter::_ReadDataFromSSDOutputFile(void)
 
 string SSDAdapter::_CheckExecutionResultFromSSDOutputFile(void)
 {
-    std::string filePath = "..\\SSD\\ssd_output.txt";
+    std::string filePath = "ssd_output.txt";
 
     std::ifstream file(filePath);
     if (!file.is_open()) {

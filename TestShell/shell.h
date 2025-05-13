@@ -24,6 +24,7 @@ public:
 	const int PASS = 0;
 	const int FAIL = 1;
 	const int MAX_SIZE = 100;
+	const int CHUNK_SIZE = 10;
 
 	Shell(ISSDAdapter* ISSDAdapter);
 	void executeShell(void);
@@ -46,6 +47,7 @@ private:
 	bool writeApi(void);
 	bool readApi(void);
 	bool eraseApi(void);
+	void splitErase(void);
 	bool eraseRangeApi(void);
 	bool exitApi(void);
 	bool helpApi(void);

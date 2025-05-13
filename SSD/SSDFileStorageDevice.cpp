@@ -39,7 +39,7 @@ bool SSDFileStorageDevice::readData(const int lba, int& data) {
 bool SSDFileStorageDevice::removeFile(void) {
     fileHandle.close();
     if (0 == std::remove(static_cast<const char*>(filename.c_str()))) {
-        std::cout << filename << " file is deleted." << std::endl;
+        // std::cout << filename << " file is deleted." << std::endl;
     }
     fileHandle.open(filename, std::ios::in | std::ios::out | std::ios::binary);
     return !fileHandle.is_open();
@@ -65,9 +65,9 @@ bool SSDFileStorageDevice::_openFile(void) {
 
 void SSDFileStorageDevice::_createFile(void) {
     std::ofstream create_file(filename, std::ios::binary);
-    std::vector<int> cellData(maxLbaCapacity + maxMapCapacity , 0);
+    std::vector<int> cellData(maxLbaCapacity + maxMapCapacity, 0);
     create_file.write(reinterpret_cast<const char*>(cellData.data()), cellData.size());
-    std::cout << filename << " file is created." << std::endl;
+    //std::cout << filename << " file is created." << std::endl;
     create_file.close();
 }
 

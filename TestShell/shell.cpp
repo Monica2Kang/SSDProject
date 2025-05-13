@@ -5,6 +5,7 @@
 #include <string>
 #include <cctype>
 #include <iomanip>
+#include <algorithm>
 #include "shell.h"
 
 using namespace std;
@@ -225,7 +226,17 @@ bool Shell::eraseApi(void) {
 			if (isValidSize(SIZE_POS)) {
 				storeSize();
 				// cut max 10 size / call SSD E LBA SIZE
-				m_ISSDAdapter->erase(LBA, LBASize);
+				int start = LBA;
+				int restSize = LBASize;
+
+				while (restSize > 0) {
+					int eraseSize = std::min(restSize, CHUNK_SIZE);
+					m_ISSDAdapter->erase(start, eraseSize);
+					cout << "erase " << dec << start << " " << dec << eraseSize << endl;
+					start += eraseSize;
+					restSize -= eraseSize;
+				}
+
 				return true;
 			}
 		}

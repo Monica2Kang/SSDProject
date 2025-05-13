@@ -24,6 +24,7 @@ public:
 	const int PASS = 0;
 	const int FAIL = 1;
 	const int MAX_SIZE = 100;
+	const int CHUNK_SIZE = 10;
 
 	Shell(ISSDAdapter* ISSDAdapter);
 	void executeShell(void);

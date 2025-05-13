@@ -124,6 +124,10 @@ void Shell::executeShell(void) {
 		if (helpApi()) 
 			return;
 	}
+	else if (parameter[COMMAND_POS] == "flush") { // flush
+		if (flushApi()) 
+			return;
+	}
 	else if (parameter[COMMAND_POS] == "fullwrite") { // fullwrite 0xAAAABBBB
 		if (fullwriteApi()) 
 			return;

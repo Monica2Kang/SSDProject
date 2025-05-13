@@ -225,23 +225,25 @@ bool Shell::eraseApi(void) {
 			storeLBA();
 			if (isValidSize(SIZE_POS)) {
 				storeSize();
-				// cut max 10 size / call SSD E LBA SIZE
-				int start = LBA;
-				int restSize = LBASize;
-
-				while (restSize > 0) {
-					int eraseSize = std::min(restSize, CHUNK_SIZE);
-					m_ISSDAdapter->erase(start, eraseSize);
-					cout << "erase " << dec << start << " " << dec << eraseSize << endl;
-					start += eraseSize;
-					restSize -= eraseSize;
-				}
-
+				splitErase();
 				return true;
 			}
 		}
 	}
 	return false;
+}
+
+void Shell::splitErase(void)
+{
+	int start = LBA;
+	int restSize = LBASize;
+
+	while (restSize > 0) {
+		int eraseSize = std::min(restSize, CHUNK_SIZE);
+		m_ISSDAdapter->erase(start, eraseSize);
+		start += eraseSize;
+		restSize -= eraseSize;
+	}
 }
 
 bool Shell::eraseRangeApi(void) {

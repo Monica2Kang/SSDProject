@@ -47,6 +47,7 @@ private:
 	bool writeApi(void);
 	bool readApi(void);
 	bool eraseApi(void);
+	void splitErase(void);
 	bool eraseRangeApi(void);
 	bool exitApi(void);
 	bool helpApi(void);

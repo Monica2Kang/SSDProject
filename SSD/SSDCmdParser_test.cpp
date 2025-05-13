@@ -128,3 +128,12 @@ TEST_F(SSDCmdParserFixture, EraseFailOutOfRange2) {
     bool expected = PARSING_FAILED;
     EXPECT_EQ(expected, actual);
 }
+
+TEST_F(SSDCmdParserFixture, FlushSuccess) {
+    const char* argv[] = { EXE_FILE_NAME, FLUSH_COMMAND};
+    int argc = sizeof(argv) / sizeof(argv[0]);
+
+    bool actual = parser.checkParsing(argc, argv);
+    bool expected = PARSING_SUCCESS;
+    EXPECT_EQ(expected, actual);
+}

@@ -16,7 +16,7 @@ bool SSDCmdParser::checkParsing(int argc, const char* argv[]) {
 
     //parse each tokens
     string command = tokens[1];
-    int lba = std::stoi(tokens[2]);
+    int lba = (tokens.size() > VALID_COMMAND_SIZE) ? std::stoi(tokens[2]) : 0;
 
     if (command == "W") {
         string value = tokens[3];
@@ -54,4 +54,3 @@ bool SSDCmdParser::checkParsing(int argc, const char* argv[]) {
     }
     return PARSING_FAILED;
 }
-

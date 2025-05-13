@@ -17,6 +17,6 @@ public:
 
 private:
     SSDDevice m_device;
-    static const int VALID_COMMAND_SIZE = 3;
+    static const int VALID_COMMAND_SIZE = 2;
     static const int MAX_LBA = 100;
 };

@@ -96,6 +96,19 @@ TEST_F(SSDAdapterFixture, WriteAndVerifyTest) {
 	EXPECT_NO_THROW();
 }
 
+TEST_F(SSDAdapterFixture, OverWriteAndVerifyTest) {
+	const int writeLba = 0;
+	const int firstData = 0xDEADBEEF;
+
+	ssdAdpater.writeLba(writeLba, firstData);
+	ssdAdpater.writeLba(writeLba, DEFAULT_DATA);
+
+	int expectedValue = ssdAdpater.readLba(writeLba);
+
+	EXPECT_EQ(expectedValue, DEFAULT_DATA);
+	EXPECT_NO_THROW();
+}
+
 TEST_F(SSDAdapterFixture, AdpaterTestFullWrite) {
 	ssdAdpater.fullWrite(DEFAULT_DATA);
 

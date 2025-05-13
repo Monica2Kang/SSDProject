@@ -44,7 +44,7 @@ bool SSDCmdParser::checkParsing(int argc, const char* argv[]) {
             return PARSING_FAILED;
         }
         
-        //m_device.eraseData(LBA, size);
+        m_device.eraseData(lba, size);
         return PARSING_SUCCESS;
     }
     

@@ -28,6 +28,11 @@ int SSDDevice::readData(const int lba) {
     return data;
 }
 
+void SSDDevice::printError(void) {
+    SSDFileOutput fLog;
+    fLog.logError();
+}
+
 void SSDDevice::writeData(const int lba, const int data) {
     if (isLbaOutOfRange(lba)) throw std::invalid_argument("Out of LBA Range.");
     fSsd.writeData(lba, data);

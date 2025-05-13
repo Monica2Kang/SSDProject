@@ -5,9 +5,9 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #endif
-#include "SSDCmdBuffer.h"
+#include "SSDBufferOutput.h"
 
-SSDCmdBuffer::SSDCmdBuffer() {
+SSDBufferOutput::SSDBufferOutput() {
     // file open with overwrite mode
     if (mkdir(folderName) != 0) {
         throw std::runtime_error("Cannot create the folder");
@@ -22,7 +22,7 @@ SSDCmdBuffer::SSDCmdBuffer() {
     }
 }
 
-SSDCmdBuffer::~SSDCmdBuffer() {
+SSDBufferOutput::~SSDBufferOutput() {
     for (int index = 0; index < MAX_FILE_COUNT; index++) {
         std::string fileName = std::string(folderName) + "/" + std::to_string(index) + "_" + fileEmptyName;        
         if (outfile.is_open()) {

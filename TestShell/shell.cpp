@@ -36,6 +36,9 @@ void Shell::executeShell(void) {
 		else if (parameter[COMMAND_POS] == "erase") { // erase 2 1
 			if (eraseApi()) continue;
 		}
+		else if (parameter[COMMAND_POS] == "erase_range") { // erase_range 0 99
+			if (eraseRangeApi()) continue;
+		}
 		else if (parameter[COMMAND_POS] == "exit") { // exit
 			if (exitApi()) break;
 		}
@@ -76,6 +79,7 @@ void Shell::executeShell(void) {
 		}
 
 		cout << "INVALID COMMAND" << endl;
+		cout << endl;
 	}
 }
 
@@ -99,6 +103,14 @@ void Shell::executeShell(void) {
 	}
 	else if (parameter[COMMAND_POS] == "read") { // read 2
 		if (readApi()) 
+			return;
+	}
+	else if (parameter[COMMAND_POS] == "erase") { // erase 2 1
+		if (eraseApi()) 
+			return;
+	}
+	else if (parameter[COMMAND_POS] == "erase_range") { // erase_range 0 99
+		if (eraseRangeApi()) 
 			return;
 	}
 	else if (parameter[COMMAND_POS] == "exit") { // exit
@@ -205,8 +217,17 @@ bool Shell::eraseApi(void) {
 			storeLBA();
 			if (isValidSize(SIZE_POS)) {
 				storeSize();
-				// 여기서 adapter를 콜하면 size를 10개로 자르면서 SSD erase를 수행해야 한다.
+				// 여기서 size를 최대 10개씩 자르면서 SSD erase를 수행해야 한다.
 			}
+		}
+	}
+}
+
+bool Shell::eraseRangeApi(void) {
+	if (isValidParameterSize(ERASE_PARAMETER_SIZE)) {
+		if (isValidLBA(LBA_POS) && isValidLBA(END_LBA_POS)) {
+			storeLBARange();
+			// 여기서 LBA ~ endLBA까지 최대 10개씩 자르면서 SSD erase를 수행해야 한다.
 		}
 	}
 }
@@ -343,4 +364,9 @@ void Shell::storeSize(void) {
 	else { // totalSize <= MAX_SIZE
 		LBASize = tempSize;
 	}
+}
+
+void Shell::storeLBARange(void) {
+	LBA = stoi(parameter[LBA_POS]);
+	endLBA = stoi(parameter[END_LBA_POS]);
 }

@@ -9,6 +9,7 @@ public:
 	const int DATA_LENGTH = 10;
 	const int COMMAND_POS = 0;
 	const int LBA_POS = 1;
+	const int END_LBA_POS = 2;
 	const int DATA_POS = 2;
 	const int SIZE_POS = 2;
 	const int FULLWRITE_DATA_POS = 1;
@@ -31,6 +32,7 @@ public:
 	bool writeApi(void);
 	bool readApi(void);
 	bool eraseApi(void);
+	bool eraseRangeApi(void);
 	bool exitApi(void);
 	bool helpApi(void);
 	bool fullwriteApi(void);
@@ -42,6 +44,7 @@ public:
 	void storeLBA(void);
 	void storeData(const int pos);
 	void storeSize(void);
+	void storeLBARange(void);
 
 protected:
 	ISSDAdapter* m_ISSDAdapter;
@@ -51,4 +54,5 @@ protected:
 	int LBA;
 	int data;
 	int LBASize;
+	int endLBA;
 };

@@ -241,6 +241,7 @@ void Shell::splitErase(void)
 	while (restSize > 0) {
 		int eraseSize = std::min(restSize, CHUNK_SIZE);
 		m_ISSDAdapter->erase(start, eraseSize);
+
 		start += eraseSize;
 		restSize -= eraseSize;
 	}
@@ -250,8 +251,7 @@ bool Shell::eraseRangeApi(void) {
 	if (isValidParameterSize(ERASE_PARAMETER_SIZE)) {
 		if (isValidLBA(LBA_POS) && isValidLBA(END_LBA_POS)) {
 			storeLBARange();
-			// LBA ~ endLBA / cut 10 size / call SSD E LBA SIZE
-			// m_ISSDAdapter->eraseRange(int startLBA, int endLBA);
+			splitErase();
 			return true;
 		}
 	}
@@ -403,4 +403,5 @@ void Shell::storeSize(void) {
 void Shell::storeLBARange(void) {
 	LBA = stoi(parameter[LBA_POS]);
 	endLBA = stoi(parameter[END_LBA_POS]);
+	LBASize = endLBA - LBA + 1;
 }

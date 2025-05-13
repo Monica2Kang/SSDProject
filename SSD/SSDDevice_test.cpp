@@ -83,12 +83,12 @@ protected:
     };
 
     const vector<LBA_RANGE> eraseLbaRanges = {
-        {0, static_cast<int>(0), false },
+        {0, static_cast<int>(0), true },
         {1, static_cast<int>(10), true },
         {32, static_cast<int>(11), false },
         {57, static_cast<int>(3), true },
         {89, static_cast<int>(5), true },
-        {99, static_cast<int>(5), true },
+        {99, static_cast<int>(0), true },
         {100, static_cast<int>(5), false },
         {101, static_cast<int>(5), false },
         {-1, static_cast<int>(5), false },

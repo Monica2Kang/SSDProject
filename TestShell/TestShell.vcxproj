@@ -137,12 +137,14 @@
     <ClCompile Include="SSDAdapter_test.cpp" />
     <ClCompile Include="TestScript.cpp" />
     <ClCompile Include="TestScript_test.cpp" />
+    <ClCompile Include="TestShellLogger_test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ISSDAdapter.h" />
     <ClInclude Include="shell.h" />
     <ClInclude Include="SSDAdapter.h" />
     <ClInclude Include="TestScript.h" />
+    <ClInclude Include="TestShellLogger.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

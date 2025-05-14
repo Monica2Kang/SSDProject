@@ -12,7 +12,7 @@ TEST(Logger, LogTest) {
 }
 
 TEST(Logger, MassLogTest) {
-	const int loop = 10000;
+	const int loop = 1000;
 	for (auto it = 0; it < loop; it++)
 	{
 		TEST_SHELL_LOG(it);

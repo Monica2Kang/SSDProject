@@ -12,6 +12,7 @@ public:
 	MOCK_METHOD(void, erase, (const int lba, const int size), (override));
 	MOCK_METHOD(void, fullWrite, (const int data), (override));
 	MOCK_METHOD(void, fullRead, (), (override));
+	MOCK_METHOD(void, flush, (), (override));
 };
 
 class SSDAdapterFixture : public Test {

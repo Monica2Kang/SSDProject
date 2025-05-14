@@ -6,7 +6,8 @@
 #include <iomanip>
 #include <chrono>
 #include <ctime>
-#include <mutex>
+#include <thread>
+#include "FileManager.h"
 
 #define TEST_SHELL_LOG(...) Logger::getInstance().log(__FUNCTION__, __VA_ARGS__)
 
@@ -17,21 +18,57 @@ public:
         return instance;
     }
 
+    void Initialize(void) {
+        bool bexist = FILE_MANAGER.fileExists(logFilePath);
+        if (bexist == true)
+        {
+            FILE_MANAGER.removeFileIfExists(logFilePath);
+        }
+
+        FILE_MANAGER.createFile(logFilePath);
+    }
+
     void log(const std::string& functionName, const std::string& message) {
+
+        // Logging
+        saveLog(functionName, message);
+
+        // Check size and rotate log file
+        checkSizeAndRotateLogFile();
+    }
+
+    void saveLog(const std::string& functionName, const std::string& message)
+    {
+        if (bInitialize == false)
+        {
+            Initialize();
+            bInitialize = true;
+        }
+
         std::ostringstream oss;
         oss << getCurrentTime() << " "
-            << std::left << std::setw(NAME_SIZE) << (functionName + "()")
+            << std::left << std::setw(LOG_CLASS_NAME_SIZE) << (functionName + "()")
             << " : " << message;
 
         std::string logLine = oss.str();
-        {
-            std::ofstream ofs(logFilePath, std::ios::app);
-            if (ofs.is_open()) {
-                ofs << logLine << std::endl;
-            }
-        }
+        FILE_MANAGER.appendLine(logFilePath, logLine);
+    }
 
-        rotateLogFileIfNeeded();
+    void checkSizeAndRotateLogFile()
+    {
+        // check size and rotate
+        std::string rotatedPath = generateRotatedFileName();
+        bool bRotate = FILE_MANAGER.checkSizeAndRotate(logFilePath, rotatedPath, MAX_LOG_FILE_SIZE);
+        if (bRotate == true)
+        {
+            if (previousFilePath.empty() == false)
+            {
+                std::string zipPath = generateZipFileName(previousFilePath);
+                FILE_MANAGER.renameFile(previousFilePath, zipPath);
+            }
+
+            previousFilePath = rotatedPath;
+        }
     }
 
     void log(const std::string& functionName, int v1) {
@@ -53,8 +90,11 @@ private:
     Logger() = default;
 
     std::string logFilePath = "latest.log";
-    const int MAX_SIZE = 10 * 1024; // 10KB
-    const int NAME_SIZE = 30;
+    std::string previousFilePath = "";
+
+    const int MAX_LOG_FILE_SIZE = 10 * 1024; // 10KB
+    const int LOG_CLASS_NAME_SIZE = 30;
+    bool bInitialize = false;
 
     std::string getCurrentTime() {
         auto now = std::chrono::system_clock::now();
@@ -70,12 +110,6 @@ private:
             << std::setw(2) << tm.tm_hour << ":"
             << std::setw(2) << tm.tm_min << "]";
         return oss.str();
-    }
-
-    std::size_t getFileSize(const std::string& filename) {
-        std::ifstream in(filename, std::ios::binary | std::ios::ate);
-        if (!in.is_open()) return 0;
-        return static_cast<std::size_t>(in.tellg());
     }
 
     std::string generateRotatedFileName() {
@@ -95,12 +129,9 @@ private:
         return oss.str();
     }
 
-    void rotateLogFileIfNeeded() {
-        if (logFilePath.empty() || getFileSize(logFilePath) < MAX_SIZE)
-            return;
-
-        std::string rotatedPath = generateRotatedFileName();
-        std::rename(logFilePath.c_str(), rotatedPath.c_str());
-        std::ofstream(logFilePath).close(); // 💡 optionally recreate empty log file immediately
+    std::string generateZipFileName(const std::string path) {
+        size_t dotPos = path.find_last_of('.');
+        if (dotPos == std::string::npos) return path + ".zip";
+        return path.substr(0, dotPos) + ".zip";
     }
 };

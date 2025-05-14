@@ -140,6 +140,7 @@
     <ClCompile Include="TestShellLogger_test.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="FileManager.h" />
     <ClInclude Include="ISSDAdapter.h" />
     <ClInclude Include="shell.h" />
     <ClInclude Include="SSDAdapter.h" />

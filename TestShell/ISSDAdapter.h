@@ -6,4 +6,5 @@ public:
 	virtual void erase(const int lba, const int size) = 0;
 	virtual void fullWrite(const int data) = 0;
 	virtual void fullRead(void) = 0;
+	virtual void flush(void) = 0;
 };

@@ -211,7 +211,7 @@ bool Shell::readApi(void) {
 		if (isValidLBA(LBA_POS)) {
 			storeLBA();
 			int printData = m_ISSDAdapter->readLba(LBA);
-			cout << "[Read] LBA " << LBA << " : 0x" << uppercase << setfill('0') << setw(8) << hex << printData << endl;
+			cout << "[Read] LBA " << dec << LBA << " : 0x" << uppercase << setfill('0') << setw(8) << hex << printData << endl;
 			cout << endl;
 			return true;
 		}

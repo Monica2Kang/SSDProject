@@ -363,8 +363,9 @@ bool Shell::isValidSize(const int pos) {
 	int isDigitCount = 0;
 
 	if (!parameter[SIZE_POS].empty()) {
-		for (char ch : str) {
-			if (isdigit(ch)) {
+		for (int i = 0; i < str.length(); i++){
+			char ch = str[i];
+			if (isdigit(ch) || (ch == '-' && i == 0)) {
 				isDigitCount++;
 			}
 		}
@@ -389,15 +390,17 @@ void Shell::storeData(const int pos) {
 }
 
 void Shell::storeSize(void) {
-	int tempSize = stoi(parameter[SIZE_POS]); // 1 ~ INF
-	int totalSize = LBA + tempSize;
+	int tempSize = stoi(parameter[SIZE_POS]); // -INF ~ -1 || 1 ~ INF
 
-	if (totalSize > MAX_SIZE) {
-		LBASize = MAX_SIZE - LBA;
+	// -INF ~ -1
+	if (tempSize < 0) {
+		LBASize = abs(tempSize);
+		LBA = std::max(0, LBA - LBASize + 1);
+		return;
 	}
-	else { // totalSize <= MAX_SIZE
-		LBASize = tempSize;
-	}
+
+	// 1 ~ INF (normal size case, exceeded size case )
+	LBASize = std::min(tempSize, MAX_SIZE - LBA);
 }
 
 void Shell::storeLBARange(void) {

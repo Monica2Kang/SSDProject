@@ -45,7 +45,7 @@ public:
         return false;
     }
 
-#if 0
+#if 1  // 향후 SSDParser_test.cpp에 포함 예정.
     bool containsValue(int value) const {
         std::ifstream infile(FILE_NAME_OUTPUT);
         if (!infile.is_open()) {
@@ -110,9 +110,6 @@ TEST_F(SSDDeviceFixture, ssdReadDataTC) {
     ssd.reinitializeFile();
     EXPECT_THROW(ssd.readData(-1), invalid_argument);
     EXPECT_THROW(ssd.readData(0), exception);
-    //ssd.writeData(0, 0);
-    //int actual = ssd.readData(0);
-    //EXPECT_EQ(0, actual);
 }
 
 TEST_F(SSDDeviceFixture, ssdReadDataTC4LBAInRange) {
@@ -183,8 +180,8 @@ TEST_F(SSDDeviceFixture, ssdReadDataTC4UntouchedLba) {
     }
 }
 
-#if 0
-TEST_F(SSDDeviceFixture, ssdReadDataTC4FileOutputCheckData) {
+#if 1
+TEST_F(SSDDeviceFixture, DISABLED_ssdReadDataTC4FileOutputCheckData) {
     for (LBA_DATA lba_data : inRangeLbaDatas) {
         ssd.writeData(lba_data.lba, lba_data.data);
         unsigned int actual = ssd.readData(lba_data.lba);
@@ -193,7 +190,7 @@ TEST_F(SSDDeviceFixture, ssdReadDataTC4FileOutputCheckData) {
     }
 }
 
-TEST_F(SSDDeviceFixture, ssdReadDataTC4FileOutputCheckUntouched) {
+TEST_F(SSDDeviceFixture, DISABLED_ssdReadDataTC4FileOutputCheckUntouched) {
     ssd.reinitializeFile();
     for (auto inRangeLbaData : inRangeLbaDatas) {
         EXPECT_THROW(ssd.readData(inRangeLbaData.lba), exception);
@@ -201,7 +198,7 @@ TEST_F(SSDDeviceFixture, ssdReadDataTC4FileOutputCheckUntouched) {
     }
 }
 
-TEST_F(SSDDeviceFixture, ssdReadDataTC4FileOutputCheckError) {
+TEST_F(SSDDeviceFixture, DISABLED_ssdReadDataTC4FileOutputCheckError) {
     ssd.reinitializeFile();
     vector<int> lba = { 100, 101, 110, 253, 337, 1553, 25675 };
     for (int addr : lba) {
@@ -210,7 +207,7 @@ TEST_F(SSDDeviceFixture, ssdReadDataTC4FileOutputCheckError) {
     }
 }
 
-TEST_F(SSDDeviceFixture, ssdReadDataTC4FileOutputCheckForcedError) {
+TEST_F(SSDDeviceFixture, DISABLED_ssdReadDataTC4FileOutputCheckForcedError) {
     for (LBA_DATA lba_data : inRangeLbaDatas) {
         ssd.writeData(lba_data.lba, lba_data.data);
         unsigned int actual = ssd.readData(lba_data.lba);

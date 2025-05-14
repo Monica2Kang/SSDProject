@@ -4,11 +4,12 @@
 
 SSDDevice::SSDDevice() {
     _initializeCellData();
-    fSsd.openFile();
+    SSD_FILE_STORAGE_DEVICE.createFile();
+    //SSD_FILE_STORAGE_DEVICE.openFile();
 }
 
 SSDDevice::~SSDDevice() {
-    fSsd.closeFile();
+    SSD_FILE_STORAGE_DEVICE.closeFile();
 }
 
 unsigned int SSDDevice::readData(const int lba) {
@@ -16,7 +17,7 @@ unsigned int SSDDevice::readData(const int lba) {
         throw std::invalid_argument("Out of LBA Range.");
     }
     unsigned int data = 0;
-    if (false == fSsd.readData(lba, data)) {
+    if (false == SSD_FILE_STORAGE_DEVICE.readData(lba, data)) {
         throw std::exception("Untouched Data.");
     }
     return data;
@@ -30,7 +31,7 @@ void SSDDevice::writeData(const int lba, const unsigned int data) {
     if (_isLbaOutOfRange(lba)) {
         throw std::invalid_argument("Out of LBA Range.");
     }
-    fSsd.writeData(lba, data);
+    SSD_FILE_STORAGE_DEVICE.writeData(lba, data);
     cellData[lba] = data;
 }
 
@@ -43,19 +44,19 @@ void SSDDevice::eraseData(const int lba, const int range) {
     }
 
     for (int curLba = lba; curLba < lba + range; curLba++)
-        fSsd.writeData(curLba, 0x00);
+        SSD_FILE_STORAGE_DEVICE.writeData(curLba, 0x00);
 }
 
 void SSDDevice::reinitializeFile(void) {
-    fSsd.removeFile();
-    fSsd.createFile();
-    //fSsd.openFile();
+    SSD_FILE_STORAGE_DEVICE.removeFile();
+    SSD_FILE_STORAGE_DEVICE.createFile();
+    //SSD_FILE_STORAGE_DEVICE.openFile();
 }
 
 void SSDDevice::_initializeCellData(void) {
     for (int lba = 0; lba < LBA_UPPER_LIMIT; lba++) {
         cellData[lba] = 0;
-        fSsd.writeData(lba, 0);
+        SSD_FILE_STORAGE_DEVICE.writeData(lba, 0);
     }
 }
 

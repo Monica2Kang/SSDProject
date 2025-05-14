@@ -37,5 +37,5 @@ private:
 
     const char* FILE_NAME = "ssd_nand.txt";
     int cellData[LBA_CAPACITY];
-    SSDFileStorageDevice fSsd{ FILE_NAME, LBA_CAPACITY };
+    //SSDFileStorageDevice fSsd{ FILE_NAME, LBA_CAPACITY };
 };

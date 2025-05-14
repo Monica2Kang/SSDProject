@@ -16,7 +16,7 @@ bool SSDFileStorageDevice::openFile(void) {
     return _openFile();
 }
 
-bool SSDFileStorageDevice::writeData(const int lba, const int data) {
+bool SSDFileStorageDevice::writeData(const int lba, const unsigned int data) {
     if (_checkLbaBoundary(lba))
         return false;
     if (!_isFileOpened())

@@ -32,7 +32,7 @@ void SSDDevice::printError(void) {
     fLog.printError();
 }
 
-void SSDDevice::writeData(const int lba, const int data) {
+void SSDDevice::writeData(const int lba, const unsigned int data) {
     SSDFileOutput fOutput;
     if (_isLbaOutOfRange(lba)) {
         fOutput.printError();

@@ -11,7 +11,7 @@ public:
     bool openFile(void);
     void closeFile(void);
 
-    bool writeData(const int lba, const int data);
+    bool writeData(const int lba, const unsigned int data);
     bool readData(const int lba, int &data);
     bool removeFile(void);
 

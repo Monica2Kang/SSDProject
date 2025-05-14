@@ -13,6 +13,8 @@
 #include <thread>
 #include <sys/stat.h>
 #include <cstring>
+
+#define NOMINMAX 
 #include <windows.h>
 
 #define FILE_MANAGER FileManager::getInstance()

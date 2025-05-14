@@ -26,14 +26,31 @@ bool SSDCmdParser::checkParsing(int argc, const char* argv[]) {
             return PARSING_FAILED; 
         }
 
-        int hexValue = static_cast<int>(std::stoul(value, nullptr, 16));
-        m_device.writeData(lba, hexValue);
-        return PARSING_SUCCESS;
+        try {
+            unsigned int hexValue = static_cast<unsigned int>(std::stoul(value, nullptr, 16));
+            m_device.writeData(lba, hexValue);
+            return PARSING_SUCCESS;
+        }
+        catch (invalid_argument& e){
+            m_fileOutput.printError();
+            return PARSING_FAILED;
+        }
     }
 
     if (command == "R") {
-        m_device.readData(lba);
-        return PARSING_SUCCESS;
+        try {
+            unsigned int outputData = m_device.readData(lba);
+            m_fileOutput.printData(outputData);
+            return PARSING_SUCCESS;
+        }
+        catch (invalid_argument& e){
+            m_fileOutput.printError();
+            return PARSING_FAILED;
+        }
+        catch (exception& e){
+            m_fileOutput.printData(0x0);
+            return PARSING_FAILED;
+        }
     }
 
     if (command == "E") {
@@ -45,8 +62,14 @@ bool SSDCmdParser::checkParsing(int argc, const char* argv[]) {
             return PARSING_FAILED;
         }
         
-        m_device.eraseData(lba, size);
-        return PARSING_SUCCESS;
+        try {
+            m_device.eraseData(lba, size);
+            return PARSING_SUCCESS;
+        }
+        catch (invalid_argument& e) {
+            m_fileOutput.printError();
+            return PARSING_FAILED;
+        }
     }
     
     if (command == "F") {

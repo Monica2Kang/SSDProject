@@ -92,7 +92,7 @@ private:
     std::string logFilePath = "latest.log";
     std::string previousFilePath = "";
 
-    const int MAX_LOG_FILE_SIZE = 10 * 1024; // 10KB
+    const int MAX_LOG_FILE_SIZE = 10 * 1024 - 100; // 10KB - 마지막 문자열 (100B)
     const int LOG_CLASS_NAME_SIZE = 30;
     bool bInitialize = false;
 

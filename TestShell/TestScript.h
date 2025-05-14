@@ -23,11 +23,13 @@ public:
 	int writeReadAging(void);
 	int eraseAndWriteAging(void);
 
+	void executeRunner(const string str);
+
 private:
 	ISSDAdapter* ssdAdapter;
 	string inputTestScript;
 	string ScriptFilePath;
-
+	
 	bool _checkTestExist();
 	int _excuteTest();
 

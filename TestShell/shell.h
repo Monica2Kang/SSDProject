@@ -21,6 +21,7 @@ public:
 	const int FLUSH_PARAMETER_SIZE = 1;
 	const int FULLWRITE_PARAMETER_SIZE = 2;
 	const int FULLREAD_PARAMETER_SIZE = 1;
+	const int TEST_SCRIPT_PARAMETER_SIZE = 1;
 	const int PASS = 0;
 	const int FAIL = 1;
 	const int MAX_SIZE = 100;
@@ -56,6 +57,7 @@ private:
 	bool fullwriteApi(void);
 	bool fullreadApi(void);
 	void fulleraseApi(void);
+	bool testScriptApi(void);
 	bool isValidParameterSize(const int size);
 	bool isValidLBA(const int pos);
 	bool isValidData(const int pos);

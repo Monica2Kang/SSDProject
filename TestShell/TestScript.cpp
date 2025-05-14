@@ -14,6 +14,11 @@ TestScript::TestScript(ISSDAdapter* ISSDAdapter) : ssdAdapter(ISSDAdapter)
 {
 }
 
+bool TestScript::isValidScenarioName(const string str) {
+	inputTestScript = str;
+	return _checkTestExist();
+}
+
 int TestScript::runTest(const string str) {
 	inputTestScript= str;
 	if (_checkTestExist()) {

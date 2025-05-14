@@ -105,10 +105,13 @@ void Shell::setCommand(string command)
 }
 #else
 void Shell::executeShell(void) {
-	cout << "==============================================================" << endl;
-	cout << "=        Test Shell (Team Amazing Reviewer)                  =" << endl;
-	cout << "==============================================================" << endl;
-	cout << endl;
+
+#ifndef _DEBUG
+		cout << "==============================================================" << endl;
+		cout << "=        Test Shell (Team Amazing Reviewer)                  =" << endl;
+		cout << "==============================================================" << endl;
+		cout << endl;
+#endif
 
 	splitAndStore();
 

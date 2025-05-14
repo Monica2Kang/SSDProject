@@ -10,6 +10,8 @@
 #include <iomanip>
 #include <vector>
 
+#define OP_SUPPORT_PERF_ENHANCED (1)
+
 using namespace std;
 
 void SSDAdapter::writeLba(const int lba, const int data)
@@ -113,6 +115,7 @@ void SSDAdapter::flush(void) {
 	_executeSSDCommand(argument);
 }
 
+#if (OP_SUPPORT_PERF_ENHANCED == 0)
 void SSDAdapter::_executeSSDCommand(const std::string argument)
 {
 	TEST_SHELL_LOG(argument);
@@ -141,6 +144,47 @@ void SSDAdapter::_executeSSDCommand(const std::string argument)
 		throw std::runtime_error("SSD Execution File Error - File return error.");
 	}
 }
+#else
+void SSDAdapter::_executeSSDCommand(const std::string argument) {
+	std::string exePath = "..\\x64\\Release\\SSD.exe";
+	std::string fullCommand = "\"" + exePath + "\" " + argument;
+
+	STARTUPINFOA si;
+	PROCESS_INFORMATION pi;
+	ZeroMemory(&si, sizeof(si));
+	si.cb = sizeof(si);
+	ZeroMemory(&pi, sizeof(pi));
+
+	// CreateProcessA modifies the command buffer, so make a writable copy
+	char* commandBuffer = new char[fullCommand.size() + 1];
+	strcpy_s(commandBuffer, fullCommand.size() + 1, fullCommand.c_str());
+
+	if (!CreateProcessA(
+		nullptr,           // No module name (use command line)
+		commandBuffer,     // Command line
+		nullptr,           // Process handle not inheritable
+		nullptr,           // Thread handle not inheritable
+		FALSE,             // Set handle inheritance to FALSE
+		0,                 // No creation flags
+		nullptr,           // Use parent's environment block
+		nullptr,           // Use parent's starting directory 
+		&si,               // Pointer to STARTUPINFO structure
+		&pi)               // Pointer to PROCESS_INFORMATION structure
+		) {
+		delete[] commandBuffer;
+		throw std::runtime_error("CreateProcess failed with error: " + std::to_string(GetLastError()));
+	}
+
+	// Wait until child process exits.
+	WaitForSingleObject(pi.hProcess, INFINITE);
+
+	// Close process and thread handles. 
+	CloseHandle(pi.hProcess);
+	CloseHandle(pi.hThread);
+	delete[] commandBuffer;
+}
+#endif
+
 
 int SSDAdapter::_readDataFromSSDOutputFile(void)
 {

@@ -6,7 +6,7 @@ enum class CommandType { WRITE, ERASE };
 struct Command {
     CommandType type;
     int lba;
-    int dataOrRange; // data (for Write), range (for Erase)
+    unsigned int dataOrRange; // data (for Write), range (for Erase)
 
     std::string toString() const {
         if (type == CommandType::WRITE)
@@ -18,8 +18,8 @@ struct Command {
 
 class SSDCmdBuffer {
 public:
-    void addWrite(const int lba, const int data);
-    void addErase(const int lba, const int range);
+    void writeData(const int lba, const unsigned int data);
+    void eraseData(const int lba, const int range);
     void clear(void);
     const std::vector<Command>& getBuffer(void) const;
 
@@ -29,6 +29,8 @@ private:
     void _optimize(void);
     void _printBuffer(void) const;
     void _clearBufferIfNeeded(void);
+    void _removeOverwrittenWrites(const int lba);
+    void _removeWritesCoveredByErase(const int startLba, const int endLba);
     // merge erase commands with adjacent or overlapping lba ranges
     void _mergeErases(void);
     // split erase if it overlaps with write

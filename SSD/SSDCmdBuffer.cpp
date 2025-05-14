@@ -6,15 +6,17 @@
 
 //enum class CommandType { WRITE, ERASE };
 
-void SSDCmdBuffer::addWrite(const int lba, const int data) {
+void SSDCmdBuffer::writeData(const int lba, const unsigned int data) {
     if (_checkLbaOutOfRange(lba)) throw std::invalid_argument("Out of LBA Range.");
+    _removeOverwrittenWrites(lba);
     cmdBuffer.push_back({ CommandType::WRITE, lba, data });
     _optimize();
 }
 
-void SSDCmdBuffer::addErase(const int lba, const int range) {
+void SSDCmdBuffer::eraseData(const int lba, const int range) {
     if (_checkEraseLbaRangeInvalid(lba, range)) throw std::invalid_argument("Out of Erase LBA Range.");
-    cmdBuffer.push_back({ CommandType::ERASE, lba, range });
+    cmdBuffer.push_back({ CommandType::ERASE, lba, static_cast<unsigned int>(range) });
+    _removeWritesCoveredByErase(lba, range);
     _optimize();
 }
 
@@ -36,7 +38,7 @@ bool SSDCmdBuffer::_checkLbaOutOfRange(int lba) const {
 
 void SSDCmdBuffer::_optimize(void) {
     _mergeErases();
-    _resolveEraseWriteConflicts();
+    //_resolveEraseWriteConflicts();
     _clearBufferIfNeeded();
 }
 
@@ -52,6 +54,19 @@ void SSDCmdBuffer::_clearBufferIfNeeded(void) {
     if (cmdBuffer.size() > MAX_CMDBUF_SIZE) {
         cmdBuffer.clear();
     }
+}
+
+void SSDCmdBuffer::_removeOverwrittenWrites(const int lba) {
+    cmdBuffer.erase(std::remove_if(cmdBuffer.begin(), cmdBuffer.end(), [lba](const Command& c) {
+        return c.type == CommandType::WRITE && c.lba == lba;
+        }), cmdBuffer.end());
+}
+
+void SSDCmdBuffer::_removeWritesCoveredByErase(const int startLba, const int lbaRange) {
+    int endLba = startLba + lbaRange - 1;
+    cmdBuffer.erase(std::remove_if(cmdBuffer.begin(), cmdBuffer.end(), [startLba, endLba](const Command& c) {
+        return c.type == CommandType::WRITE && c.lba >= startLba && c.lba <= endLba;
+        }), cmdBuffer.end());
 }
 
 // merge erase commands with adjacent or overlapping lba ranges
@@ -78,11 +93,20 @@ void SSDCmdBuffer::_mergeErases(void) {
             int end1 = last.lba + last.dataOrRange;
             int end2 = cmd.lba + cmd.dataOrRange;
 
-            if (cmd.lba <= end1 && (end2 - last.lba) <= 10) {
-                int newStart = last.lba;
-                int newEnd = std::max(end1, end2);
-                last.lba = newStart;
-                last.dataOrRange = newEnd - newStart;
+            if (cmd.lba <= end1) {
+                if ((end2 - last.lba) <= MAX_ERASE_RANGE) {
+                    int newStart = last.lba;
+                    int newEnd = std::max(end1, end2);
+                    last.lba = newStart;
+                    last.dataOrRange = newEnd - newStart;
+                }
+                else {
+                    Command newCmd;
+                    newCmd.type = CommandType::ERASE;
+                    newCmd.lba = end1;
+                    newCmd.dataOrRange = end2 - end1;
+                    merged.push_back(newCmd);
+                }
             }
             else {
                 merged.push_back(cmd);
@@ -114,9 +138,9 @@ void SSDCmdBuffer::_resolveEraseWriteConflicts() {
                     int part2Len = eraseEnd - write.lba;
 
                     if (part1Len > 0)
-                        resolved.push_back({ CommandType::ERASE, eraseStart, part1Len });
+                        resolved.push_back({ CommandType::ERASE, eraseStart, static_cast<unsigned int>(part1Len) });
                     if (part2Len > 0)
-                        resolved.push_back({ CommandType::ERASE, write.lba + 1, part2Len });
+                        resolved.push_back({ CommandType::ERASE, write.lba + 1, static_cast<unsigned int>(part2Len) });
                     splitNeeded = true;
                     break;
                 }

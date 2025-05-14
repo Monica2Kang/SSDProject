@@ -58,7 +58,7 @@ public:
         fSsd.openFile();
 
         for (LBA_DATA lba_data : inRangeLbaData) {
-            int readData;
+            unsigned int readData;
             bool result = fSsd.readData(lba_data.lba, readData);
             EXPECT_FALSE(result);
             fSsd.writeData(lba_data.lba, lba_data.data);
@@ -68,7 +68,7 @@ public:
             //EXPECT_EQ(readData, 0x00);
         }
         for (LBA_DATA lba_data : outOfRangeLbaData) {
-            int readData;
+            unsigned int readData;
             bool result = fSsd.readData(lba_data.lba, readData);
             EXPECT_FALSE(result);
         }
@@ -82,7 +82,7 @@ public:
 protected:
     struct LBA_DATA {
         int lba;
-        int data;
+        unsigned int data;
     };
 
     const char* FILE_NAME = "ssd_nand.txt";
@@ -91,23 +91,23 @@ protected:
     SSDFileStorageDevice fSsd = { FILE_NAME, FILE_STORAGE_CAPACITY };
 
     const vector<LBA_DATA> inRangeLbaData = {
-        {0, static_cast<int>(0x100)},
-        {1, static_cast<int>(0x1AFAED)},
-        {98, static_cast<int>(0xB1E8F0E2)},
-        {57, static_cast<int>(0xDEADBEEF)},
-        {32, static_cast<int>(0xABCDEF)},
-        {89, static_cast<int>(0xBEEF1082)},
-        {99, static_cast<int>(0xFFFFFFFF)},
+        {0,  0x100},
+        {1,  0x1AFAED},
+        {98, 0xB1E8F0E2},
+        {57, 0xDEADBEEF},
+        {32, 0xABCDEF},
+        {89, 0xBEEF1082},
+        {99, 0xFFFFFFFF},
     };
     const vector<LBA_DATA> outOfRangeLbaData = {
-        {-1, static_cast<int>(0x100)},
-        {-100, static_cast<int>(0x1AFAED)},
-        {132, static_cast<int>(0xABCDEF)},
-        {5557, static_cast<int>(0xDEADBEEF)},
-        {889, static_cast<int>(0xBEEF1082)},
-        {100, static_cast<int>(0xB1E8F0E2)},
-        {101, static_cast<int>(0x1082)},
-        {-15557, static_cast<int>(0xDEADBEEF)},
+        {-1, 0x100},
+        {-100, 0x1AFAED},
+        {132, 0xABCDEF},
+        {5557, 0xDEADBEEF},
+        {889, 0xBEEF1082},
+        {100, 0xB1E8F0E2},
+        {101, 0x1082},
+        {-15557, 0xDEADBEEF},
     };
 };
 

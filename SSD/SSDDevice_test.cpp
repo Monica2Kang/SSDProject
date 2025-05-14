@@ -39,9 +39,11 @@ public:
         std::string line;
         while (std::getline(infile, line)) {
             if (line.find("ERROR") != std::string::npos) {
+                infile.close();
                 return true;
             }
         }
+        infile.close();
         return false;
     }
 
@@ -56,9 +58,11 @@ public:
         std::string line;
         while (std::getline(infile, line)) {
             if (line.find(target) != std::string::npos) {
+                infile.close();
                 return true;
             }
         }
+        infile.close();
         return false;
     }
 #endif // 0
@@ -67,7 +71,7 @@ public:
 protected:
     struct LBA_DATA {
         int lba;
-        int data;
+        unsigned int data;
     };
     struct LBA_RANGE {
         int lba;
@@ -79,26 +83,26 @@ protected:
     const char* FILE_NAME_OUTPUT = "ssd_output.txt";
     static const int SAMPLE_DATA = static_cast<int>(0x1082);
     const vector<LBA_DATA> inRangeLbaDatas = {
-        {0, static_cast<int>(0x100)},
-        {1, static_cast<int>(0x1AFAED)},
-        {32, static_cast<int>(0xABCDEF)},
-        {57, static_cast<int>(0xDEADBEEF)},
-        {89, static_cast<int>(0xBEEF1082)},
-        {98, static_cast<int>(0xB1E8F0E2)},
+        {0,  0x100},
+        {1,  0x1AFAED},
+        {32, 0xABCDEF},
+        {57, 0xDEADBEEF},
+        {89, 0xBEEF1082},
+        {98, 0xB1E8F0E2},
     };
 
     const vector<LBA_RANGE> eraseLbaRanges = {
-        {0, static_cast<int>(0), true },
-        {1, static_cast<int>(10), true },
-        {32, static_cast<int>(11), false },
-        {57, static_cast<int>(3), true },
-        {89, static_cast<int>(5), true },
-        {99, static_cast<int>(0), true },
-        {100, static_cast<int>(5), false },
-        {101, static_cast<int>(5), false },
-        {-1, static_cast<int>(5), false },
-        {98, static_cast<int>(-1), false },
-        {198, static_cast<int>(3), false },
+        {0, 0, true },
+        {1, 10, true },
+        {32, 11, false },
+        {57, 3, true },
+        {89, 5, true },
+        {99, 0, true },
+        {100, 5, false },
+        {101, 5, false },
+        {-1, 5, false },
+        {98, -1, false },
+        {198, 3, false },
     };
 };
 

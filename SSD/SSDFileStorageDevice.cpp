@@ -6,87 +6,76 @@
 
 using namespace std;
 
-bool SSDFileStorageDevice::openFile(void) {
-    if (_isFileOpened()) {
-        return true;
-    }
-    if (!_openFile()) {
-        createFile();
-    }
-    return _openFile();
-}
-
 bool SSDFileStorageDevice::writeData(const int lba, const unsigned int data) {
     if (_checkLbaBoundary(lba))
         return false;
-    if (!_isFileOpened())
-        return false;
-
-    _writeFile(lba, data);
-
-    return true;
+    try {
+        _writeFile(lba, data);
+        return true;
+    }
+    catch (runtime_error& e) {
+        throw std::exception(e);
+    }
 }
 
 bool SSDFileStorageDevice::readData(const int lba, unsigned int& data) {
     if (_checkLbaBoundary(lba))
         return false;
-    if (!_isFileOpened())
-        return false;
-
-    return _readFile(lba, data);
+    try {
+        return _readFile(lba, data);
+    }
+    catch (runtime_error& e) {
+        throw std::exception(e);
+    }
 }
 
 bool SSDFileStorageDevice::removeFile(void) {
-    fileHandle.close();
     if (0 == std::remove(static_cast<const char*>(filename.c_str()))) {
         // std::cout << filename << " file is deleted." << std::endl;
     }
-    fileHandle.open(filename, std::ios::in | std::ios::out | std::ios::binary);
-    return !fileHandle.is_open();
-}
-
-void SSDFileStorageDevice::closeFile(void) {
-    if (fileOpened) {
-        fileHandle.close();
-        _setFileOpened(false);
-    }
-}
-
-bool SSDFileStorageDevice::_openFile(void) {
-    fileHandle.open(filename, std::ios::in | std::ios::out | std::ios::binary);
-    if (fileHandle.is_open()) {
-        _setFileOpened(true);
-    }
-    else {
-        _setFileOpened(false);
-    }
-    return _isFileOpened();
+    fstream file;
+    file.open(filename, ios::in | ios::out | ios::binary);
+    bool result = !file.is_open();
+    file.close();
+    return result;
 }
 
 void SSDFileStorageDevice::createFile(void) {
     std::ofstream create_file(filename, std::ios::binary);
+    if (!create_file.is_open()) {
+        std::cerr << "Cannot Open the file" << filename << std::endl;
+        return;
+    }
+
     std::vector<int> cellData(maxLbaCapacity + maxMapCapacity, 0);
-    create_file.write(reinterpret_cast<const char*>(cellData.data()), cellData.size());
-    //std::cout << filename << " file is created." << std::endl;
+    create_file.write(reinterpret_cast<const char*>(cellData.data()), cellData.size() * sizeof(int));
+    create_file.flush();
     create_file.close();
 }
 
 void SSDFileStorageDevice::_writeFile(const int lba, const int data) {
     fstream file(filename, ios::in | ios::out | ios::binary);
-    file.seekp(lba * sizeof(int));
+
+    if (!file.is_open()) {
+        throw std::runtime_error("Cannot Open the File.");
+    }
+    file.seekp(lba * sizeof(int), ios::beg);
     file.write(reinterpret_cast<const char*>(&data), sizeof(data));
-    file.seekp(lba * sizeof(int) + maxMapCapacity * sizeof(int));
-    file.write(reinterpret_cast<const char*>(&TOUCHED_FLAG), sizeof(data));
+    file.seekp(lba * sizeof(int) + maxMapCapacity * sizeof(int), ios::beg);
+    file.write(reinterpret_cast<const char*>(&TOUCHED_FLAG), sizeof(TOUCHED_FLAG));
     file.flush();
     file.close();
 }
 
 bool SSDFileStorageDevice::_readFile(const int lba, unsigned int& data) {
-    fstream file(filename, ios::in | ios::out | ios::binary);
-    //ifstream file(filename, ios::binary);
-
-    int flag = 0;
-    file.seekg(lba * sizeof(int) + maxMapCapacity * sizeof(int));
+    //fstream file(filename, ios::in | ios::out | ios::binary);
+    ifstream file(filename, ios::binary);
+    if (!file.is_open()) {
+        throw std::runtime_error("Cannot Open the File.");
+        //return false;
+    }
+        int flag = 0;
+    file.seekg(lba * sizeof(int) + maxMapCapacity * sizeof(int), ios::beg);
     file.read(reinterpret_cast<char*>(&flag), sizeof(flag));
     if (TOUCHED_FLAG != flag) {
         file.close();

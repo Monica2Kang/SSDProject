@@ -17,7 +17,7 @@ public:
         EXPECT_TRUE(fileOpened);
     }
     void doInRangeBoundaryCheck(const bool expectation) {
-        SSD_FILE_STORAGE_DEVICE.openFile();
+        //SSD_FILE_STORAGE_DEVICE.openFile();
         for (LBA_DATA lba_data : inRangeLbaData) {
             bool result = SSD_FILE_STORAGE_DEVICE.readData(lba_data.lba, lba_data.data);
             if (expectation)
@@ -25,10 +25,10 @@ public:
             else
                 EXPECT_FALSE(result);
         }
-        SSD_FILE_STORAGE_DEVICE.closeFile();
+        //SSD_FILE_STORAGE_DEVICE.closeFile();
     }
     void doOutOfRangeBoundaryCheck(const bool expectation)     {
-        SSD_FILE_STORAGE_DEVICE.openFile();
+        //SSD_FILE_STORAGE_DEVICE.openFile();
         for (LBA_DATA lba_data : outOfRangeLbaData) {
             bool result = SSD_FILE_STORAGE_DEVICE.readData(lba_data.lba, lba_data.data);
             if (expectation)
@@ -36,10 +36,10 @@ public:
             else
                 EXPECT_FALSE(result);
         }
-        SSD_FILE_STORAGE_DEVICE.closeFile();
+        //SSD_FILE_STORAGE_DEVICE.closeFile();
     }
     void doReadDataConfirmation(void) {
-        SSD_FILE_STORAGE_DEVICE.openFile();
+        //SSD_FILE_STORAGE_DEVICE.openFile();
 
         for (LBA_DATA lba_data : inRangeLbaData) {
             unsigned int readData;
@@ -56,11 +56,11 @@ public:
             bool result = SSD_FILE_STORAGE_DEVICE.readData(lba_data.lba, readData);
             EXPECT_FALSE(result);
         }
-        SSD_FILE_STORAGE_DEVICE.closeFile();
+        //SSD_FILE_STORAGE_DEVICE.closeFile();
     }
     void removeAndCreateFile(void) {
-        SSD_FILE_STORAGE_DEVICE.closeFile();
         SSD_FILE_STORAGE_DEVICE.removeFile();
+        SSD_FILE_STORAGE_DEVICE.createFile();
     }
 
 protected:
@@ -108,16 +108,17 @@ TEST_F(SSDFileStorageDeviceFixture, ssdFileStorageCreationTC) {
 // ssdFileReadDataTCs
 TEST_F(SSDFileStorageDeviceFixture, ssdFileReadDataTC4InBoundCheck) {
     SSD_FILE_STORAGE_DEVICE.removeFile();
-    SSD_FILE_STORAGE_DEVICE.openFile();
+    SSD_FILE_STORAGE_DEVICE.createFile();
+    //SSD_FILE_STORAGE_DEVICE.openFile();
     doInRangeBoundaryCheck(false);
 
-    SSD_FILE_STORAGE_DEVICE.openFile();
+    //SSD_FILE_STORAGE_DEVICE.openFile();
     for (LBA_DATA lba_data : inRangeLbaData) {
         SSD_FILE_STORAGE_DEVICE.writeData(lba_data.lba, lba_data.data);
         bool result = SSD_FILE_STORAGE_DEVICE.readData(lba_data.lba, lba_data.data);
         EXPECT_TRUE(result);
     }
-    SSD_FILE_STORAGE_DEVICE.closeFile();
+    //SSD_FILE_STORAGE_DEVICE.closeFile();
 
 }
 
@@ -136,20 +137,21 @@ TEST_F(SSDFileStorageDeviceFixture, ssdFileWriteDataTC4OutOfBoundCheck) {
 
 TEST_F(SSDFileStorageDeviceFixture, ssdFileWriteDataTC4FileNotOpened) {
     // No file opened
+    SSD_FILE_STORAGE_DEVICE.removeFile();
     for (LBA_DATA lba_data : inRangeLbaData) {
-        bool result = SSD_FILE_STORAGE_DEVICE.readData(lba_data.lba, lba_data.data);
-        EXPECT_FALSE(result);
+        EXPECT_THROW(SSD_FILE_STORAGE_DEVICE.writeData(lba_data.lba, lba_data.data), exception);
     }
-    doInRangeBoundaryCheck(true);
+    SSD_FILE_STORAGE_DEVICE.createFile();
+    doInRangeBoundaryCheck(false); // 여기선 false가 맞음. 한번도 writeData() 하지 않았으므로.
 }
 
 TEST_F(SSDFileStorageDeviceFixture, ssdFileReadDataTC4FileNotOpened) {
-    // No file opened
+    SSD_FILE_STORAGE_DEVICE.removeFile();
     for (LBA_DATA lba_data : inRangeLbaData) {
-        bool result = SSD_FILE_STORAGE_DEVICE.readData(lba_data.lba, lba_data.data);
-        EXPECT_FALSE(result);
+        EXPECT_THROW(SSD_FILE_STORAGE_DEVICE.readData(lba_data.lba, lba_data.data), exception);
     }
-    doInRangeBoundaryCheck(true);
+    SSD_FILE_STORAGE_DEVICE.createFile();
+    doInRangeBoundaryCheck(false); // 여기선 false가 맞음. 한번도 writeData() 하지 않았으므로.
 }
 
 TEST_F(SSDFileStorageDeviceFixture, ssdFileReadDataTC4ReadData) {

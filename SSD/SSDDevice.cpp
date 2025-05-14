@@ -4,12 +4,12 @@
 
 SSDDevice::SSDDevice() {
     _initializeCellData();
-    SSD_FILE_STORAGE_DEVICE.createFile();
+    //SSD_FILE_STORAGE_DEVICE.createFile();
     //SSD_FILE_STORAGE_DEVICE.openFile();
 }
 
 SSDDevice::~SSDDevice() {
-    SSD_FILE_STORAGE_DEVICE.closeFile();
+    //SSD_FILE_STORAGE_DEVICE.closeFile();
 }
 
 unsigned int SSDDevice::readData(const int lba) {
@@ -48,7 +48,7 @@ void SSDDevice::eraseData(const int lba, const int range) {
 }
 
 void SSDDevice::reinitializeFile(void) {
-    SSD_FILE_STORAGE_DEVICE.removeFile();
+    bool it = SSD_FILE_STORAGE_DEVICE.removeFile();
     SSD_FILE_STORAGE_DEVICE.createFile();
     //SSD_FILE_STORAGE_DEVICE.openFile();
 }

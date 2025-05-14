@@ -1,9 +1,9 @@
 #include <string>
 #include <vector>
+#include <iostream>
 #include "SSDCmdParser.h"
 
-using std::string;
-using std::vector;
+using namespace std;
 
 bool SSDCmdParser::checkParsing(int argc, const char* argv[]) {
     //make tokens
@@ -13,13 +13,14 @@ bool SSDCmdParser::checkParsing(int argc, const char* argv[]) {
     for (int i = 0; i < argc; ++i) {
         tokens.emplace_back(argv[i]);
     }
-
+    //cout << argv[1] << " " << argv[2] << "\n";
+    
     //parse each tokens
     string command = tokens[1];
     int lba = (tokens.size() > VALID_COMMAND_SIZE) ? std::stoi(tokens[2]) : 0;
 
     if (command == "W") {
-        string value = tokens[3];
+        string value = (tokens.size() > VALID_COMMAND_SIZE) ? tokens[3] : "0";
         if (value.find("0x") == string::npos || value.length() != 10) {
             m_device.printError();
             return PARSING_FAILED; 
@@ -39,7 +40,7 @@ bool SSDCmdParser::checkParsing(int argc, const char* argv[]) {
         int size = std::stoi(tokens[3]);
         if (size == 0) return PARSING_SUCCESS; //Do nothing
 
-        if (size < MIN_SIZE || size > MAX_SIZE || lba + size > MAX_LBA) {
+        if (size < MIN_ERASE_SIZE || size > MAX_ERASE_SIZE || lba + size > MAX_LBA) {
             m_device.printError();
             return PARSING_FAILED;
         }

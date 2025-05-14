@@ -396,6 +396,43 @@ TEST_F(SSDCmdBufferFixture, CmdBufferMergeWriteEraseComplexCmdTC2) {
     }
 }
 
+TEST_F(SSDCmdBufferFixture, CmdBufferMergeWriteIgnoreTC0) {
+    vector<Command> commandList = {
+        {CommandType::WRITE, 3, 0xBEEFCAFE},
+        {CommandType::WRITE, 50, 0xA5A5A5A5},
+        {CommandType::WRITE, 77, 0xA5A5A5A5},
+        {CommandType::WRITE, 99, 0xCAFEBEAD},
+        {CommandType::WRITE, 99, 0xBEADCAFE},
+        {CommandType::ERASE, 0, 7},
+        {CommandType::ERASE, 48, 6},
+        {CommandType::WRITE, 99, 0xBEADCAFE},
+        {CommandType::ERASE, 70, 8},
+    };
+    vector<Command> eraseCmdExpected = {
+        {CommandType::WRITE, 99, 0xBEADCAFE},
+        {CommandType::ERASE, 0, 7},
+        {CommandType::ERASE, 48, 6},
+        {CommandType::ERASE, 70, 8},
+    };
+    vector<Command> eraseCmdActual;
+
+    for (auto cmd : commandList) {
+        if (cmd.type == CommandType::ERASE)
+            cbuf.eraseData(cmd.lba, cmd.dataOrRange);
+        else
+            cbuf.writeData(cmd.lba, cmd.dataOrRange);
+    }
+    vector<Command> buffer = cbuf.getBuffer();
+    for (auto cmd : buffer) {
+        eraseCmdActual.push_back(cmd);
+    }
+
+    for (size_t i = 0; i < eraseCmdExpected.size(); ++i) {
+        EXPECT_TRUE(0 == std::memcmp(&eraseCmdExpected[i], &eraseCmdActual[i], sizeof(Command)));
+    }
+}
+
+
 
 
 

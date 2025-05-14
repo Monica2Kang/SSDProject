@@ -86,10 +86,6 @@ void Shell::setCommand(string command)
 }
 #else
 void Shell::executeShell(void) {
-	cout << "==============================================================" << endl;
-	cout << "=        Test Shell (Team Amazing Reviewer)                  =" << endl;
-	cout << "==============================================================" << endl;
-	cout << endl;
 
 	splitAndStore();
 
@@ -263,7 +259,7 @@ bool Shell::exitApi(void) {
 
 bool Shell::helpApi(void) {
 	if (isValidParameterSize(HELP_PARAMETER_SIZE)) {
-		cout << "==============================================================" << endl;
+		cout << "\n==============================================================" << endl;
 		cout << "Test Shell (Help)" << endl;
 		cout << "==============================================================" << endl;
 		cout << "1) Team : AmazingReviewer" << endl;

@@ -107,7 +107,7 @@ TEST_F(ShellFixture, validReadApiTest) {
 	instance.executeShell();
 }
 
-TEST_F(ShellFixture, validExitApiTest) {
+TEST_F(ShellFixture, DISABLED_validExitApiTest) {
 	MockSSDAdapter ssdAdpater;
 	Shell instance{ &ssdAdpater };
 

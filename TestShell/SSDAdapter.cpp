@@ -13,7 +13,8 @@ using namespace std;
 void SSDAdapter::writeLba(const int lba, const int data)
 {
 	std::stringstream ss;
-	ss << "0x" << std::uppercase << std::hex << data;
+
+	ss << "0x" << std::uppercase << std::setfill('0') << std::setw(8) << std::hex << data;
 	std::string argument = "W " + std::to_string(lba) + " " + ss.str();
 
 	_executeSSDCommand(argument);

@@ -26,7 +26,10 @@ int TestScript::runTest(const string str) {
 
 bool TestScript::_checkTestExist() {
 	bool isExist = false;
-	ScriptFilePath = testDir + "\\" + inputTestScript;
+	std::string fullPath = FILE_MANAGER.findFileWithPrefix(testDir, inputTestScript);
+	if (fullPath == "") return false;
+
+	ScriptFilePath = testDir + "\\" + fullPath;
 
 	isExist = FILE_MANAGER.fileExists(ScriptFilePath);
 	return isExist;
@@ -225,7 +228,7 @@ void TestScript::makeScenario(void)
 		FILE_MANAGER.createFile(scenarioPath);
 	}
 
-	const int MAX_LBA = 10;
+	const int MAX_LBA = 100;
 	const int loop = 30;
 	const int lba1 = 0;
 	const int lba2 = 99;
@@ -240,7 +243,7 @@ void TestScript::makeScenario(void)
 
 	for (int it = 0; it < loop; it++)
 	{
-		for (int lba = 2; lba < MAX_LBA; lba++)
+		for (int lba = 2; lba < MAX_LBA;)
 		{
 			argument = _writeCommand(lba, expectedData1);
 			FILE_MANAGER.appendLine(scenarioPath, argument);
@@ -409,7 +412,7 @@ int TestScript::eraseAndWriteAging(void)
 	• 6 ~ 8번 LBA 삭제
 	*/
 
-	const int MAX_LBA = 10;
+	const int MAX_LBA = 100;
 	const int loop = 30;
 	const int lba1 = 0;
 	const int lba2 = 99;
@@ -422,7 +425,7 @@ int TestScript::eraseAndWriteAging(void)
 
 	for (int it = 0; it < loop; it++)
 	{
-		for (int lba = 2; lba < MAX_LBA; lba++)
+		for (int lba = 2; lba < MAX_LBA;)
 		{
 			ssdAdapter->writeLba(lba, expectedData1);
 			ssdAdapter->writeLba(lba, expectedData2);

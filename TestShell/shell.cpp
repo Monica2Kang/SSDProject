@@ -136,7 +136,7 @@ void Shell::executeShell(void) {
 			return;
 	}
 	else if (parameter[COMMAND_POS] == "1_" || parameter[COMMAND_POS] == "1_FullWriteAndReadCompare") {
-		if (!(m_TestScript->runTest("1_FullWriteAndReadCompare.txt"))) {
+		if (!(m_TestScript->runTest(parameter[COMMAND_POS]))) {
 			cout << "PASS\n" << endl;
 			return;
 		}

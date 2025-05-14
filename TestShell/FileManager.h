@@ -12,6 +12,8 @@
 #include <direct.h>
 #include <thread>
 #include <sys/stat.h>
+#include <cstring>
+#include <windows.h>
 
 #define FILE_MANAGER FileManager::getInstance()
 
@@ -117,6 +119,45 @@ public:
         }
 
         return _mkdir(path.c_str()) == 0;
+    }
+
+    std::string findFileWithPrefix(const std::string& directory, const std::string& targetPrefix) {
+        WIN32_FIND_DATAA findFileData;
+        HANDLE hFind;
+
+        std::string searchPath = directory;
+        if (!searchPath.empty() && searchPath.back() != '\\') {
+            searchPath += "\\";
+        }
+        searchPath += "*"; // 모든 파일 검색
+
+        hFind = FindFirstFileA(searchPath.c_str(), &findFileData);
+
+        if (hFind == INVALID_HANDLE_VALUE) {
+            return ""; // 디렉토리 못 찾음
+        }
+
+        do {
+            std::string filename = findFileData.cFileName;
+
+            // "." 과 ".."는 무시
+            if (filename == "." || filename == "..") {
+                continue;
+            }
+
+            // prefix 비교
+            if (filename.compare(0, targetPrefix.size(), targetPrefix) == 0) {
+                // regular file인지 확인
+                if (!(findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+                    FindClose(hFind);
+                    return directory + "\\" + filename;
+                }
+            }
+
+        } while (FindNextFileA(hFind, &findFileData) != 0);
+
+        FindClose(hFind);
+        return "";
     }
 
 private:

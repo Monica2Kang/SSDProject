@@ -13,8 +13,8 @@ public:
 
     static const bool PARSING_FAILED = false;
     static const bool PARSING_SUCCESS = true;
-    static const int MAX_SIZE = 10;
-    static const int MIN_SIZE = 0;
+    static const int MAX_ERASE_SIZE = 10;
+    static const int MIN_ERASE_SIZE = 0;
 
 private:
     SSDDevice m_device;

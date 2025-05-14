@@ -70,7 +70,7 @@ public:
         {"99", "10"}, {"91", "10"}, {"99", "2"}, {"95", "6"}, {"95", "7"}, {"93", "8"}
     };
 
-private:
+protected:
     void SetUp(void) override {
         for (string lba : VALID_LBA_LIST) {
             const char* argv[] = { EXE_FILE_NAME, WRITE_COMMAND, lba.c_str(), DEFAULT_VALUE };
@@ -144,7 +144,7 @@ TEST_F(SSDCmdParserFixture, WriteFailSmallValue) {
 }
 
 TEST_F(SSDCmdParserFixture, EraseSuccessSize) {
-    for (int size = MIN_SIZE; size <= MAX_SIZE; size++) {
+    for (int size = MIN_ERASE_SIZE; size <= MAX_ERASE_SIZE; size++) {
         string str = to_string(size);
         const char* argv[] = { EXE_FILE_NAME, ERASE_COMMAND, DEFAULT_LBA, str.c_str() };
         int argc = sizeof(argv) / sizeof(argv[0]);

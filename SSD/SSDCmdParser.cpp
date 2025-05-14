@@ -40,7 +40,7 @@ bool SSDCmdParser::checkParsing(int argc, const char* argv[]) {
         int size = std::stoi(tokens[3]);
         if (size == 0) return PARSING_SUCCESS; //Do nothing
 
-        if (size < MIN_SIZE || size > MAX_SIZE || lba + size > MAX_LBA) {
+        if (size < MIN_ERASE_SIZE || size > MAX_ERASE_SIZE || lba + size > MAX_LBA) {
             m_device.printError();
             return PARSING_FAILED;
         }

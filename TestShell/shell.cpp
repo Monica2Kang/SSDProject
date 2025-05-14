@@ -342,10 +342,9 @@ bool Shell::fullreadApi(void) {
 }
 
 void Shell::fulleraseApi(void) {
-	for (auto lba = 0; lba < MAX_SIZE; )
+	for (auto lba = 0; lba < MAX_SIZE; lba += CHUNK_SIZE)
 	{
 		m_ISSDAdapter->erase(lba, CHUNK_SIZE);
-		lba += CHUNK_SIZE;
 	}
 }
 

@@ -17,7 +17,6 @@ public:
         EXPECT_TRUE(fileOpened);
     }
     void doInRangeBoundaryCheck(const bool expectation) {
-        //SSD_FILE_STORAGE_DEVICE.openFile();
         for (LBA_DATA lba_data : inRangeLbaData) {
             bool result = SSD_FILE_STORAGE_DEVICE.readData(lba_data.lba, lba_data.data);
             if (expectation)
@@ -25,10 +24,8 @@ public:
             else
                 EXPECT_FALSE(result);
         }
-        //SSD_FILE_STORAGE_DEVICE.closeFile();
     }
     void doOutOfRangeBoundaryCheck(const bool expectation)     {
-        //SSD_FILE_STORAGE_DEVICE.openFile();
         for (LBA_DATA lba_data : outOfRangeLbaData) {
             bool result = SSD_FILE_STORAGE_DEVICE.readData(lba_data.lba, lba_data.data);
             if (expectation)
@@ -36,11 +33,8 @@ public:
             else
                 EXPECT_FALSE(result);
         }
-        //SSD_FILE_STORAGE_DEVICE.closeFile();
     }
     void doReadDataConfirmation(void) {
-        //SSD_FILE_STORAGE_DEVICE.openFile();
-
         for (LBA_DATA lba_data : inRangeLbaData) {
             unsigned int readData;
             bool result = SSD_FILE_STORAGE_DEVICE.readData(lba_data.lba, readData);
@@ -56,7 +50,6 @@ public:
             bool result = SSD_FILE_STORAGE_DEVICE.readData(lba_data.lba, readData);
             EXPECT_FALSE(result);
         }
-        //SSD_FILE_STORAGE_DEVICE.closeFile();
     }
     void removeAndCreateFile(void) {
         SSD_FILE_STORAGE_DEVICE.removeFile();
@@ -72,8 +65,6 @@ protected:
     const char* FILE_NAME = "ssd_nand.txt";
     const char* FILE_NAME_TEMP = "ssd_nand_temp.txt";
     const int FILE_STORAGE_CAPACITY = 100;
-    //SSDFileStorageDevice SSD_FILE_STORAGE_DEVICE = { FILE_NAME, FILE_STORAGE_CAPACITY };
-
 
     const vector<LBA_DATA> inRangeLbaData = {
         {0,  0x100},
@@ -109,17 +100,14 @@ TEST_F(SSDFileStorageDeviceFixture, ssdFileStorageCreationTC) {
 TEST_F(SSDFileStorageDeviceFixture, ssdFileReadDataTC4InBoundCheck) {
     SSD_FILE_STORAGE_DEVICE.removeFile();
     SSD_FILE_STORAGE_DEVICE.createFile();
-    //SSD_FILE_STORAGE_DEVICE.openFile();
+
     doInRangeBoundaryCheck(false);
 
-    //SSD_FILE_STORAGE_DEVICE.openFile();
     for (LBA_DATA lba_data : inRangeLbaData) {
         SSD_FILE_STORAGE_DEVICE.writeData(lba_data.lba, lba_data.data);
         bool result = SSD_FILE_STORAGE_DEVICE.readData(lba_data.lba, lba_data.data);
         EXPECT_TRUE(result);
     }
-    //SSD_FILE_STORAGE_DEVICE.closeFile();
-
 }
 
 TEST_F(SSDFileStorageDeviceFixture, ssdFileReadDataTC4OutOfBoundCheck) {

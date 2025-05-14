@@ -6,6 +6,22 @@
 
 using namespace std;
 
+SSDFileStorageDevice::SSDFileStorageDevice(std::string filename, int lbaCapacity)
+    : filename(std::move(filename)), maxLbaCapacity(lbaCapacity), maxMapCapacity(lbaCapacity),
+    upperLbaLimit(lbaCapacity - 1) {
+
+    if (!_fileExists(this->filename)) {
+        createFile();
+    }
+}
+
+
+bool SSDFileStorageDevice::_fileExists(const std::string& name) {
+    std::ifstream f(name, std::ios::binary);
+    bool exists = f.good();
+    return exists;
+}
+
 bool SSDFileStorageDevice::writeData(const int lba, const unsigned int data) {
     if (_checkLbaBoundary(lba))
         return false;
@@ -74,7 +90,7 @@ bool SSDFileStorageDevice::_readFile(const int lba, unsigned int& data) {
         throw std::runtime_error("Cannot Open the File.");
         //return false;
     }
-        int flag = 0;
+    int flag = 0;
     file.seekg(lba * sizeof(int) + maxMapCapacity * sizeof(int), ios::beg);
     file.read(reinterpret_cast<char*>(&flag), sizeof(flag));
     if (TOUCHED_FLAG != flag) {

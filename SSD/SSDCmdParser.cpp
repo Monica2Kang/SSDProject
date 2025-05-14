@@ -2,9 +2,11 @@
 #include <vector>
 #include <iostream>
 #include "SSDCmdParser.h"
+#include "SSDCmdBuffer.h"
 
 using namespace std;
-#define m_device SSDDevice::getInstance()
+//#define m_device SSDDevice::getInstance()
+#define m_device SSDCmdBuffer::getInstance()
 #define m_fileOutput SSDFileOutput::getInstance()
 
 bool SSDCmdParser::checkParsing(int argc, const char* argv[]) {
@@ -24,13 +26,14 @@ bool SSDCmdParser::checkParsing(int argc, const char* argv[]) {
     if (command == "W") {
         string value = (tokens.size() > VALID_COMMAND_SIZE) ? tokens[3] : "0";
         if (value.find("0x") == string::npos || value.length() != 10) {
-            m_device.printError();
+            m_fileOutput.printError();
             return PARSING_FAILED; 
         }
 
         try {
             unsigned int hexValue = static_cast<unsigned int>(std::stoul(value, nullptr, 16));
             m_device.writeData(lba, hexValue);
+            m_fileOutput.printDone();
             return PARSING_SUCCESS;
         }
         catch (invalid_argument& e){
@@ -60,7 +63,7 @@ bool SSDCmdParser::checkParsing(int argc, const char* argv[]) {
         if (size == 0) return PARSING_SUCCESS; //Do nothing
 
         if (size < MIN_ERASE_SIZE || size > MAX_ERASE_SIZE || lba + size > MAX_LBA) {
-            m_device.printError();
+            m_fileOutput.printError();
             return PARSING_FAILED;
         }
         

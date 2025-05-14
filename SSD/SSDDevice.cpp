@@ -3,13 +3,9 @@
 #include "SSDFileOutput.h"
 
 SSDDevice::SSDDevice() {
-    _initializeCellData();
-    //SSD_FILE_STORAGE_DEVICE.createFile();
-    //SSD_FILE_STORAGE_DEVICE.openFile();
 }
 
 SSDDevice::~SSDDevice() {
-    //SSD_FILE_STORAGE_DEVICE.closeFile();
 }
 
 unsigned int SSDDevice::readData(const int lba) {
@@ -50,7 +46,6 @@ void SSDDevice::eraseData(const int lba, const int range) {
 void SSDDevice::reinitializeFile(void) {
     bool it = SSD_FILE_STORAGE_DEVICE.removeFile();
     SSD_FILE_STORAGE_DEVICE.createFile();
-    //SSD_FILE_STORAGE_DEVICE.openFile();
 }
 
 void SSDDevice::_initializeCellData(void) {

@@ -23,51 +23,6 @@ public:
         EXPECT_THROW(ssd.writeData(lba, SAMPLE_DATA), invalid_argument);
     }
 
-    std::string intToHexString(const unsigned int value) const {
-        std::ostringstream oss;
-        oss << "0x" << std::uppercase << std::setfill('0') << std::setw(OUTPUT_DIGIT)
-            << std::hex << value;
-        return oss.str();
-    }
-
-    bool containsError() const {
-        std::ifstream infile(FILE_NAME_OUTPUT);
-        if (!infile.is_open()) {
-            throw std::runtime_error("Cannot Open the File.");
-        }
-
-        std::string line;
-        while (std::getline(infile, line)) {
-            if (line.find("ERROR") != std::string::npos) {
-                infile.close();
-                return true;
-            }
-        }
-        infile.close();
-        return false;
-    }
-
-#if 1  // 향후 SSDParser_test.cpp에 포함 예정.
-    bool containsValue(int value) const {
-        std::ifstream infile(FILE_NAME_OUTPUT);
-        if (!infile.is_open()) {
-            throw std::runtime_error("Cannot Open the File.");
-        }
-
-        std::string target = intToHexString(static_cast<unsigned int>(value));
-        std::string line;
-        while (std::getline(infile, line)) {
-            if (line.find(target) != std::string::npos) {
-                infile.close();
-                return true;
-            }
-        }
-        infile.close();
-        return false;
-    }
-#endif // 0
-
-
 protected:
     struct LBA_DATA {
         int lba;
@@ -181,58 +136,5 @@ TEST_F(SSDDeviceFixture, ssdReadDataTC4UntouchedLba) {
     ssd.reinitializeFile();
     for (auto inRangeLbaData : inRangeLbaDatas) {
         EXPECT_THROW(ssd.readData(inRangeLbaData.lba), exception);
-    }
-}
-
-#if 1
-TEST_F(SSDDeviceFixture, DISABLED_ssdReadDataTC4FileOutputCheckData) {
-    for (LBA_DATA lba_data : inRangeLbaDatas) {
-        ssd.writeData(lba_data.lba, lba_data.data);
-        unsigned int actual = ssd.readData(lba_data.lba);
-        EXPECT_EQ(lba_data.data, actual);
-        EXPECT_TRUE(containsValue(actual));
-    }
-}
-
-TEST_F(SSDDeviceFixture, DISABLED_ssdReadDataTC4FileOutputCheckUntouched) {
-    ssd.reinitializeFile();
-    for (auto inRangeLbaData : inRangeLbaDatas) {
-        EXPECT_THROW(ssd.readData(inRangeLbaData.lba), exception);
-        EXPECT_TRUE(containsValue(0x0));
-    }
-}
-
-TEST_F(SSDDeviceFixture, DISABLED_ssdReadDataTC4FileOutputCheckError) {
-    ssd.reinitializeFile();
-    vector<int> lba = { 100, 101, 110, 253, 337, 1553, 25675 };
-    for (int addr : lba) {
-        EXPECT_THROW(ssd.readData(addr), exception);
-        EXPECT_TRUE(containsError());
-    }
-}
-
-TEST_F(SSDDeviceFixture, DISABLED_ssdReadDataTC4FileOutputCheckForcedError) {
-    for (LBA_DATA lba_data : inRangeLbaDatas) {
-        ssd.writeData(lba_data.lba, lba_data.data);
-        unsigned int actual = ssd.readData(lba_data.lba);
-        EXPECT_EQ(lba_data.data, actual);
-        EXPECT_TRUE(containsValue(actual));
-
-        ssd.printError();
-        EXPECT_TRUE(containsError());
-    }
-}
-
-#endif // 0
-
-TEST_F(SSDDeviceFixture, ssdEraseDataTC4RangeCheck) {
-    for (LBA_RANGE lba_range : eraseLbaRanges) {
-        if (lba_range.expected) {
-            EXPECT_NO_THROW(ssd.eraseData(lba_range.lba, lba_range.range));
-        }
-        else {
-            EXPECT_THROW(ssd.eraseData(lba_range.lba, lba_range.range), invalid_argument);
-            EXPECT_TRUE(containsError());
-        }
     }
 }

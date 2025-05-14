@@ -208,7 +208,7 @@ bool Shell::readApi(void) {
 		if (isValidLBA(LBA_POS)) {
 			storeLBA();
 			int printData = m_ISSDAdapter->readLba(LBA);
-			cout << "[Read] LBA " << LBA << " : 0x" << uppercase << setfill('0') << setw(8) << hex << printData << endl;
+			cout << "[Read] LBA " << dec << LBA << " : 0x" << uppercase << setfill('0') << setw(8) << hex << printData << endl;
 			cout << endl;
 			return true;
 		}
@@ -269,6 +269,8 @@ bool Shell::helpApi(void) {
 		cout << "write > write [LBA] [data]" << endl;
 		cout << "read > read [LBA]" << endl;
 		cout << "erase > erase [LBA] [SIZE]" << endl;
+		cout << "erase_range > erase_range [startLBA] [endLBA]" << endl;
+		cout << "flush > Execute all commands in the command buffer" << endl;
 		cout << "exit > End the program" << endl;
 		cout << "help > Show command guide" << endl;
 		cout << "fullwrite > fullwrite[data]" << endl;
@@ -281,7 +283,8 @@ bool Shell::helpApi(void) {
 
 bool Shell::flushApi(void) {
 	if (isValidParameterSize(FLUSH_PARAMETER_SIZE)) {
-		// m_ISSDAdapter->flush();
+		m_ISSDAdapter->flush();
+		cout << endl;
 		return true;
 	}
 	return false;

@@ -7,6 +7,8 @@
 using namespace std;
 using namespace testing;
 
+#define ssd SSDDevice::getInstance()
+
 class SSDCmdParserFixture : public SSDCmdParser, public Test {
 public:
     void testWriteFail(const vector<string>& valueList) {
@@ -31,8 +33,53 @@ public:
         }
     }
 
+    std::string intToHexString(const unsigned int value) const {
+        std::ostringstream oss;
+        oss << "0x" << std::uppercase << std::setfill('0') << std::setw(OUTPUT_DIGIT)
+            << std::hex << value;
+        return oss.str();
+    }
+
+    //bool containsValue(int value) const {
+    bool containsValue(std::string value) const {
+        std::ifstream infile(OUTPUT_FILE_NAME);
+        if (!infile.is_open()) {
+            throw std::runtime_error("Cannot Open the File.");
+        }
+
+        //std::string target = intToHexString(static_cast<unsigned int>(value));
+        std::string line;
+        while (std::getline(infile, line)) {
+            if (line.find(value) != std::string::npos) {
+                infile.close();
+                return true;
+            }
+        }
+        infile.close();
+        return false;
+    }
+
+    bool containsError() const {
+        std::ifstream infile(OUTPUT_FILE_NAME);
+        if (!infile.is_open()) {
+            throw std::runtime_error("Cannot Open the File.");
+        }
+
+        std::string line;
+        while (std::getline(infile, line)) {
+            if (line.find("ERROR") != std::string::npos) {
+                infile.close();
+                return true;
+            }
+        }
+        infile.close();
+        return false;
+    }
+
+public:
     SSDCmdParser parser;
     const char* EXE_FILE_NAME = "SSD.exe";
+    const char* OUTPUT_FILE_NAME = "ssd_output.txt";
     const char* READ_COMMAND = "R";
     const char* WRITE_COMMAND = "W";
     const char* ERASE_COMMAND = "E";
@@ -41,6 +88,7 @@ public:
     const char* DEFAULT_LBA = "0";
     const char* OVER_LBA = "100";
     const char* DEFAULT_VALUE = "0x1234ABCD";
+    const int OUTPUT_DIGIT = 8;
 
     const vector<string> VALID_LBA_LIST = {
         "3", "25", "11", "95", "73", "52"
@@ -68,6 +116,31 @@ public:
     };
     const vector<vector<string>> OVER_RANGE_LIST = {
         {"99", "10"}, {"91", "10"}, {"99", "2"}, {"95", "6"}, {"95", "7"}, {"93", "8"}
+    };
+
+    struct LBA_DATA {
+        int lba;
+        unsigned int data;
+    };
+
+    const vector<LBA_DATA> inRangeLbaDatas = {
+        {0,  0x100},
+        {1,  0x1AFAED},
+        {98, 0xB1E8F0E2},
+        {57, 0xDEADBEEF},
+        {32, 0xABCDEF},
+        {89, 0xBEEF1082},
+        {99, 0xFFFFFFFF},
+    };
+    const vector<LBA_DATA> outOfRangeLbaDatas = {
+        {-1, 0x100},
+        {-100, 0x1AFAED},
+        {132, 0xABCDEF},
+        {5557, 0xDEADBEEF},
+        {889, 0xBEEF1082},
+        {100, 0xB1E8F0E2},
+        {101, 0x1082},
+        {-15557, 0xDEADBEEF},
     };
 
 protected:
@@ -188,4 +261,58 @@ TEST_F(SSDCmdParserFixture, FlushSuccess) {
     bool actual = parser.checkParsing(argc, argv);
     bool expected = PARSING_SUCCESS;
     EXPECT_EQ(expected, actual);
+}
+
+
+TEST_F(SSDCmdParserFixture, FileOutputCheckTouched) {
+    for (int index = 0; index < VALID_LBA_LIST.size(); index++) {
+        string lba = VALID_LBA_LIST[index];
+        string value = VALID_VALUE_LIST[index];
+        const char* argv[] = { EXE_FILE_NAME, WRITE_COMMAND, lba.c_str(), value.c_str() };
+        int argc = sizeof(argv) / sizeof(argv[0]);
+
+        bool actual = parser.checkParsing(argc, argv);
+        bool expected = PARSING_SUCCESS;
+        EXPECT_EQ(expected, actual);
+
+        const char* argvR[] = { EXE_FILE_NAME, READ_COMMAND, lba.c_str() };
+        int argcR = sizeof(argvR) / sizeof(argvR[0]);
+
+        actual = parser.checkParsing(argcR, argvR);
+        expected = PARSING_SUCCESS;
+        EXPECT_EQ(expected, actual);
+        EXPECT_TRUE(containsValue(value.c_str()));
+
+    }
+}
+
+TEST_F(SSDCmdParserFixture, FileOutputCheckUntouched) {
+    ssd.reinitializeFile();
+    for (int index = 0; index < VALID_LBA_LIST.size(); index++) {
+        string lba = VALID_LBA_LIST[index];
+        string value = VALID_VALUE_LIST[index];
+
+        const char* argvR[] = { EXE_FILE_NAME, READ_COMMAND, lba.c_str() };
+        int argcR = sizeof(argvR) / sizeof(argvR[0]);
+
+        bool actual = parser.checkParsing(argcR, argvR);
+        bool expected = PARSING_FAILED;
+        EXPECT_EQ(expected, actual);
+        EXPECT_TRUE(containsValue("0x00000000")); 
+    }
+}
+
+TEST_F(SSDCmdParserFixture, FileOutputCheckError) {
+    for (int index = 0; index < OVER_LBA_LIST.size(); index++) {
+        string lba = OVER_LBA_LIST[index];
+        string value = VALID_VALUE_LIST[index];
+
+        const char* argvR[] = { EXE_FILE_NAME, READ_COMMAND, lba.c_str() };
+        int argcR = sizeof(argvR) / sizeof(argvR[0]);
+
+        bool actual = parser.checkParsing(argcR, argvR);
+        bool expected = PARSING_FAILED;
+        EXPECT_EQ(expected, actual);
+        EXPECT_TRUE(containsError());
+    }
 }

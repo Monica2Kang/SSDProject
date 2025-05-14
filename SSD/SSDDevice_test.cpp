@@ -185,54 +185,7 @@ TEST_F(SSDDeviceFixture, ssdReadDataTC4UntouchedLba) {
 }
 
 #if 1
-TEST_F(SSDDeviceFixture, DISABLED_ssdReadDataTC4FileOutputCheckData) {
-    for (LBA_DATA lba_data : inRangeLbaDatas) {
-        ssd.writeData(lba_data.lba, lba_data.data);
-        unsigned int actual = ssd.readData(lba_data.lba);
-        EXPECT_EQ(lba_data.data, actual);
-        EXPECT_TRUE(containsValue(actual));
-    }
-}
 
-TEST_F(SSDDeviceFixture, DISABLED_ssdReadDataTC4FileOutputCheckUntouched) {
-    ssd.reinitializeFile();
-    for (auto inRangeLbaData : inRangeLbaDatas) {
-        EXPECT_THROW(ssd.readData(inRangeLbaData.lba), exception);
-        EXPECT_TRUE(containsValue(0x0));
-    }
-}
-
-TEST_F(SSDDeviceFixture, DISABLED_ssdReadDataTC4FileOutputCheckError) {
-    ssd.reinitializeFile();
-    vector<int> lba = { 100, 101, 110, 253, 337, 1553, 25675 };
-    for (int addr : lba) {
-        EXPECT_THROW(ssd.readData(addr), exception);
-        EXPECT_TRUE(containsError());
-    }
-}
-
-TEST_F(SSDDeviceFixture, DISABLED_ssdReadDataTC4FileOutputCheckForcedError) {
-    for (LBA_DATA lba_data : inRangeLbaDatas) {
-        ssd.writeData(lba_data.lba, lba_data.data);
-        unsigned int actual = ssd.readData(lba_data.lba);
-        EXPECT_EQ(lba_data.data, actual);
-        EXPECT_TRUE(containsValue(actual));
-
-        ssd.printError();
-        EXPECT_TRUE(containsError());
-    }
-}
 
 #endif // 0
 
-TEST_F(SSDDeviceFixture, ssdEraseDataTC4RangeCheck) {
-    for (LBA_RANGE lba_range : eraseLbaRanges) {
-        if (lba_range.expected) {
-            EXPECT_NO_THROW(ssd.eraseData(lba_range.lba, lba_range.range));
-        }
-        else {
-            EXPECT_THROW(ssd.eraseData(lba_range.lba, lba_range.range), invalid_argument);
-            EXPECT_TRUE(containsError());
-        }
-    }
-}

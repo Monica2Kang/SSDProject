@@ -272,6 +272,8 @@ bool Shell::helpApi(void) {
 		cout << "write > write [LBA] [data]" << endl;
 		cout << "read > read [LBA]" << endl;
 		cout << "erase > erase [LBA] [SIZE]" << endl;
+		cout << "erase_range > erase_range [startLBA] [endLBA]" << endl;
+		cout << "flush > Execute all commands in the command buffer" << endl;
 		cout << "exit > End the program" << endl;
 		cout << "help > Show command guide" << endl;
 		cout << "fullwrite > fullwrite[data]" << endl;

@@ -391,20 +391,16 @@ void Shell::storeData(const int pos) {
 
 void Shell::storeSize(void) {
 	int tempSize = stoi(parameter[SIZE_POS]); // -INF ~ -1 || 1 ~ INF
-	int totalSize = LBA + tempSize;
 
-	if (tempSize < 0) { // -INF ~ -1
+	// -INF ~ -1
+	if (tempSize < 0) {
 		LBASize = abs(tempSize);
-		LBA = max(0, (LBA - LBASize + 1));
+		LBA = std::max(0, LBA - LBASize + 1);
+		return;
 	}
-	else { // 1 ~ INF
-		if (totalSize > MAX_SIZE) { // 200
-			LBASize = MAX_SIZE - LBA;
-		}
-		else { // totalSize <= MAX_SIZE
-			LBASize = tempSize;
-		}
-	}
+
+	// 1 ~ INF (normal size case, exceeded size case )
+	LBASize = std::min(tempSize, MAX_SIZE - LBA);
 }
 
 void Shell::storeLBARange(void) {

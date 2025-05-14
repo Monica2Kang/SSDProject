@@ -68,6 +68,12 @@ void SSDAdapter::fullRead(void)
 	}
 }
 
+void SSDAdapter::flush(void) {
+	std::string argument = "F";
+
+	_executeSSDCommand(argument);
+}
+
 void SSDAdapter::_executeSSDCommand(const std::string argument)
 {
 	std::string exePath = "..\\x64\\Release\\SSD.exe";

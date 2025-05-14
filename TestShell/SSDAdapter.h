@@ -11,6 +11,7 @@ public:
 	void erase(const int lba, const int size) override;
 	void fullWrite(const int data) override;
 	void fullRead(void) override;
+	void flush(void) override;
 
 private:
 	void _executeSSDCommand(const string command);

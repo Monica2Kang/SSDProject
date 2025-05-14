@@ -25,6 +25,7 @@ public:
 
 private:
     //bool _openFile(void);
+    bool _fileExists(const std::string& name);
     bool _checkLbaBoundary(const int lba) const;
     //bool _isFileOpened(void) const { return fileOpened; }
     //void _setFileOpened(const bool input) { fileOpened = input; }
@@ -33,11 +34,14 @@ private:
 
 private:
     SSDFileStorageDevice() = default;
-    SSDFileStorageDevice(std::string filename, int maxLbaCapacity) : 
-        filename{ filename }, maxLbaCapacity{ maxLbaCapacity }, maxMapCapacity{ maxLbaCapacity },
-        upperLbaLimit{ maxLbaCapacity - 1 } {
-        createFile();
-    };
+
+    SSDFileStorageDevice(std::string filename, int maxLbaCapacity);
+
+    //SSDFileStorageDevice(std::string filename, int maxLbaCapacity) : 
+    //    filename{ filename }, maxLbaCapacity{ maxLbaCapacity }, maxMapCapacity{ maxLbaCapacity },
+    //    upperLbaLimit{ maxLbaCapacity - 1 } {
+    //    createFile();
+    //};
 
 private:
     std::string filename;

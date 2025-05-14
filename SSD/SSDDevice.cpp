@@ -3,7 +3,7 @@
 #include "SSDFileOutput.h"
 
 SSDDevice::SSDDevice() {
-    _initializeCellData();
+    //_initializeCellData();
     //SSD_FILE_STORAGE_DEVICE.createFile();
     //SSD_FILE_STORAGE_DEVICE.openFile();
 }

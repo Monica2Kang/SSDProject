@@ -6,6 +6,22 @@
 
 using namespace std;
 
+SSDFileStorageDevice::SSDFileStorageDevice(std::string filename, int lbaCapacity)
+    : filename(std::move(filename)), maxLbaCapacity(lbaCapacity), maxMapCapacity(lbaCapacity),
+    upperLbaLimit(lbaCapacity - 1) {
+
+    if (!_fileExists(this->filename)) {
+        createFile();
+    }
+}
+
+
+bool SSDFileStorageDevice::_fileExists(const std::string& name) {
+    std::ifstream f(name, std::ios::binary);
+    bool exists = f.good();
+    return exists;
+}
+
 bool SSDFileStorageDevice::writeData(const int lba, const unsigned int data) {
     if (_checkLbaBoundary(lba))
         return false;

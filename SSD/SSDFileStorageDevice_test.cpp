@@ -25,10 +25,8 @@ public:
             else
                 EXPECT_FALSE(result);
         }
-        //SSD_FILE_STORAGE_DEVICE.closeFile();
     }
     void doOutOfRangeBoundaryCheck(const bool expectation)     {
-        //SSD_FILE_STORAGE_DEVICE.openFile();
         for (LBA_DATA lba_data : outOfRangeLbaData) {
             bool result = SSD_FILE_STORAGE_DEVICE.readData(lba_data.lba, lba_data.data);
             if (expectation)
@@ -36,11 +34,10 @@ public:
             else
                 EXPECT_FALSE(result);
         }
-        //SSD_FILE_STORAGE_DEVICE.closeFile();
-    }
-    void doReadDataConfirmation(void) {
-        //SSD_FILE_STORAGE_DEVICE.openFile();
 
+    }
+	
+    void doReadDataConfirmation(void) {
         for (LBA_DATA lba_data : inRangeLbaData) {
             unsigned int readData;
             bool result = SSD_FILE_STORAGE_DEVICE.readData(lba_data.lba, readData);
@@ -58,6 +55,7 @@ public:
         }
         //SSD_FILE_STORAGE_DEVICE.closeFile();
     }
+	
     void removeAndCreateFile(void) {
         SSD_FILE_STORAGE_DEVICE.removeFile();
         SSD_FILE_STORAGE_DEVICE.createFile();

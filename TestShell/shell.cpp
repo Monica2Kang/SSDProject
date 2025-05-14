@@ -66,35 +66,16 @@ void Shell::executeShell(void) {
 		else if (parameter[COMMAND_POS] == "fullread") { // fullread 
 			if (fullreadApi()) continue;
 		}
-		else if (parameter[COMMAND_POS] == "1_" || parameter[COMMAND_POS] == "1_FullWriteAndReadCompare") {
-			if(!(m_TestScript->runTest(parameter[COMMAND_POS]))){
-				cout << "PASS\n" << endl;
+		else {
+			if (testScriptApi()) {
 				continue;
 			}
-			cout << "FAIL\n" << endl;
-			continue;
-		}
-		else if (parameter[COMMAND_POS] == "2_" || parameter[COMMAND_POS] == "2_PartialLBAWrite") {
-			if (!(m_TestScript->runTest(parameter[COMMAND_POS]))) {
-				cout << "PASS\n" << endl;
-				continue;
-			}
-			cout << "FAIL\n" << endl;
-			continue;
-		}
-		else if (parameter[COMMAND_POS] == "3_" || parameter[COMMAND_POS] == "3_WriteReadAging") {
-			if (!(m_TestScript->runTest(parameter[COMMAND_POS]))) {
-				cout << "PASS\n" << endl;
-				continue;
-			}
-			cout << "FAIL\n" << endl;
-			continue;
 		}
 
 		cout << "INVALID COMMAND" << endl;
 		cout << endl;
 
-		TEST_SHELL_LOG("INVALID COMMAND");
+		TEST_SHELL_LOG("INVALID COMMAND");	
 	}
 }
 
@@ -153,31 +134,12 @@ void Shell::executeShell(void) {
 		if (fullreadApi()) 
 			return;
 	}
-	else if (parameter[COMMAND_POS] == "1_" || parameter[COMMAND_POS] == "1_FullWriteAndReadCompare") {
-		if (!(m_TestScript->runTest(parameter[COMMAND_POS]))) {
-			cout << "PASS\n" << endl;
+	else {
+		if (testScriptApi()) {
 			return;
 		}
-		cout << "FAIL\n" << endl;
-		return;
 	}
-	else if (parameter[COMMAND_POS] == "2_" || parameter[COMMAND_POS] == "2_PartialLBAWrite") {
-		const int expectedData = 0xBEEFCAFE;
-		if (!(m_TestScript->partialLBAWrite(expectedData))) { 
-			cout << "PASS\n" << endl;
-			return; 
-		}
-		cout << "FAIL\n" << endl;
-		return;
-	}
-	else if (parameter[COMMAND_POS] == "3_" || parameter[COMMAND_POS] == "3_WriteReadAging") {
-		if (!(m_TestScript->writeReadAging())) { 
-			cout << "PASS\n" << endl;
-			return;
-		}
-		cout << "FAIL\n" << endl;
-		return;
-	}
+
 	cout << "INVALID COMMAND" << endl;
 
 	TEST_SHELL_LOG("INVALID COMMAND");
@@ -364,6 +326,21 @@ void Shell::fulleraseApi(void) {
 	{
 		m_ISSDAdapter->erase(lba, CHUNK_SIZE);
 	}
+}
+
+bool Shell::testScriptApi(void) {
+	if (isValidParameterSize(TEST_SCRIPT_PARAMETER_SIZE)) {
+		if (m_TestScript->isValidScenarioName(parameter[COMMAND_POS])) {
+			if (!(m_TestScript->runTest(parameter[COMMAND_POS]))) {
+				cout << "PASS\n" << endl;
+			}
+			else{
+				cout << "FAIL\n" << endl;
+			}
+			return true;
+		}
+	}
+	return false;
 }
 
 bool Shell::isValidParameterSize(const int size) {

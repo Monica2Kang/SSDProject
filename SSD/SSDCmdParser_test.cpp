@@ -105,7 +105,9 @@ TEST_F(SSDCmdParserFixture, ReadFailInvalidLBA) {
         const char* argv[] = { EXE_FILE_NAME, READ_COMMAND, lba.c_str() };
         int argc = sizeof(argv) / sizeof(argv[0]);
 
-        EXPECT_THROW(parser.checkParsing(argc, argv), std::invalid_argument);
+        bool actual = parser.checkParsing(argc, argv);
+        bool expected = PARSING_FAILED;
+        EXPECT_EQ(expected, actual);
     }
 }
 
@@ -127,7 +129,9 @@ TEST_F(SSDCmdParserFixture, WriteFailInvalidLBA) {
         const char* argv[] = { EXE_FILE_NAME, WRITE_COMMAND, lba.c_str(), DEFAULT_VALUE };
         int argc = sizeof(argv) / sizeof(argv[0]);
 
-        EXPECT_THROW(parser.checkParsing(argc, argv), std::invalid_argument);
+        bool actual = parser.checkParsing(argc, argv);
+        bool expected = PARSING_FAILED;
+        EXPECT_EQ(expected, actual);
     }
 }
 

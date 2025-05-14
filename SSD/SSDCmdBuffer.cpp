@@ -7,7 +7,54 @@
 #include "SSDDevice.h"
 #include "SSDCmdBufferOutput.h"
 
-//enum class CommandType { WRITE, ERASE };
+unsigned int SSDCmdBuffer::readData(const int lba)
+{
+    if (_checkLbaOutOfRange(lba)) {
+        throw std::invalid_argument("Out of LBA Range.");
+    }
+
+    // 최신 명령부터 확인
+    for (auto it = cmdBuffer.rbegin(); it != cmdBuffer.rend(); ++it) {
+        const Command& cmd = *it;
+
+        bool retFlag;
+        unsigned int retVal = _getBufferedDataIfHit(cmd, lba, retFlag);
+        if (retFlag) return retVal;
+    }
+
+    // cmdBuffer에 명령이 없으면 SSD 디바이스에서 직접 읽기
+    return SSD_DEVICE.readData(lba);
+}
+
+unsigned int SSDCmdBuffer::_getBufferedDataIfHit(const Command& cmd, const int lba, bool& retFlag) {
+    retFlag = true;
+    if (_isCmdWrite(cmd) && _isLbaTheSame(cmd, lba)) {
+        return cmd.dataOrRange;
+    }
+
+    if (_isCmdErase(cmd)) {
+        int eraseStart = cmd.lba;
+        int eraseEnd = eraseStart + static_cast<int>(cmd.dataOrRange) - 1;
+        if (lba >= eraseStart && lba <= eraseEnd) {
+            return 0;
+        }
+    }
+
+    retFlag = false;
+    return {};
+}
+
+bool SSDCmdBuffer::_isLbaTheSame(const Command& cmd, const int lba) const {
+    return cmd.lba == lba;
+}
+
+bool SSDCmdBuffer::_isCmdWrite(const Command& cmd) const {
+    return cmd.type == CommandType::WRITE;
+}
+
+bool SSDCmdBuffer::_isCmdErase(const Command& cmd) const {
+    return cmd.type == CommandType::ERASE;
+}
 
 void SSDCmdBuffer::writeData(const int lba, const unsigned int data) {
     if (_checkLbaOutOfRange(lba)) throw std::invalid_argument("Out of LBA Range.");
@@ -15,6 +62,7 @@ void SSDCmdBuffer::writeData(const int lba, const unsigned int data) {
     cmdBuffer.push_back({ CommandType::WRITE, lba, data });
     _optimize();
     _exportBufferToFiles();
+    _saveBufferToFile();
 }
 
 void SSDCmdBuffer::eraseData(const int lba, const int range) {
@@ -23,15 +71,12 @@ void SSDCmdBuffer::eraseData(const int lba, const int range) {
     _removeWritesCoveredByErase(lba, range);
     _optimize();
     _exportBufferToFiles();
+    _saveBufferToFile();
 }
 
 const std::vector<Command>& SSDCmdBuffer::getBuffer(void) const {
     return cmdBuffer;
 }
-
-//void SSDCmdBuffer::clear(void) {
-//    cmdBuffer.clear();
-//}
 
 void SSDCmdBuffer::flushData(void) {
     for (const auto& cmd : cmdBuffer) {
@@ -48,7 +93,7 @@ void SSDCmdBuffer::flushData(void) {
     }
     cmdBuffer.clear();
     _exportBufferToFiles();
-
+    _saveBufferToFile();
 }
 
 bool SSDCmdBuffer::_checkEraseLbaRangeInvalid(int lba, int range) const {
@@ -95,6 +140,7 @@ void SSDCmdBuffer::_clearBufferIfNeeded(void) {
     if (cmdBuffer.size() > MAX_CMDBUF_SIZE) {
         flushData();
         _exportBufferToFiles();
+        //_saveBufferToFile();
     }
 }
 
@@ -164,40 +210,31 @@ void SSDCmdBuffer::_mergeErases(void) {
     cmdBuffer.insert(cmdBuffer.end(), merged.begin(), merged.end());
 }
 
+void SSDCmdBuffer::_saveBufferToFile() const {
+    std::ofstream ofs(_bufferFileName.c_str());
+    if (!ofs) return;
 
-#if 0
-// split erase if it overlaps with write
-void SSDCmdBuffer::_resolveEraseWriteConflicts() {
-    std::vector<Command> resolved;
     for (const auto& cmd : cmdBuffer) {
-        if (cmd.type == CommandType::ERASE) {
-            bool splitNeeded = false;
-            for (const auto& write : cmdBuffer) {
-                if (write.type != CommandType::WRITE) continue;
-                int eraseStart = cmd.lba;
-                int eraseEnd = cmd.lba + cmd.dataOrRange - 1;
-                if (write.lba >= eraseStart && write.lba <= eraseEnd) {
-                    // split erase
-                    int part1Len = write.lba - eraseStart;
-                    int part2Len = eraseEnd - write.lba;
-
-                    if (part1Len > 0)
-                        resolved.push_back({ CommandType::ERASE, eraseStart, static_cast<unsigned int>(part1Len) });
-                    if (part2Len > 0)
-                        resolved.push_back({ CommandType::ERASE, write.lba + 1, static_cast<unsigned int>(part2Len) });
-                    splitNeeded = true;
-                    break;
-                }
-            }
-            if (!splitNeeded) {
-                resolved.push_back(cmd);
-            }
-        }
-        else {
-            resolved.push_back(cmd);
-        }
+        ofs << cmd.toString() << "\n";
     }
-    cmdBuffer = resolved;
 }
 
-#endif // 0
+void SSDCmdBuffer::_loadBufferFromFile() {
+    std::ifstream ifs(_bufferFileName.c_str());
+    if (!ifs) return;
+
+    std::string line;
+    while (std::getline(ifs, line)) {
+        if (!line.empty()) {
+            cmdBuffer.push_back(Command::fromString(line));
+        }
+    }
+
+    _exportBufferToFiles();  // 복원된 상태를 시각화 (파일로)
+}
+
+void SSDCmdBuffer::clearForTestOnly(void) {
+    cmdBuffer.clear();
+    _saveBufferToFile();
+    _exportBufferToFiles();
+}

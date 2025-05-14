@@ -3,11 +3,13 @@
 #include <vector>
 #include "SSDCmdParser.h"
 #include "SSDDevice.h"
+#include "SSDCmdBuffer.h"
 
 using namespace std;
 using namespace testing;
 
 #define ssd SSDDevice::getInstance()
+#define SSD_CMD_BUFFER SSDCmdBuffer::getInstance()
 
 class SSDCmdParserFixture : public SSDCmdParser, public Test {
 public:
@@ -91,13 +93,13 @@ public:
     const int OUTPUT_DIGIT = 8;
 
     const vector<string> VALID_LBA_LIST = {
-        "3", "25", "11", "95", "73", "52"
+        "3", "25", "11", "0", "95", "73", "99", "52",
     };
     const vector<string> OVER_LBA_LIST = {
         "123", "8392", "321", "573", "2312", "213"
     };
     const vector<string> VALID_VALUE_LIST = {
-        "0x00000100", "0x001AFAED", "0x00ABCDEF", "0xDEADBEEF", "0xBEEF1082", "0xB1E8F0E2"
+        "0x00000100", "0x001AFAED", "0x00ABCDEF", "0xDEADBEEF", "0xBEEF1082", "0xB1E8F0E2", "0xCAFEBEAD", "0xDEADBEEF"
     };
     const vector<string> DECIMEL_VALUE_LIST = {
         "2", "75", "14325", "2136422", "323467842", "4294967295"
@@ -287,6 +289,8 @@ TEST_F(SSDCmdParserFixture, FileOutputCheckTouched) {
 }
 
 TEST_F(SSDCmdParserFixture, FileOutputCheckUntouched) {
+    // 반드시 Cmd Buffer flushData()를 먼저 하고, 다음에 파일을 reinitialize (remove-create) 해야 함. 그렇지 않으면 TC fail 발생함.
+    SSD_CMD_BUFFER.flushData();
     ssd.reinitializeFile();
     for (int index = 0; index < VALID_LBA_LIST.size(); index++) {
         string lba = VALID_LBA_LIST[index];

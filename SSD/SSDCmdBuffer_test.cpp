@@ -6,9 +6,11 @@
 using namespace testing;
 using namespace std;
 
+#define cbuf SSDCmdBuffer::getInstance()
+
 class SSDCmdBufferFixture : public Test {
 public:
-    SSDCmdBuffer cbuf;
+    //SSDCmdBuffer cbuf;
 
     // 파일 이름 확인용
     vector<string> getFileNames() {
@@ -92,6 +94,7 @@ TEST_F(SSDCmdBufferFixture, CmdBufferOutOfBound4WriteTC) {
 }
 
 TEST_F(SSDCmdBufferFixture, CmdBufferDuplicateWriteCmdTC0) {
+    cbuf.clearForTestOnly();  // TC 마다 Buffer 초기화 필요
     vector<Command> writeCmd = {
         {CommandType::WRITE, 0, 0xBEEFCAF0},
         {CommandType::WRITE, 0, 0xBEEFCAF1},
@@ -103,15 +106,23 @@ TEST_F(SSDCmdBufferFixture, CmdBufferDuplicateWriteCmdTC0) {
         {CommandType::WRITE, 0, 0xBEEFCAF6},
         {CommandType::WRITE, 0, 0xBEEFCAF6},
     };
-    Command writeCmdAnswer{ CommandType::WRITE, 0, 0xBEEFCAF6 };
 
-    for (auto cmd : writeCmd) {
+
+    for (const auto& cmd : writeCmd) {
         cbuf.writeData(cmd.lba, cmd.dataOrRange);
-        vector<Command> buffer = cbuf.getBuffer();
-        Command actual = *buffer.begin();
-
-        EXPECT_TRUE(0 == std::memcmp(&actual, &cmd, sizeof(writeCmdAnswer)));
     }
+
+    // 최종 결과는 가장 마지막 값만 남아야 한다
+    vector<Command> buffer = cbuf.getBuffer();
+
+    ASSERT_EQ(buffer.size(), 1);  // Only the last write should remain
+
+    Command expected = { CommandType::WRITE, 0, 0xBEEFCAF6 };
+    Command actual = buffer[0];
+
+    EXPECT_EQ(actual.type, expected.type);
+    EXPECT_EQ(actual.lba, expected.lba);
+    EXPECT_EQ(actual.dataOrRange, expected.dataOrRange);
 }
 
 TEST_F(SSDCmdBufferFixture, CmdBufferMergeEraseCmdTC0) {
@@ -170,6 +181,7 @@ TEST_F(SSDCmdBufferFixture, CmdBufferMergeEraseCmdTC14CoveringCase) {
 }
 
 TEST_F(SSDCmdBufferFixture, CmdBufferMergeEraseCmdTC2) {
+    cbuf.clearForTestOnly();
     vector<Command> eraseCmd = {
         {CommandType::ERASE, 0, 1},
         {CommandType::ERASE, 2, 1},
@@ -304,8 +316,8 @@ TEST_F(SSDCmdBufferFixture, CmdBufferMergeEraseCmdTC6) {
     }
 }
 
-
 TEST_F(SSDCmdBufferFixture, CmdBufferMergeWriteEraseComplexCmdTC0) {
+    cbuf.clearForTestOnly();
     vector<Command> commandList = {
         {CommandType::ERASE, 0, 7},
         {CommandType::ERASE, 51, 3},
@@ -474,7 +486,7 @@ TEST_F(SSDCmdBufferFixture, CmdBufferToFileConfirmation_TC1) {
         "3_E_48_6",
         "4_E_70_8",
         "5_empty",
-    }; 
+    };
 
     vector<string> actualFileNames = getFileNames();
     expectFileNamesMatch(actualFileNames, expectedFileNames);

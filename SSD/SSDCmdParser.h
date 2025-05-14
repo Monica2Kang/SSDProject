@@ -3,6 +3,7 @@
 #include <vector>
 #include "SSDDevice.h"
 #include "SSDFileOutput.h"
+#include "SSDCmdBuffer.h"
 
 using std::string;
 using std::vector;
@@ -20,6 +21,7 @@ public:
 private:
     //SSDDevice m_device;
     //SSDFileOutput m_fileOutput;
+    //SSDCmdBuffer m_device;
 
     static const int VALID_COMMAND_SIZE = 2;
     static const int MAX_LBA = 100;

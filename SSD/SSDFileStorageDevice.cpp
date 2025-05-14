@@ -90,7 +90,7 @@ bool SSDFileStorageDevice::_readFile(const int lba, unsigned int& data) {
         throw std::runtime_error("Cannot Open the File.");
         //return false;
     }
-        int flag = 0;
+    int flag = 0;
     file.seekg(lba * sizeof(int) + maxMapCapacity * sizeof(int), ios::beg);
     file.read(reinterpret_cast<char*>(&flag), sizeof(flag));
     if (TOUCHED_FLAG != flag) {

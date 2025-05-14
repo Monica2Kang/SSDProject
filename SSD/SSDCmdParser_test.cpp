@@ -9,6 +9,28 @@ using namespace testing;
 
 class SSDCmdParserFixture : public SSDCmdParser, public Test {
 public:
+    void testWriteFail(const vector<string>& valueList) {
+        for (string value : valueList) {
+            const char* argv[] = { EXE_FILE_NAME, WRITE_COMMAND, DEFAULT_LBA, value.c_str() };
+            int argc = sizeof(argv) / sizeof(argv[0]);
+
+            bool actual = parser.checkParsing(argc, argv);
+            bool expected = PARSING_FAILED;
+            EXPECT_EQ(expected, actual);
+        }
+    }
+
+    void testEraseFail(const vector<string>& sizeList) {
+        for (string size : sizeList) {
+            const char* argv[] = { EXE_FILE_NAME, ERASE_COMMAND, DEFAULT_LBA, size.c_str() };
+            int argc = sizeof(argv) / sizeof(argv[0]);
+
+            bool actual = parser.checkParsing(argc, argv);
+            bool expected = PARSING_FAILED;
+            EXPECT_EQ(expected, actual);
+        }
+    }
+
     SSDCmdParser parser;
     const char* EXE_FILE_NAME = "SSD.exe";
     const char* READ_COMMAND = "R";
@@ -110,36 +132,15 @@ TEST_F(SSDCmdParserFixture, WriteFailInvalidLBA) {
 }
 
 TEST_F(SSDCmdParserFixture, WriteFailDecimalValue) {
-    for (string value : DECIMEL_VALUE_LIST) {
-        const char* argv[] = { EXE_FILE_NAME, WRITE_COMMAND, DEFAULT_LBA, value.c_str() };
-        int argc = sizeof(argv) / sizeof(argv[0]);
-
-        bool actual = parser.checkParsing(argc, argv);
-        bool expected = PARSING_FAILED;
-        EXPECT_EQ(expected, actual);
-    }
+    testWriteFail(DECIMEL_VALUE_LIST);
 }
 
 TEST_F(SSDCmdParserFixture, WriteFailBigValue) {
-    for (string value : BIG_VALUE_LIST) {
-        const char* argv[] = { EXE_FILE_NAME, WRITE_COMMAND, DEFAULT_LBA, value.c_str() };
-        int argc = sizeof(argv) / sizeof(argv[0]);
-
-        bool actual = parser.checkParsing(argc, argv);
-        bool expected = PARSING_FAILED;
-        EXPECT_EQ(expected, actual);
-    }
+    testWriteFail(BIG_VALUE_LIST);
 }
 
 TEST_F(SSDCmdParserFixture, WriteFailSmallValue) {
-    for (string value : SMALL_VALUE_LIST) {
-        const char* argv[] = { EXE_FILE_NAME, WRITE_COMMAND, DEFAULT_LBA, value.c_str()};
-        int argc = sizeof(argv) / sizeof(argv[0]);
-
-        bool actual = parser.checkParsing(argc, argv);
-        bool expected = PARSING_FAILED;
-        EXPECT_EQ(expected, actual);
-    }
+    testWriteFail(SMALL_VALUE_LIST);
 }
 
 TEST_F(SSDCmdParserFixture, EraseSuccessSize) {
@@ -155,25 +156,11 @@ TEST_F(SSDCmdParserFixture, EraseSuccessSize) {
 }
 
 TEST_F(SSDCmdParserFixture, EraseFailMinuxSize) {
-    for (string size : MINUS_SIZE_LIST) {
-        const char* argv[] = { EXE_FILE_NAME, ERASE_COMMAND, DEFAULT_LBA, size.c_str()};
-        int argc = sizeof(argv) / sizeof(argv[0]);
-
-        bool actual = parser.checkParsing(argc, argv);
-        bool expected = PARSING_FAILED;
-        EXPECT_EQ(expected, actual);
-    }
+    testEraseFail(MINUS_SIZE_LIST);
 }
 
 TEST_F(SSDCmdParserFixture, EraseFailOverSize) {
-    for (string size : OVER_SIZE_LIST) {
-        const char* argv[] = { EXE_FILE_NAME, ERASE_COMMAND, DEFAULT_LBA, size.c_str()};
-        int argc = sizeof(argv) / sizeof(argv[0]);
-
-        bool actual = parser.checkParsing(argc, argv);
-        bool expected = PARSING_FAILED;
-        EXPECT_EQ(expected, actual);
-    }
+    testEraseFail(OVER_SIZE_LIST);
 }
 /* ex)  90 10 : 90~99 -> success
 *       91 10 : 91~100 -> fail

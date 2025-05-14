@@ -11,8 +11,8 @@ public:
     bool openFile(void);
     void closeFile(void);
 
-    bool writeData(const int lba, const int data);
-    bool readData(const int lba, int &data);
+    bool writeData(const int lba, const unsigned int data);
+    bool readData(const int lba, unsigned int &data);
     bool removeFile(void);
 
 private:
@@ -21,7 +21,7 @@ private:
     bool _checkLbaBoundary(const int lba) const;
     bool _isFileOpened(void) const { return fileOpened; }
     void _setFileOpened(const bool input) { fileOpened = input; }
-    bool _readFile(const int lba, int& data);
+    bool _readFile(const int lba, unsigned int& data);
     void _writeFile(const int lba, const int data);
 
 private:

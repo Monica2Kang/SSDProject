@@ -16,7 +16,7 @@ bool SSDFileStorageDevice::openFile(void) {
     return _openFile();
 }
 
-bool SSDFileStorageDevice::writeData(const int lba, const int data) {
+bool SSDFileStorageDevice::writeData(const int lba, const unsigned int data) {
     if (_checkLbaBoundary(lba))
         return false;
     if (!_isFileOpened())
@@ -27,7 +27,7 @@ bool SSDFileStorageDevice::writeData(const int lba, const int data) {
     return true;
 }
 
-bool SSDFileStorageDevice::readData(const int lba, int& data) {
+bool SSDFileStorageDevice::readData(const int lba, unsigned int& data) {
     if (_checkLbaBoundary(lba))
         return false;
     if (!_isFileOpened())
@@ -80,7 +80,7 @@ void SSDFileStorageDevice::_writeFile(const int lba, const int data) {
     file.flush();
 }
 
-bool SSDFileStorageDevice::_readFile(const int lba, int& data) {
+bool SSDFileStorageDevice::_readFile(const int lba, unsigned int& data) {
     fstream file(filename, ios::in | ios::out | ios::binary);
     //ifstream file(filename, ios::binary);
 

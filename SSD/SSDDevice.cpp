@@ -11,13 +11,13 @@ SSDDevice::~SSDDevice() {
     fSsd.closeFile();
 }
 
-int SSDDevice::readData(const int lba) {
+unsigned int SSDDevice::readData(const int lba) {
     SSDFileOutput fOutput;
     if (_isLbaOutOfRange(lba)) {
         //fOutput.printError();
         throw std::invalid_argument("Out of LBA Range.");
     }
-    int data = 0;
+    unsigned int data = 0;
     if (false == fSsd.readData(lba, data)) {
         //fOutput.printData(0x0);
         throw std::exception("Untouched Data.");
@@ -32,7 +32,7 @@ void SSDDevice::printError(void) {
     fLog.printError();
 }
 
-void SSDDevice::writeData(const int lba, const int data) {
+void SSDDevice::writeData(const int lba, const unsigned int data) {
     SSDFileOutput fOutput;
     if (_isLbaOutOfRange(lba)) {
         //fOutput.printError();

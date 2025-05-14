@@ -23,51 +23,6 @@ public:
         EXPECT_THROW(ssd.writeData(lba, SAMPLE_DATA), invalid_argument);
     }
 
-    std::string intToHexString(const unsigned int value) const {
-        std::ostringstream oss;
-        oss << "0x" << std::uppercase << std::setfill('0') << std::setw(OUTPUT_DIGIT)
-            << std::hex << value;
-        return oss.str();
-    }
-
-    bool containsError() const {
-        std::ifstream infile(FILE_NAME_OUTPUT);
-        if (!infile.is_open()) {
-            throw std::runtime_error("Cannot Open the File.");
-        }
-
-        std::string line;
-        while (std::getline(infile, line)) {
-            if (line.find("ERROR") != std::string::npos) {
-                infile.close();
-                return true;
-            }
-        }
-        infile.close();
-        return false;
-    }
-
-#if 1  // 향후 SSDParser_test.cpp에 포함 예정.
-    bool containsValue(int value) const {
-        std::ifstream infile(FILE_NAME_OUTPUT);
-        if (!infile.is_open()) {
-            throw std::runtime_error("Cannot Open the File.");
-        }
-
-        std::string target = intToHexString(static_cast<unsigned int>(value));
-        std::string line;
-        while (std::getline(infile, line)) {
-            if (line.find(target) != std::string::npos) {
-                infile.close();
-                return true;
-            }
-        }
-        infile.close();
-        return false;
-    }
-#endif // 0
-
-
 protected:
     struct LBA_DATA {
         int lba;
@@ -183,9 +138,3 @@ TEST_F(SSDDeviceFixture, ssdReadDataTC4UntouchedLba) {
         EXPECT_THROW(ssd.readData(inRangeLbaData.lba), exception);
     }
 }
-
-#if 1
-
-
-#endif // 0
-

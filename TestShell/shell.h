@@ -27,6 +27,7 @@ public:
 	const int CHUNK_SIZE = 10;
 
 	Shell(ISSDAdapter* ISSDAdapter);
+
 	void executeShell(void);
 	void setCommand(std::string command);
 
@@ -54,6 +55,7 @@ private:
 	bool flushApi(void);
 	bool fullwriteApi(void);
 	bool fullreadApi(void);
+	void fulleraseApi(void);
 	bool isValidParameterSize(const int size);
 	bool isValidLBA(const int pos);
 	bool isValidData(const int pos);

@@ -4,6 +4,8 @@
 #include "SSDCmdParser.h"
 
 using namespace std;
+#define m_device SSDDevice::getInstance()
+#define m_fileOutput SSDFileOutput::getInstance()
 
 bool SSDCmdParser::checkParsing(int argc, const char* argv[]) {
     //make tokens

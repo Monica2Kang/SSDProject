@@ -70,7 +70,7 @@ public:
 
         std::ofstream ofs(path);
         if (!ofs.is_open()) return false;
-        for (const auto& l : lines) ofs << l << '\n';
+        for (const auto& line : lines) ofs << line << '\n';
 
         return true;
     }

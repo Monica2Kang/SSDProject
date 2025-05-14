@@ -91,12 +91,6 @@ TEST_F(SSDCmdParserFixture, InvalidCommand) {
 
 TEST_F(SSDCmdParserFixture, ReadSuccess) {
     for (string lba : VALID_LBA_LIST) {
-        const char* argv[] = { EXE_FILE_NAME, WRITE_COMMAND, lba.c_str(), DEFAULT_VALUE };
-        int argc = sizeof(argv) / sizeof(argv[0]);
-        parser.checkParsing(argc, argv);
-    }
-
-    for (string lba : VALID_LBA_LIST) {
         const char* argv[] = { EXE_FILE_NAME, READ_COMMAND, lba.c_str() };
         int argc = sizeof(argv) / sizeof(argv[0]);
 

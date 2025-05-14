@@ -25,6 +25,8 @@ private:
     ~SSDFileOutput();
     SSDFileOutput(const SSDFileOutput&) = delete;
     SSDFileOutput& operator=(const SSDFileOutput&) = delete;
+    void _openFile(void);
+    void _closeFile(void);
 
 private:
     std::ofstream outfile;

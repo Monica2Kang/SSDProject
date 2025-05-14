@@ -56,8 +56,7 @@ void Shell::executeShell(void) {
 			if (fullreadApi()) continue;
 		}
 		else if (parameter[COMMAND_POS] == "1_" || parameter[COMMAND_POS] == "1_FullWriteAndReadCompare") {
-			const int expectedData = 0xBEEFCAFE;
-			if (!(m_TestScript->FullWriteAndReadCompare(expectedData))) {
+			if(!(m_TestScript->runTest(parameter[COMMAND_POS]))){
 				cout << "PASS\n" << endl;
 				continue;
 			}
@@ -65,8 +64,7 @@ void Shell::executeShell(void) {
 			continue;
 		}
 		else if (parameter[COMMAND_POS] == "2_" || parameter[COMMAND_POS] == "2_PartialLBAWrite") {
-			const int expectedData = 0xBEEFCAFE;
-			if (!(m_TestScript->PartialLBAWrite(expectedData))) {
+			if (!(m_TestScript->runTest(parameter[COMMAND_POS]))) {
 				cout << "PASS\n" << endl;
 				continue;
 			}
@@ -74,7 +72,7 @@ void Shell::executeShell(void) {
 			continue;
 		}
 		else if (parameter[COMMAND_POS] == "3_" || parameter[COMMAND_POS] == "3_WriteReadAging") {
-			if (!(m_TestScript->WriteReadAging())) {
+			if (!(m_TestScript->runTest(parameter[COMMAND_POS]))) {
 				cout << "PASS\n" << endl;
 				continue;
 			}

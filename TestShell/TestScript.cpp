@@ -10,10 +10,13 @@
 
 using namespace std;
 
+TestScript::TestScript(ISSDAdapter* ISSDAdapter) : ssdAdapter(ISSDAdapter)
+{
+}
+
 int TestScript::runTest(const string str) {
 	
 	inputTestScript= str;
-	cout << "runTest input : " << str << endl;
 	if (checkTestExist()) {
 		return excuteTest();
 	}
@@ -29,7 +32,6 @@ bool TestScript::checkTestExist() {
 			if (file.is_regular_file() && file.path().extension() == ".txt") {
 				if (file.path().filename().string().substr(0, inputTestScript.size()) == inputTestScript) {
 					ScriptFilePath = file.path().string();
-					cout << "ScriptFilePath : " << ScriptFilePath << endl;
 					isExist = true;
 					break;
 				}
@@ -39,7 +41,6 @@ bool TestScript::checkTestExist() {
 	catch (const filesystem::filesystem_error& e){
 		isExist = false;
 	}
-	cout << "isExist : " << isExist << endl;
 	return isExist;
 }
 
@@ -47,7 +48,6 @@ bool TestScript::checkTestExist() {
 int TestScript::excuteTest() {
 	fstream file(ScriptFilePath);
 	if (!file.is_open()) {
-		cout << "file is open" << endl;
 		return FAIL;
 	}
 
@@ -57,8 +57,6 @@ int TestScript::excuteTest() {
 	int data;
 	int size;
 	string line;
-
-	int num = 0;
 	while (getline(file, line)) {
 		
 		parameter.clear();
@@ -69,21 +67,22 @@ int TestScript::excuteTest() {
 			parameter.push_back(word);
 		}
 		
-		if (parameter[0] == "write") {
+		if (parameter[0] == "W") {
 			LBA = stoi(parameter[1]);
 			data = static_cast<int>(stoul(parameter[2], nullptr, 16));
+			//cout << "[" << LBA << "] " << parameter[1] << " " << data << endl;
 			ssdAdapter->writeLba(LBA, data);
 			expectedData[LBA] = data;
 		}
-		else if (parameter[0] == "read") {
+		else if (parameter[0] == "R") {
 			LBA = stoi(parameter[1]);
 			int resultData = ssdAdapter->readLba(LBA);
 			if (resultData != expectedData[LBA]) {
-				cout << num << " :: " << expectedData[LBA] << ", " << resultData << endl;
+				//cout << resultData << " : " << expectedData[LBA] << endl;
 				return FAIL;
 			}
 		}
-		else if (parameter[0] == "erase") {
+		else if (parameter[0] == "E") {
 			LBA = stoi(parameter[1]);
 			size = stoi(parameter[2]);
 			ssdAdapter->erase(LBA, size);
@@ -91,7 +90,9 @@ int TestScript::excuteTest() {
 				expectedData[i] = 0;
 			}
 		}
-		num++;
+		else {
+			return FAIL;
+		}
 	}
 
 	return PASS;

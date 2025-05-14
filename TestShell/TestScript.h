@@ -6,16 +6,14 @@
 
 static const int PASS = 0;
 static const int FAIL = 1;
-static const string testDir = "../TestScripts";
+static const string testDir = "../TestScenarios";
 
 using namespace std;
 
 class TestScript {
 public:
 	TestScript() = default;
-	TestScript(ISSDAdapter* obj) {
-		ssdAdapter = obj;
-	}
+	TestScript(ISSDAdapter* ISSDAdapter);
 
 	int runTest(const string str);
 

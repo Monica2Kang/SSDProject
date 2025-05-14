@@ -10,6 +10,7 @@
 #include <chrono>
 #include <ctime>
 #include <direct.h>
+#include <thread>
 #include <sys/stat.h>
 
 #define FILE_MANAGER FileManager::getInstance()

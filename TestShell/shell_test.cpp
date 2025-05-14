@@ -205,3 +205,14 @@ TEST(ShellFixture, validWriteReadAging) {
 
 	EXPECT_NO_THROW(instance.executeShell());
 }
+
+TEST(ShellFixture, validTestScenario) {
+	SSDAdapter ssdAdpater;
+	Shell instance{ &ssdAdpater };
+
+	const string command = "1_";
+	instance.setCommand(command);
+	instance.executeShell();
+
+	// console 창에서 PASS가 출력되어야 함
+}

@@ -73,21 +73,21 @@ TEST_F(TestScriptFixture, WriteReadAging1) {
 
 TEST_F(TestScriptFixture, FullWriteAndReadCompare2) {
 	TestScript* script = new TestScript(&ssdAdapter);
-	int result = script->FullWriteAndReadCompare(TEST_DATA);
+	int result = script->fullWriteAndReadCompare(TEST_DATA);
 
 	EXPECT_EQ(result, PASS);
 }
 
 TEST_F(TestScriptFixture, PartialLBAWrite2) {
 	TestScript* script = new TestScript(&ssdAdapter);
-	int result = script->PartialLBAWrite(TEST_DATA);
+	int result = script->partialLBAWrite(TEST_DATA);
 
 	EXPECT_EQ(result, PASS);
 }
 
 TEST_F(TestScriptFixture, WriteReadAging2) {
 	TestScript* script = new TestScript(&ssdAdapter);
-	int result = script->WriteReadAging();
+	int result = script->writeReadAging();
 
 	EXPECT_EQ(result, PASS);
 }

@@ -24,6 +24,7 @@ public:
 	int eraseAndWriteAging(void);
 
 	void executeRunner(const string str);
+	bool isValidScenarioName(const string str);
 
 private:
 	ISSDAdapter* ssdAdapter;

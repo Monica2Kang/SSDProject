@@ -88,7 +88,7 @@ public:
         return static_cast<std::size_t>(in.tellg());
     }
 
-    bool checkSizeAndRotate(std::string logFilePath, std::string rotatedPath, int maxSize) {
+    bool checkSizeAndRotate(const std::string& logFilePath, const std::string& rotatedPath, int maxSize) {
         if (logFilePath.empty() || getFileSize(logFilePath) < maxSize)
             return false;
 
@@ -99,12 +99,12 @@ public:
         return true;
     }
 
-    void renameFile(std::string srcFilePath, std::string dstFilePath) {
+    void renameFile(const std::string& srcFilePath, const std::string& dstFilePath) {
         std::rename(srcFilePath.c_str(), dstFilePath.c_str());
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
 
-    bool directoryExists(const std::string path) {
+    bool directoryExists(const std::string& path) {
         struct _stat info;
         if (_stat(path.c_str(), &info) != 0) return false;
         return (info.st_mode & _S_IFDIR) != 0;

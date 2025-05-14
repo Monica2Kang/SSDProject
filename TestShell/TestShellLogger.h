@@ -47,7 +47,7 @@ public:
 
         std::ostringstream oss;
         oss << getCurrentTime() << " "
-            << std::left << std::setw(NAME_SIZE) << (functionName + "()")
+            << std::left << std::setw(LOG_CLASS_NAME_SIZE) << (functionName + "()")
             << " : " << message;
 
         std::string logLine = oss.str();
@@ -58,7 +58,7 @@ public:
     {
         // check size and rotate
         std::string rotatedPath = generateRotatedFileName();
-        bool bRotate = FILE_MANAGER.checkSizeAndRotate(logFilePath, rotatedPath, MAX_SIZE);
+        bool bRotate = FILE_MANAGER.checkSizeAndRotate(logFilePath, rotatedPath, MAX_LOG_FILE_SIZE);
         if (bRotate == true)
         {
             if (previousFilePath.empty() == false)
@@ -92,8 +92,8 @@ private:
     std::string logFilePath = "latest.log";
     std::string previousFilePath = "";
 
-    const int MAX_SIZE = 10 * 1024; // 10KB
-    const int NAME_SIZE = 30;
+    const int MAX_LOG_FILE_SIZE = 10 * 1024; // 10KB
+    const int LOG_CLASS_NAME_SIZE = 30;
     bool bInitialize = false;
 
     std::string getCurrentTime() {

@@ -286,7 +286,8 @@ bool Shell::helpApi(void) {
 
 bool Shell::flushApi(void) {
 	if (isValidParameterSize(FLUSH_PARAMETER_SIZE)) {
-		// m_ISSDAdapter->flush();
+		m_ISSDAdapter->flush();
+		cout << endl;
 		return true;
 	}
 	return false;

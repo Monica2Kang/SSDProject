@@ -20,6 +20,17 @@ void SSDAdapter::writeLba(const int lba, const int data)
 	_executeSSDCommand(argument);
 }
 
+bool SSDAdapter::writeLba(std::string lba, std::string data)
+{
+	std::stringstream ss;
+
+	std::string argument = "W " + lba + " " + data;
+
+	_executeSSDCommand(argument);
+
+	return _checkCmdExecutionResultFromSSDOutputFile();
+}
+
 int SSDAdapter::readLba(const int lba)
 {
 	std::string argument = "R " + std::to_string(lba);
@@ -29,11 +40,36 @@ int SSDAdapter::readLba(const int lba)
 	return _readDataFromSSDOutputFile();
 }
 
+bool SSDAdapter::readLba(std::string lba, int& readData)
+{
+	std::string argument = "R " + lba;
+
+	_executeSSDCommand(argument);
+
+	bool bReturn = _checkReadCmdExecutionResultFromSSDOutputFile();
+
+	if (bReturn == true)
+	{
+		readData = _readDataFromSSDOutputFile();
+	}
+
+	return bReturn;
+}
+
 void SSDAdapter::erase(const int lba, const int size)
 {
 	std::string argument = "E " + std::to_string(lba) + " " + std::to_string(size);
 
 	_executeSSDCommand(argument);
+}
+
+bool SSDAdapter::erase(std::string lba, std::string size)
+{
+	std::string argument = "E " + lba + " " + size;
+
+	_executeSSDCommand(argument);
+
+	return _checkCmdExecutionResultFromSSDOutputFile();
 }
 
 void SSDAdapter::fullWrite(const int data)
@@ -104,14 +140,14 @@ void SSDAdapter::_executeSSDCommand(const std::string argument)
 
 int SSDAdapter::_readDataFromSSDOutputFile(void)
 {
-	std::string line = _checkExecutionResultFromSSDOutputFile();
+	std::string line = _readResultFromSSDOutputFile();
 	int readData = std::stoul(line, nullptr, 16);
 
 
 	return readData;
 }
 
-string SSDAdapter::_checkExecutionResultFromSSDOutputFile(void)
+string SSDAdapter::_readResultFromSSDOutputFile(void)
 {
 	std::string filePath = "ssd_output.txt";
 
@@ -134,4 +170,58 @@ string SSDAdapter::_checkExecutionResultFromSSDOutputFile(void)
 	}
 
 	return line;
+}
+
+bool SSDAdapter::_checkReadCmdExecutionResultFromSSDOutputFile(void)
+{
+	std::string filePath = "ssd_output.txt";
+
+	std::ifstream file(filePath);
+	if (!file.is_open()) {
+		throw std::runtime_error("SSD Output File Error - File not found.");
+	}
+
+	std::string line;
+	if (!std::getline(file, line)) {
+		throw std::runtime_error("SSD Output File Error - File is empty.");
+	}
+
+	// 공백 제거 (필요 시)
+	line.erase(remove_if(line.begin(), line.end(), ::isspace), line.end());
+
+	// ERROR 문자열인 경우
+	if (line == "ERROR") {
+		return false;
+	}
+	else
+	{
+		return true;
+	}
+}
+
+bool SSDAdapter::_checkCmdExecutionResultFromSSDOutputFile(void)
+{
+	std::string filePath = "ssd_output.txt";
+
+	std::ifstream file(filePath);
+	if (!file.is_open()) {
+		return true;
+	}
+
+	std::string line;
+	if (!std::getline(file, line)) {
+		return true;
+	}
+
+	// 공백 제거 (필요 시)
+	line.erase(remove_if(line.begin(), line.end(), ::isspace), line.end());
+
+	// ERROR 문자열인 경우
+	if (line == "ERROR") {
+		return false;
+	}
+	else
+	{
+		return true;
+	}
 }

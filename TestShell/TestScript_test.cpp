@@ -10,6 +10,9 @@ public:
 	MOCK_METHOD(void, writeLba, (const int lba, const int data), (override));
 	MOCK_METHOD(int, readLba, (const int lba), (override));
 	MOCK_METHOD(void, erase, (const int lba, const int size), (override));
+	MOCK_METHOD(bool, writeLba, (std::string lba, std::string data), (override));
+	MOCK_METHOD(bool, readLba, (std::string lba, int& readData), (override));
+	MOCK_METHOD(bool, erase, (std::string lba, std::string size), (override));
 	MOCK_METHOD(void, fullWrite, (const int data), (override));
 	MOCK_METHOD(void, fullRead, (), (override));
 	MOCK_METHOD(void, flush, (), (override));
@@ -28,12 +31,6 @@ TEST_F(TestScriptFixture, DISABLED_FullWriteAndReadCompare1) {
 	TestScript* mockScript = new TestScript(&mockSSDAdapter);
 	const int MAX_LBA = 100;
 	const int expectedData = 0xBEEFCAFE;
-	EXPECT_CALL(mockSSDAdapter, writeLba)
-		.Times(MAX_LBA);
-
-	EXPECT_CALL(mockSSDAdapter, readLba)
-		.Times(MAX_LBA)
-		.WillRepeatedly(Return(expectedData));
 
 	int result = mockScript->fullWriteAndReadCompare(expectedData);
 }
@@ -42,13 +39,6 @@ TEST_F(TestScriptFixture, DISABLED_PartialLBAWrite1) {
 	TestScript* mockScript = new TestScript(&mockSSDAdapter);
 	const int loop = 150;
 	const int expectedData = 0xBEEFCAFE;
-	EXPECT_CALL(mockSSDAdapter, writeLba)
-		.Times(loop);
-
-	EXPECT_CALL(mockSSDAdapter, readLba)
-		.Times(loop)
-		.WillRepeatedly(Return(expectedData));
-
 
 	int result = mockScript->partialLBAWrite(expectedData);
 
@@ -59,13 +49,6 @@ TEST_F(TestScriptFixture, DISABLED_WriteReadAging1) {
 	TestScript* mockScript = new TestScript(&mockSSDAdapter);
 	const int loop = 60;
 	const int expectedData = 0xBEEFCAFE;
-
-	EXPECT_CALL(mockSSDAdapter, writeLba)
-		.Times(loop);
-
-	EXPECT_CALL(mockSSDAdapter, readLba)
-		.Times(loop)
-		.WillRepeatedly(Return(expectedData));
 
 	int result = mockScript->writeReadAging();
 

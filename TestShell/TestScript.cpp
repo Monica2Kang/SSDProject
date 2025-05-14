@@ -47,6 +47,7 @@ int TestScript::_excuteTest() {
 	int data;
 	int size;
 	string line;
+	bool bReturn = true;
 	while (getline(file, line)) {
 		parameter.clear();
 		stringstream ss(line);
@@ -60,13 +61,14 @@ int TestScript::_excuteTest() {
 			LBA = stoi(parameter[1]);
 			data = static_cast<int>(stoul(parameter[2], nullptr, 16));
 			//cout << "[" << LBA << "] " << parameter[1] << " " << data << endl;
-			ssdAdapter->writeLba(LBA, data);
+			bReturn = ssdAdapter->writeLba(parameter[1], parameter[2]);
 			expectedData[LBA] = data;
 		}
 		else if (parameter[0] == "R") {
 			LBA = stoi(parameter[1]);
-			int resultData = ssdAdapter->readLba(LBA);
-			if (resultData != expectedData[LBA]) {
+			int resultData;
+			bReturn = ssdAdapter->readLba(parameter[1], resultData);
+			if (bReturn == true && resultData != expectedData[LBA]) {
 				//cout << resultData << " : " << expectedData[LBA] << endl;
 				return FAIL;
 			}
@@ -74,7 +76,7 @@ int TestScript::_excuteTest() {
 		else if (parameter[0] == "E") {
 			LBA = stoi(parameter[1]);
 			size = stoi(parameter[2]);
-			ssdAdapter->erase(LBA, size);
+			bReturn = ssdAdapter->erase(parameter[1], parameter[2]);
 			for (int i = LBA; i < LBA + size; i++) {
 				expectedData[i] = 0;
 			}
@@ -82,6 +84,8 @@ int TestScript::_excuteTest() {
 		else {
 			return FAIL;
 		}
+
+		if (bReturn == false) return FAIL;
 	}
 
 	return PASS;

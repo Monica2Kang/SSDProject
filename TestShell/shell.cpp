@@ -276,6 +276,9 @@ bool Shell::eraseRangeApi(void) {
 
 bool Shell::exitApi(void) {
 	if (isValidParameterSize(EXIT_PARAMETER_SIZE)) {
+
+		fulleraseApi();
+
 		return true;
 	}
 	return false;
@@ -336,6 +339,14 @@ bool Shell::fullreadApi(void) {
 		return true;
 	}
 	return false;
+}
+
+void Shell::fulleraseApi(void) {
+	for (auto lba = 0; lba < MAX_SIZE; )
+	{
+		m_ISSDAdapter->erase(lba, CHUNK_SIZE);
+		lba += CHUNK_SIZE;
+	}
 }
 
 bool Shell::isValidParameterSize(const int size) {

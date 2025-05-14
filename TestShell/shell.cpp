@@ -18,6 +18,12 @@ Shell::Shell(ISSDAdapter* ISSDAdapter) : m_ISSDAdapter(ISSDAdapter)
 
 #ifndef _DEBUG
 void Shell::executeShell(void) {
+
+	cout << "==============================================================" << endl;
+	cout << "=        Test Shell (Team Amazing Reviewer)                  =" << endl;
+	cout << "==============================================================" << endl;
+	cout << endl;
+
 	while(true) {
 		setCommand("");
 
@@ -99,6 +105,11 @@ void Shell::setCommand(string command)
 }
 #else
 void Shell::executeShell(void) {
+	cout << "==============================================================" << endl;
+	cout << "=        Test Shell (Team Amazing Reviewer)                  =" << endl;
+	cout << "==============================================================" << endl;
+	cout << endl;
+
 	splitAndStore();
 
 	if (noEnterCommand()) {
@@ -240,6 +251,8 @@ bool Shell::eraseApi(void) {
 			if (isValidSize(SIZE_POS)) {
 				storeSize();
 				splitErase();
+
+				cout << "[Erase] Done\n" << endl;
 				return true;
 			}
 		}
@@ -267,6 +280,7 @@ bool Shell::eraseRangeApi(void) {
 			storeLBARange();
 			splitErase();
 
+			cout << "[Erase Range] Done\n" << endl;
 			TEST_SHELL_LOG("Erase Range");
 			return true;
 		}
@@ -279,6 +293,7 @@ bool Shell::exitApi(void) {
 
 		fulleraseApi();
 
+		cout << "Bye Bye. \n" << endl;
 		return true;
 	}
 	return false;
@@ -286,19 +301,26 @@ bool Shell::exitApi(void) {
 
 bool Shell::helpApi(void) {
 	if (isValidParameterSize(HELP_PARAMETER_SIZE)) {
-		cout << "Team : AmazingReviewer" << endl;
-		cout << "Minju Kang, Namwook Kang, Janghwan Kim, Jungyeon Kim" << endl;
-		cout << "write > write [LBA] [data]" << endl;
-		cout << "read > read [LBA]" << endl;
-		cout << "erase > erase [LBA] [SIZE]" << endl;
-		cout << "erase_range > erase_range [startLBA] [endLBA]" << endl;
-		cout << "flush > Execute all commands in the command buffer" << endl;
-		cout << "exit > End the program" << endl;
-		cout << "help > Show command guide" << endl;
-		cout << "fullwrite > fullwrite[data]" << endl;
-		cout << "fullread > fullread" << endl;
+		cout << "==============================================================" << endl;
+		cout << "Test Shell (Help)" << endl;
+		cout << "==============================================================" << endl;
+		cout << "1) Team : AmazingReviewer" << endl;
+		cout << "2) Team members : Minju Kang (Leader), Namwook Kang, Janghwan Kim, Jungyeon Kim" << endl;
+		cout << "3) Test Shell Command" << endl;
+		cout << "3-1) write > write [LBA] [data]" << endl;
+		cout << "3-2) read > read [LBA]" << endl;
+		cout << "3-3) erase > erase [LBA] [SIZE]" << endl;
+		cout << "3-4) erase_range > erase_range [startLBA] [endLBA]" << endl;
+		cout << "3-5) flush > Execute all commands in the command buffer" << endl;
+		cout << "3-6) exit > End the program" << endl;
+		cout << "3-7) help > Show command guide" << endl;
+		cout << "3-8) fullwrite > fullwrite[data]" << endl;
+		cout << "3-9) fullread > fullread" << endl;
+		cout << "==============================================================" << endl;
+		cout << "==============================================================" << endl;
 		cout << endl;
 
+		cout << "[Help] Done\n" << endl;
 		TEST_SHELL_LOG("Help Done");
 		return true;
 	}
@@ -308,8 +330,8 @@ bool Shell::helpApi(void) {
 bool Shell::flushApi(void) {
 	if (isValidParameterSize(FLUSH_PARAMETER_SIZE)) {
 		m_ISSDAdapter->flush();
-		cout << endl;
 
+		cout << "[Flush] Done\n" << endl;
 		TEST_SHELL_LOG("Flush Done");
 		return true;
 	}
@@ -321,8 +343,8 @@ bool Shell::fullwriteApi(void) {
 		if (isValidData(FULLWRITE_DATA_POS)) {
 			storeData(FULLWRITE_DATA_POS);
 			m_ISSDAdapter->fullWrite(data);
-			cout << "[Fullwrite] Done\n" << endl;
 
+			cout << "[Fullwrite] Done\n" << endl;
 			TEST_SHELL_LOG("Fullwrite Done");
 			return true;
 		}
@@ -333,8 +355,8 @@ bool Shell::fullwriteApi(void) {
 bool Shell::fullreadApi(void) {
 	if (isValidParameterSize(FULLREAD_PARAMETER_SIZE)) {
 		m_ISSDAdapter->fullRead();
-		cout << endl;
 
+		cout << "[Fullread] Done\n" << endl;
 		TEST_SHELL_LOG("Fullread Done");
 		return true;
 	}

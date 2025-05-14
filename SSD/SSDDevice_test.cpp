@@ -166,7 +166,7 @@ TEST_F(SSDDeviceFixture, ssdWriteReadDataConfirmTC) {
 TEST_F(SSDDeviceFixture, ssdWriteReadDataConfirmTC4Multi) {
     for (LBA_DATA lba_data : inRangeLbaDatas) {
         ssd.writeData(lba_data.lba, lba_data.data);
-        int actual = ssd.readData(lba_data.lba);
+        unsigned int actual = ssd.readData(lba_data.lba);
         EXPECT_EQ(lba_data.data, actual);
     }
 }
@@ -181,7 +181,7 @@ TEST_F(SSDDeviceFixture, ssdReadDataTC4UntouchedLba) {
 TEST_F(SSDDeviceFixture, ssdReadDataTC4FileOutputCheckData) {
     for (LBA_DATA lba_data : inRangeLbaDatas) {
         ssd.writeData(lba_data.lba, lba_data.data);
-        int actual = ssd.readData(lba_data.lba);
+        unsigned int actual = ssd.readData(lba_data.lba);
         EXPECT_EQ(lba_data.data, actual);
         EXPECT_TRUE(containsValue(actual));
     }
@@ -207,7 +207,7 @@ TEST_F(SSDDeviceFixture, ssdReadDataTC4FileOutputCheckError) {
 TEST_F(SSDDeviceFixture, ssdReadDataTC4FileOutputCheckForcedError) {
     for (LBA_DATA lba_data : inRangeLbaDatas) {
         ssd.writeData(lba_data.lba, lba_data.data);
-        int actual = ssd.readData(lba_data.lba);
+        unsigned int actual = ssd.readData(lba_data.lba);
         EXPECT_EQ(lba_data.data, actual);
         EXPECT_TRUE(containsValue(actual));
 

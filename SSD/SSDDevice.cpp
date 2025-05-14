@@ -14,12 +14,12 @@ SSDDevice::~SSDDevice() {
 int SSDDevice::readData(const int lba) {
     SSDFileOutput fOutput;
     if (_isLbaOutOfRange(lba)) {
-        fOutput.printError();
+        //fOutput.printError();
         throw std::invalid_argument("Out of LBA Range.");
     }
     int data = 0;
     if (false == fSsd.readData(lba, data)) {
-        fOutput.printData(0x0);
+        //fOutput.printData(0x0);
         throw std::exception("Untouched Data.");
     }
 
@@ -35,7 +35,7 @@ void SSDDevice::printError(void) {
 void SSDDevice::writeData(const int lba, const int data) {
     SSDFileOutput fOutput;
     if (_isLbaOutOfRange(lba)) {
-        fOutput.printError();
+        //fOutput.printError();
         throw std::invalid_argument("Out of LBA Range.");
     }
     fSsd.writeData(lba, data);
@@ -45,11 +45,11 @@ void SSDDevice::writeData(const int lba, const int data) {
 void SSDDevice::eraseData(const int lba, const int range) {
     SSDFileOutput fOutput;
     if (_isLbaOutOfRange(lba)) {
-        fOutput.printError();
+        //fOutput.printError();
         throw std::invalid_argument("Out of LBA Range.");
     }
     if (_isEraseRangeInvalid(range)) {
-        fOutput.printError();
+        //fOutput.printError();
         throw std::invalid_argument("Out of e Range.");
     }
 

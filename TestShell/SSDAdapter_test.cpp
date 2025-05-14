@@ -10,6 +10,11 @@ public:
 	MOCK_METHOD(void, writeLba, (const int lba, const int data), (override));
 	MOCK_METHOD(int, readLba, (const int lba), (override));
 	MOCK_METHOD(void, erase, (const int lba, const int size), (override));
+
+	MOCK_METHOD(bool, writeLba, (std::string lba, std::string data), (override));
+	MOCK_METHOD(bool, readLba, (std::string lba, int& readData), (override));
+	MOCK_METHOD(bool, erase, (std::string lba, std::string size), (override));
+
 	MOCK_METHOD(void, fullWrite, (const int data), (override));
 	MOCK_METHOD(void, fullRead, (), (override));
 	MOCK_METHOD(void, flush, (), (override));

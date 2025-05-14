@@ -17,7 +17,7 @@ public:
     static const int MIN_ERASE_SIZE = 0;
 
 private:
-    SSDDevice m_device;
+    //SSDDevice m_device;
     static const int VALID_COMMAND_SIZE = 2;
     static const int MAX_LBA = 100;
 };

@@ -11,7 +11,7 @@ bool SSDFileStorageDevice::openFile(void) {
         return true;
     }
     if (!_openFile()) {
-        _createFile();
+        createFile();
     }
     return _openFile();
 }
@@ -63,7 +63,7 @@ bool SSDFileStorageDevice::_openFile(void) {
     return _isFileOpened();
 }
 
-void SSDFileStorageDevice::_createFile(void) {
+void SSDFileStorageDevice::createFile(void) {
     std::ofstream create_file(filename, std::ios::binary);
     std::vector<int> cellData(maxLbaCapacity + maxMapCapacity, 0);
     create_file.write(reinterpret_cast<const char*>(cellData.data()), cellData.size());
@@ -78,6 +78,7 @@ void SSDFileStorageDevice::_writeFile(const int lba, const int data) {
     file.seekp(lba * sizeof(int) + maxMapCapacity * sizeof(int));
     file.write(reinterpret_cast<const char*>(&TOUCHED_FLAG), sizeof(data));
     file.flush();
+    file.close();
 }
 
 bool SSDFileStorageDevice::_readFile(const int lba, unsigned int& data) {
@@ -87,11 +88,14 @@ bool SSDFileStorageDevice::_readFile(const int lba, unsigned int& data) {
     int flag = 0;
     file.seekg(lba * sizeof(int) + maxMapCapacity * sizeof(int));
     file.read(reinterpret_cast<char*>(&flag), sizeof(flag));
-    if (TOUCHED_FLAG != flag)
+    if (TOUCHED_FLAG != flag) {
+        file.close();
         return false;
+    }
 
     file.seekg(lba * sizeof(int), ios::beg);
     file.read(reinterpret_cast<char*>(&data), sizeof(data));
+    file.close();
     return true;
 }
 

@@ -14,10 +14,10 @@ public:
     bool writeData(const int lba, const unsigned int data);
     bool readData(const int lba, unsigned int &data);
     bool removeFile(void);
+    void createFile(void);
 
 private:
     bool _openFile(void);
-    void _createFile(void);
     bool _checkLbaBoundary(const int lba) const;
     bool _isFileOpened(void) const { return fileOpened; }
     void _setFileOpened(const bool input) { fileOpened = input; }

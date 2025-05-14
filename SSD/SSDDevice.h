@@ -2,10 +2,17 @@
 #include <stdexcept>
 #include "SSDFileStorageDevice.h"
 
+// Singleton
+#define SSD_DEVICE SSDDevice::getInstance()
+
 class SSDDevice {
 public:
-    SSDDevice();
-    ~SSDDevice();
+    static SSDDevice& getInstance(void) {
+        static SSDDevice instance;
+        return instance;
+    }
+
+public:
     unsigned int readData(const int lba);
     void writeData(const int lba, const unsigned int data);
     void eraseData(const int lba, const int range);
@@ -16,6 +23,10 @@ private:
     void _initializeCellData(void);
     bool _isLbaOutOfRange(const int lba) const;
     bool _isEraseRangeInvalid(const int range) const;
+
+private:
+    SSDDevice();
+    ~SSDDevice();
 
 private:
     static const int LBA_CAPACITY = 100;

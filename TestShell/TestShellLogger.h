@@ -39,7 +39,7 @@ public:
 
     void saveLog(const std::string& functionName, const std::string& message)
     {
-        if (bInitialize = false)
+        if (bInitialize == false)
         {
             Initialize();
             bInitialize = true;

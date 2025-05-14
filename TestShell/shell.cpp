@@ -5,6 +5,7 @@
 #include <string>
 #include <cctype>
 #include <iomanip>
+#include "TestShellLogger.h"
 #include <algorithm>
 #include "shell.h"
 
@@ -25,8 +26,12 @@ void Shell::executeShell(void) {
 		if (noEnterCommand()) {
 			cout << "INVALID COMMAND" << endl;
 			cout << endl;
+
+			TEST_SHELL_LOG("INVALID COMMAND");
 			continue;
 		}
+
+		TEST_SHELL_LOG("New Command " + parameter[COMMAND_POS]);
 
 		if (parameter[COMMAND_POS] == "write") { // write 3 0xAAAABBBB
 			if (writeApi()) continue;
@@ -82,6 +87,8 @@ void Shell::executeShell(void) {
 
 		cout << "INVALID COMMAND" << endl;
 		cout << endl;
+
+		TEST_SHELL_LOG("INVALID COMMAND");
 	}
 }
 
@@ -96,8 +103,12 @@ void Shell::executeShell(void) {
 
 	if (noEnterCommand()) {
 		cout << "INVALID COMMAND" << endl;
+
+		TEST_SHELL_LOG("INVALID COMMAND");
 		return;
 	}
+
+	TEST_SHELL_LOG("New Command " + parameter[COMMAND_POS]);
 
 	if (parameter[COMMAND_POS] == "write") { // write 3 0xAAAABBBB
 		if (writeApi()) 
@@ -161,6 +172,8 @@ void Shell::executeShell(void) {
 		return;
 	}
 	cout << "INVALID COMMAND" << endl;
+
+	TEST_SHELL_LOG("INVALID COMMAND");
 }
 
 void Shell::setCommand(string command)
@@ -196,6 +209,8 @@ bool Shell::writeApi(void)
 				storeData(DATA_POS);
 				m_ISSDAdapter->writeLba(LBA, data);
 				cout << "[Write] Done\n" << endl;
+
+				TEST_SHELL_LOG("[Write] Done");
 				return true;
 			}
 		}
@@ -210,6 +225,8 @@ bool Shell::readApi(void) {
 			int printData = m_ISSDAdapter->readLba(LBA);
 			cout << "[Read] LBA " << dec << LBA << " : 0x" << uppercase << setfill('0') << setw(8) << hex << printData << endl;
 			cout << endl;
+
+			TEST_SHELL_LOG("[Read] LBA");
 			return true;
 		}
 	}
@@ -249,6 +266,8 @@ bool Shell::eraseRangeApi(void) {
 		if (isValidLBA(LBA_POS) && isValidLBA(END_LBA_POS)) {
 			storeLBARange();
 			splitErase();
+
+			TEST_SHELL_LOG("Erase Range");
 			return true;
 		}
 	}
@@ -276,6 +295,8 @@ bool Shell::helpApi(void) {
 		cout << "fullwrite > fullwrite[data]" << endl;
 		cout << "fullread > fullread" << endl;
 		cout << endl;
+
+		TEST_SHELL_LOG("Help Done");
 		return true;
 	}
 	return false;
@@ -285,6 +306,8 @@ bool Shell::flushApi(void) {
 	if (isValidParameterSize(FLUSH_PARAMETER_SIZE)) {
 		m_ISSDAdapter->flush();
 		cout << endl;
+
+		TEST_SHELL_LOG("Flush Done");
 		return true;
 	}
 	return false;
@@ -296,6 +319,8 @@ bool Shell::fullwriteApi(void) {
 			storeData(FULLWRITE_DATA_POS);
 			m_ISSDAdapter->fullWrite(data);
 			cout << "[Fullwrite] Done\n" << endl;
+
+			TEST_SHELL_LOG("Fullwrite Done");
 			return true;
 		}
 	}
@@ -306,6 +331,8 @@ bool Shell::fullreadApi(void) {
 	if (isValidParameterSize(FULLREAD_PARAMETER_SIZE)) {
 		m_ISSDAdapter->fullRead();
 		cout << endl;
+
+		TEST_SHELL_LOG("Fullread Done");
 		return true;
 	}
 	return false;

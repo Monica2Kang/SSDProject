@@ -1,5 +1,6 @@
 #include "SSDAdapter.h"
 #include <stdexcept>
+#include "TestShellLogger.h"
 #include <algorithm>
 #include <iostream>
 #include <fstream>
@@ -8,6 +9,7 @@
 #include <sstream>
 #include <iomanip>
 #include <vector>
+
 using namespace std;
 
 void SSDAdapter::writeLba(const int lba, const int data)
@@ -113,6 +115,8 @@ void SSDAdapter::flush(void) {
 
 void SSDAdapter::_executeSSDCommand(const std::string argument)
 {
+	TEST_SHELL_LOG(argument);
+
 	std::string exePath = "..\\x64\\Release\\SSD.exe";
 	std::string command = "\"" + exePath + "\" " + argument;
 

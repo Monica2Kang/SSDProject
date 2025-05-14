@@ -366,8 +366,9 @@ bool Shell::isValidSize(const int pos) {
 	int isDigitCount = 0;
 
 	if (!parameter[SIZE_POS].empty()) {
-		for (char ch : str) {
-			if (isdigit(ch)) {
+		for (int i = 0; i < str.length(); i++){
+			char ch = str[i];
+			if (isdigit(ch) || (ch == '-' && i == 0)) {
 				isDigitCount++;
 			}
 		}
@@ -392,14 +393,20 @@ void Shell::storeData(const int pos) {
 }
 
 void Shell::storeSize(void) {
-	int tempSize = stoi(parameter[SIZE_POS]); // 1 ~ INF
+	int tempSize = stoi(parameter[SIZE_POS]); // -INF ~ -1 || 1 ~ INF
 	int totalSize = LBA + tempSize;
 
-	if (totalSize > MAX_SIZE) {
-		LBASize = MAX_SIZE - LBA;
+	if (tempSize < 0) { // -INF ~ -1
+		LBASize = abs(tempSize);
+		LBA = max(0, (LBA - LBASize + 1));
 	}
-	else { // totalSize <= MAX_SIZE
-		LBASize = tempSize;
+	else { // 1 ~ INF
+		if (totalSize > MAX_SIZE) { // 200
+			LBASize = MAX_SIZE - LBA;
+		}
+		else { // totalSize <= MAX_SIZE
+			LBASize = tempSize;
+		}
 	}
 }
 

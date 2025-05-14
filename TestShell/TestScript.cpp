@@ -50,6 +50,7 @@ int TestScript::_excuteTest() {
 	bool bReturn = true;
 	while (getline(file, line)) {
 		parameter.clear();
+		//cout << line << endl;
 		stringstream ss(line);
 		string word;
 
@@ -89,6 +90,51 @@ int TestScript::_excuteTest() {
 	}
 
 	return PASS;
+}
+
+void TestScript::executeRunner(const string filename) {
+	//  shell_scriptst.txt가 존재하는지 확인
+	string scenarioPath = "..\\..\\TestScenarios";
+	string path = scenarioPath + "\\" + filename;
+	fstream file(path);
+	
+	if (!file.is_open()) {
+		cout << "INVALID COMMAND\n";
+		return;
+	}
+	else {
+		string line;
+		while (getline(file, line)) {
+			cout << line << "    ___    Run...";
+
+			bool isExist = false;
+			std::string fullPath = FILE_MANAGER.findFileWithPrefix(scenarioPath, line);
+			// cout << "fullPath : " << fullPath << endl;
+			if (fullPath == "") {
+				cout << "full Path FAIL!" << endl;
+				break;
+			}
+
+			ScriptFilePath = fullPath;
+
+			//cout << "ScriptFilePath : " << ScriptFilePath << endl;
+			isExist = FILE_MANAGER.fileExists(ScriptFilePath);
+
+			if (isExist) {
+				if (_excuteTest()) {
+					cout << "FAIL!" << endl;
+					break;
+				}
+				else {
+					cout << "Pass" << endl;
+				}
+			}
+			else {
+				cout << "FAIL!" << endl;
+				break;
+			}
+		}
+	}
 }
 
 void TestScript::makeScenario(void)
@@ -285,7 +331,6 @@ std::string TestScript::_eraseCommand(const int lba, const int size)
 
 	return argument;
 }
-
 
 int TestScript::fullWriteAndReadCompare(const int data) {
 

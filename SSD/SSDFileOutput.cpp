@@ -22,3 +22,7 @@ void SSDFileOutput::printData(const unsigned int value) {
 void SSDFileOutput::printError(void) {
     outfile << "ERROR" << std::endl;
 }
+
+void SSDFileOutput::printDone(void) {
+    outfile << "" << std::endl;
+}

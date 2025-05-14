@@ -1,8 +1,11 @@
 #include <iostream>
+#include <sstream>
 #include <vector>
 #include <algorithm>
 #include <string>
 #include "SSDCmdBuffer.h"
+#include "SSDDevice.h"
+#include "SSDCmdBufferOutput.h"
 
 //enum class CommandType { WRITE, ERASE };
 
@@ -11,6 +14,7 @@ void SSDCmdBuffer::writeData(const int lba, const unsigned int data) {
     _removeOverwrittenWrites(lba);
     cmdBuffer.push_back({ CommandType::WRITE, lba, data });
     _optimize();
+    _exportBufferToFiles();
 }
 
 void SSDCmdBuffer::eraseData(const int lba, const int range) {
@@ -18,14 +22,33 @@ void SSDCmdBuffer::eraseData(const int lba, const int range) {
     cmdBuffer.push_back({ CommandType::ERASE, lba, static_cast<unsigned int>(range) });
     _removeWritesCoveredByErase(lba, range);
     _optimize();
+    _exportBufferToFiles();
 }
 
 const std::vector<Command>& SSDCmdBuffer::getBuffer(void) const {
     return cmdBuffer;
 }
 
-void SSDCmdBuffer::clear(void) {
+//void SSDCmdBuffer::clear(void) {
+//    cmdBuffer.clear();
+//}
+
+void SSDCmdBuffer::flushData(void) {
+    for (const auto& cmd : cmdBuffer) {
+        switch (cmd.type) {
+        case CommandType::WRITE:
+            SSD_DEVICE.writeData(cmd.lba, cmd.dataOrRange);
+            break;
+        case CommandType::ERASE:
+            SSD_DEVICE.eraseData(cmd.lba, static_cast<int>(cmd.dataOrRange));
+            break;
+        default:
+            throw std::runtime_error("Unknown command type in buffer.");
+        }
+    }
     cmdBuffer.clear();
+    _exportBufferToFiles();
+
 }
 
 bool SSDCmdBuffer::_checkEraseLbaRangeInvalid(int lba, int range) const {
@@ -42,17 +65,36 @@ void SSDCmdBuffer::_optimize(void) {
     _clearBufferIfNeeded();
 }
 
-void SSDCmdBuffer::_printBuffer(void) const {
-    std::cout << "Current buffer:\n";
+void SSDCmdBuffer::_exportBufferToFiles(void) {
+    //SSDCmdBufferOutput output;
+    std::vector<std::string> fileNames;
+
     for (const auto& cmd : cmdBuffer) {
-        std::cout << cmd.toString() << "\n";
+        std::string fileName;
+
+        if (cmd.type == CommandType::WRITE) {
+            std::ostringstream oss;
+            oss << "W_" << cmd.lba << "_0x"
+                << std::uppercase << std::setfill('0') << std::setw(8) << std::hex << cmd.dataOrRange;
+            fileName = oss.str();
+        }
+        else if (cmd.type == CommandType::ERASE) {
+            fileName = "E_" + std::to_string(cmd.lba) + "_" + std::to_string(cmd.dataOrRange);
+        }
+        else {
+            fileName = "UNKNOWN_CMD";
+        }
+
+        fileNames.emplace_back(fileName);
     }
-    std::cout << std::endl;
+
+    output.createFilesInFolder(fileNames);
 }
 
 void SSDCmdBuffer::_clearBufferIfNeeded(void) {
     if (cmdBuffer.size() > MAX_CMDBUF_SIZE) {
-        cmdBuffer.clear();
+        flushData();
+        _exportBufferToFiles();
     }
 }
 
@@ -122,6 +164,8 @@ void SSDCmdBuffer::_mergeErases(void) {
     cmdBuffer.insert(cmdBuffer.end(), merged.begin(), merged.end());
 }
 
+
+#if 0
 // split erase if it overlaps with write
 void SSDCmdBuffer::_resolveEraseWriteConflicts() {
     std::vector<Command> resolved;
@@ -155,3 +199,5 @@ void SSDCmdBuffer::_resolveEraseWriteConflicts() {
     }
     cmdBuffer = resolved;
 }
+
+#endif // 0

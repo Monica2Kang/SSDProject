@@ -1,5 +1,6 @@
 #pragma once
 #include "SSDDevice.h"
+#include "SSDCmdBufferOutput.h"
 
 enum class CommandType { WRITE, ERASE };
 
@@ -18,16 +19,18 @@ struct Command {
 
 class SSDCmdBuffer {
 public:
+    SSDCmdBufferOutput output;
+public:
     void writeData(const int lba, const unsigned int data);
     void eraseData(const int lba, const int range);
-    void clear(void);
+    void flushData(void);
     const std::vector<Command>& getBuffer(void) const;
 
 private:
     bool _checkEraseLbaRangeInvalid(const int lba, const int range) const;
     bool _checkLbaOutOfRange(const int lba) const;
     void _optimize(void);
-    void _printBuffer(void) const;
+    void _exportBufferToFiles(void);
     void _clearBufferIfNeeded(void);
     void _removeOverwrittenWrites(const int lba);
     void _removeWritesCoveredByErase(const int startLba, const int endLba);

@@ -1,6 +1,7 @@
 #include <iostream>
 #include "gmock/gmock.h"
 #include "SSDCmdBuffer.h"
+#include "SSDCmdBufferOutput.h"
 
 using namespace testing;
 using namespace std;
@@ -8,6 +9,19 @@ using namespace std;
 class SSDCmdBufferFixture : public Test {
 public:
     SSDCmdBuffer cbuf;
+
+    // 파일 이름 확인용
+    vector<string> getFileNames() {
+        //SSDCmdBufferOutput& output = SSDCmdBuffer::output;
+        return cbuf.output.getFileListForDebug();
+    }
+
+    void expectFileNamesMatch(const vector<string>& actual, const vector<string>& expected) {
+        ASSERT_EQ(actual.size(), expected.size());
+        for (size_t i = 0; i < expected.size(); ++i) {
+            EXPECT_EQ(actual[i], expected[i]);
+        }
+    }
 
 protected:
     struct LBA_RANGE_DATA_EXP {
@@ -432,7 +446,37 @@ TEST_F(SSDCmdBufferFixture, CmdBufferMergeWriteIgnoreTC0) {
     }
 }
 
+TEST_F(SSDCmdBufferFixture, CmdBufferToFileConfirmation_TC1) {
+    vector<Command> commandList = {
+        {CommandType::WRITE, 3,  0xBEEFCAFE},
+        {CommandType::WRITE, 50, 0xA5A5A5A5},
+        {CommandType::WRITE, 77, 0xA5A5A5A5},
+        {CommandType::WRITE, 99, 0xCAFEBEAD},
+        {CommandType::WRITE, 99, 0xBEADCAFE},  // overwrite
+        {CommandType::ERASE, 0, 7},
+        {CommandType::ERASE, 48, 6},
+        {CommandType::WRITE, 99, 0xBEADCAFE},  // re-write
+        {CommandType::ERASE, 70, 8},
+    };
 
+    // 실제 동작
+    for (auto& cmd : commandList) {
+        if (cmd.type == CommandType::ERASE)
+            cbuf.eraseData(cmd.lba, static_cast<int>(cmd.dataOrRange));
+        else
+            cbuf.writeData(cmd.lba, cmd.dataOrRange);
+    }
 
+    // 파일 이름 기준 기대 결과
+    vector<string> expectedFileNames = {
+        "1_W_99_0xBEADCAFE",
+        "2_E_0_7",
+        "3_E_48_6",
+        "4_E_70_8",
+        "5_empty",
+    }; 
 
+    vector<string> actualFileNames = getFileNames();
+    expectFileNamesMatch(actualFileNames, expectedFileNames);
+}
 

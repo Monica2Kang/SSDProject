@@ -23,10 +23,10 @@ void SSDCmdBufferOutput::createFilesInFolder(vector<string>& files) {
     }
     _clearFileNameForDebug();
 
-    int fileNumber = 1;
+    int fileNumber = 0;
     for (string fileName : files) {
-        string filePath = string(folderName) + "\\" + to_string(fileNumber++) + "_" + fileName;
-        _storeFileNameForDebug(fileName);
+        string filePath = string(folderName) + "\\" + to_string(++fileNumber) + "_" + fileName;
+        _storeFileNameForDebug(to_string(fileNumber) + "_" + fileName);
         ofstream file(filePath);
         if (file.is_open()) {
             file.close();
@@ -80,7 +80,8 @@ void SSDCmdBufferOutput::_clearFilesInFolder(void) {
 }
 
 void SSDCmdBufferOutput::_storeFileNameForDebug(string fileName) {
-    m_fileListForDebug.emplace_back(fileName);
+    //m_fileListForDebug.emplace_back(fileName);
+    m_fileListForDebug.push_back(fileName);
 }
 
 void SSDCmdBufferOutput::_clearFileNameForDebug(void) {

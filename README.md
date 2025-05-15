@@ -3,14 +3,27 @@
 ## 구현내용 참고사항
 1. [TestScript]
 - Test Script 를 통한 검증은 Test Shell Command 를 기준이 아닌, SSD Command 기준 작성하였습니다. SSD 명령어 기준으로 ERROR 유무를 확인하고 Script/Scenario PASS/FAIL을 결정합니다.
+- 
 2. [CmdBuffer]
 - cmd_buffer.txt는 Command buffer의 내부 context 내용을 기입하는 것으로 실제 buf 폴더에 저장하는 0_E_0_3, 1_W_0_0xBEEFCAFE 와 내용이 같다.
 처음에 buffer 폴더 내부의 파일명이 단지 채점을 위한 Command Buffer 내용 확인용이라 생각했으나, 개발 후반부에 이 buf 폴더 내부의 파일명이 
 결국 Commad Buffer의 context를 계속 유지 시켜줄 수 있는 내부 데이터용도로도 사용되어야 했었다. 
-처음에 buf내 파일명을 그냥 Command Buffer의 cout 정도로 생각 했으나 이는 잘못된 길로 나를 인도하였다.
-3. [CmdBuffer]
-- buf 내 파일명은 모두 command buffer내 유효한 커맨드를 의미한다. 비록 Erase와 Write 파일의 lba가 겹치더라도, 이는 Erase가 우선한다. 즉 해당 erase보다 write가 뒤에 들어 온 것으로 유효하다.
+처음에 buffer내 파일명을 그냥 Command Buffer의 cout 정도로 생각 했으나 이는 잘못된 길로 나를 인도하였다.
+- buffer 내 파일명은 모두 command buffer내 유효한 커맨드를 의미한다. 비록 Erase와 Write 파일의 lba가 겹치더라도, 이는 Erase가 우선한다. 즉 해당 erase보다 write가 뒤에 들어 온 것으로 유효하다.
 Write에의한 write ignore, erase에 의한 write ignore, erase에 의한 erase ignore혹은 merge는 구현되어 있다.
+
+3. [TestScript]
+- 본 과제에서는 Script에서 지원하는 Scenario는 SSD Command(W/R/E/F)를 기준으로 구현
+- Scenario가 잘못 만들어 진 경우 SSD의 ERROR를 통해 Test Fail 판단
+- Scenario의 추가를 위해 Scenario 를 txt로 만들고 txt 를 기반으로 수행
+- Scenario 는 수행 경로가 VS에서 보는 경로와 exe 파일의 경로가 달라 2군데에 생성 (TestScenario)
+ 
+4. [Test 환경]
+- VS 에서 Release Mode로 Test 시 TestShell 폴더내에 ssd_nand, ssd_output, log 파일이 생성
+- Command Buffer 데이터는 buffer 폴더 밑에 파일 생성
+- Scenario 및 Script File은 수행 경로 상위 폴더의 TestScenarios 폴더에 생성
+- exe 로 수행하는 경우 해당 경로에서 파일들이 생성
+
 ---
 <img src ="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQEFq__WA1GsvqVFhNqU_Hx0h1J424IeyClmQ&s" width=120></img>
 <img src="https://lettering.org/wp-content/uploads/2023/11/t.jpg" width=120> </img>

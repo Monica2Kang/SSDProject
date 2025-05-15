@@ -1,9 +1,9 @@
 # Amazing Reviewer Team SSD 프로젝트 입니다.
 
-구현 내용
+## 구현내용 참고사항
 1. Test Script 를 통한 검증은 Test Shell Command 를 기준이 아닌, SSD Command 기준 작성하였습니다. SSD 명령어 기준으로 ERROR 유무를 확인하고 Script/Scenario PASS/FAIL을 결정합니다.
-2. cmd_buf.txt는 Command buffer의 내부 context 내용을 기입하는 것으로 실제 buf 폴더에 저장하는 0_E_0_3, 1_W_0_0xBEEFCAFE 와 내용이 같다.
-처음에 buf/내부의 파일명이 단지 채점을 위한 Command Buffer 내용 확인용이라 생각했으나, 개발 후반부에 이 buf 폴더 내부의 파일명이 
+2. cmd_buffer.txt는 Command buffer의 내부 context 내용을 기입하는 것으로 실제 buf 폴더에 저장하는 0_E_0_3, 1_W_0_0xBEEFCAFE 와 내용이 같다.
+처음에 buffer 폴더 내부의 파일명이 단지 채점을 위한 Command Buffer 내용 확인용이라 생각했으나, 개발 후반부에 이 buf 폴더 내부의 파일명이 
 결국 Commad Buffer의 context를 계속 유지 시켜줄 수 있는 내부 데이터용도로도 사용되어야 했었다. 
 처음에 buf내 파일명을 그냥 Command Buffer의 cout 정도로 생각 했으나 이는 잘못된 길로 나를 인도하였다.
 3. buf 내 파일명은 모두 command buffer내 유효한 커맨드를 의미한다. 비록 Erase와 Write 파일의 lba가 겹치더라도, 이는 Erase가 우선한다. 즉 해당 erase보다 write가 뒤에 들어 온 것으로 유효하다.

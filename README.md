@@ -21,6 +21,10 @@
 - buffer 내 파일명은 모두 command buffer내 유효한 커맨드를 의미한다. 비록 Erase와 Write 파일의 lba가 겹치더라도, 이는 Erase가 우선한다. 즉 해당 erase보다 write가 뒤에 들어 온 것으로 유효하다.
 Write에의한 write ignore, erase에 의한 write ignore, erase에 의한 erase ignore혹은 merge는 구현되어 있다.
 
+## Wiki 자료 
+* Integration Test 현황 : https://github.com/Monica2Kang/SSDProject/wiki/Integration-Test-%ED%98%84%ED%99%A9
+* 시연 자료 : https://github.com/Monica2Kang/SSDProject/wiki/%5B%EC%8B%9C%EC%97%B0-%EC%9E%90%EB%A3%8C%5D
+
 
 ---
 <img src ="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQEFq__WA1GsvqVFhNqU_Hx0h1J424IeyClmQ&s" width=120></img>

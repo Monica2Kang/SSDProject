@@ -78,7 +78,7 @@ bool SSDCmdParser::checkParsing(int argc, const char* argv[]) {
     }
     
     if (command == "F") {
-        //m_device.flushData();
+        m_device.flushData();
         return PARSING_SUCCESS;
     }
     return PARSING_FAILED;

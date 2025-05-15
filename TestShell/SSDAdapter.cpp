@@ -146,8 +146,24 @@ void SSDAdapter::_executeSSDCommand(const std::string argument)
 }
 #else
 void SSDAdapter::_executeSSDCommand(const std::string argument) {
+	TEST_SHELL_LOG(argument);
+
 	std::string exePath = "..\\x64\\Release\\SSD.exe";
 	std::string fullCommand = "\"" + exePath + "\" " + argument;
+
+	std::ifstream ssdFile(exePath);
+	if (ssdFile.good() == false) {
+		std::string exePath2 = ".\\SSD.exe";
+		std::ifstream ssdFile2(exePath2);
+		if (ssdFile2.good() == false)
+		{
+			throw std::runtime_error("SSD Execution File Error - File not found.");
+		}
+		else
+		{
+			fullCommand = "\"" + exePath2 + "\" " + argument;
+		}
+	}
 
 	STARTUPINFOA si;
 	PROCESS_INFORMATION pi;

@@ -62,20 +62,27 @@ int TestScript::_excuteTest() {
 		while (ss >> word) {
 			parameter.push_back(word);
 		}
-		
+
 		if (parameter[0] == "W") {
 			LBA = stoi(parameter[1]);
 			data = static_cast<int>(stoul(parameter[2], nullptr, 16));
 			//cout << "[" << LBA << "] " << parameter[1] << " " << data << endl;
 			bReturn = ssdAdapter->writeLba(parameter[1], parameter[2]);
-			expectedData[LBA] = data;
+			if (bReturn == true) {
+				expectedData[LBA] = data;
+			}
 		}
 		else if (parameter[0] == "R") {
 			LBA = stoi(parameter[1]);
 			int resultData;
 			bReturn = ssdAdapter->readLba(parameter[1], resultData);
-			if (bReturn == true && resultData != expectedData[LBA]) {
+			if (bReturn == true) {
+				if (resultData != expectedData[LBA]) {
+					return FAIL;
+				}
 				//cout << resultData << " : " << expectedData[LBA] << endl;
+			}
+			else {
 				return FAIL;
 			}
 		}
@@ -83,9 +90,14 @@ int TestScript::_excuteTest() {
 			LBA = stoi(parameter[1]);
 			size = stoi(parameter[2]);
 			bReturn = ssdAdapter->erase(parameter[1], parameter[2]);
-			for (int i = LBA; i < LBA + size; i++) {
-				expectedData[i] = 0;
+			if (bReturn == true) {
+				for (int i = LBA; i < LBA + size; i++) {
+					expectedData[i] = 0;
+				}
 			}
+		}
+		else if (parameter[0] == "F") {
+			ssdAdapter->flush();
 		}
 		else {
 			return FAIL;
@@ -298,7 +310,7 @@ void TestScript::makeScenario(void)
 
 	for (int it = 0; it < loop; it++)
 	{
-		for (int lba = 2; lba < MAX_LBA;)
+		for (int lba = 2; lba < MAX_LBA-3;)
 		{
 			argument = _writeCommand(lba, expectedData1);
 			FILE_MANAGER.appendLine(scenarioPath, argument);

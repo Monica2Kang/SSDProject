@@ -146,6 +146,8 @@ void SSDAdapter::_executeSSDCommand(const std::string argument)
 }
 #else
 void SSDAdapter::_executeSSDCommand(const std::string argument) {
+	TEST_SHELL_LOG(argument);
+
 	std::string exePath = "..\\x64\\Release\\SSD.exe";
 	std::string fullCommand = "\"" + exePath + "\" " + argument;
 
